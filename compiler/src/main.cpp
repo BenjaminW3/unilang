@@ -5,10 +5,13 @@
 #include <filesystem>
 
 //-----------------------------------------------------------------------------
-//
+//! The main unilang namespace
 //-----------------------------------------------------------------------------
 namespace unilang
 {
+	//-----------------------------------------------------------------------------
+	//! Prints out the information for command line usage
+	//-----------------------------------------------------------------------------
 	void print_usage()
 	{
 		std::cout << "Available options:\n";
@@ -22,7 +25,8 @@ namespace unilang
 //-----------------------------------------------------------------------------
 int main( int argc, char *argv[] ) 
 {
-   std::vector<std::string> vsParameters(&argv[1], &argv[argc]);	// The 0. argument is the command line itself so start with the first one
+	// The 0. argument is the command line itself so start with the first one when creating the list
+	std::vector<std::string> vsParameters(&argv[1], &argv[argc]);
 
 	if(vsParameters.empty())
 	{
@@ -43,7 +47,7 @@ int main( int argc, char *argv[] )
 					std::cout << "Error: Expected two filenames after /compile option. None was given.\n\n";
 					break;
 				}
-				std::tr2::sys::path pInPath(vsParameters[i]);
+				std::tr2::sys::path const pInPath(vsParameters[i]);
 				if(!std::tr2::sys::is_regular_file(pInPath))
 				{
 					std::cout << "Error: The input  for the /compile option is no valid file: \""+ pInPath.file_string() +"\"\n\n";
@@ -61,7 +65,7 @@ int main( int argc, char *argv[] )
 					std::cout << "Error: Expected two filenames after /compile option. One was given.\n\n";
 					break;
 				}
-				std::tr2::sys::path pOutPath(vsParameters[i]);
+				std::tr2::sys::path const pOutPath(vsParameters[i]);
 
 				try
 				{
@@ -87,7 +91,7 @@ int main( int argc, char *argv[] )
 					std::cout << sSourceCode << std::endl;
 				
 					// TODO: Compile source to bytecode
-					void* bytecodebufferhandle = nullptr;
+					void * const bytecodebufferhandle = nullptr;
 
 					if(bytecodebufferhandle)
 					{
@@ -110,5 +114,5 @@ int main( int argc, char *argv[] )
 		}
 	}
 
-   return 0;
+	return 0;
 }
