@@ -1,0 +1,4 @@
+entrypoint () : (int iSuccess())
+{
+	iSuccess = 1;
+}
