@@ -13,10 +13,78 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Source Files\parser">
+      <UniqueIdentifier>{659a67e5-9d39-4a46-b5bf-e5360eadbb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\parser">
+      <UniqueIdentifier>{e6e42224-c903-4eb7-b05b-4e72684774c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator">
+      <UniqueIdentifier>{387486bc-e23d-4bd2-ba00-8a5e06243638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator">
+      <UniqueIdentifier>{5bb0e2d7-f6ea-407e-90e0-7e0e972c7411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parser\grammar">
+      <UniqueIdentifier>{1063f36e-2773-4a14-9d66-95b84052e5eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\parser\grammar">
+      <UniqueIdentifier>{db27c86c-b512-4808-ba37-1f6c4fe1ae4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\abstract_syntax_tree">
+      <UniqueIdentifier>{ce78f8a5-d996-4591-9bce-bd53a6f20af0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\virtual_machine">
+      <UniqueIdentifier>{a5136dcf-32bb-49ec-b88c-bd4b91244333}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\virtual_machine">
+      <UniqueIdentifier>{0dcc9c54-adf1-4531-83ea-285a276e7d8c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\parser\parser.cpp">
+      <Filter>Source Files\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\code_generator.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\virtual_machine\vm.cpp">
+      <Filter>Source Files\virtual_machine</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\parser\parser.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\annotation.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\error_handler.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\skipper.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\code_generator.hpp">
+      <Filter>Header Files\code_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\abstract_syntax_tree\abstract_syntax_tree.hpp">
+      <Filter>Header Files\abstract_syntax_tree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\expression.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\function.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\statement.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\virtual_machine\vm.hpp">
+      <Filter>Header Files\virtual_machine</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

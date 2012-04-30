@@ -4,6 +4,10 @@
 
 #include <filesystem>
 
+#include "parser/error_handler.hpp"
+#include "parser/parser.hpp"
+#include "code_generator/code_generator.hpp"
+
 //-----------------------------------------------------------------------------
 //! The main unilang namespace
 //-----------------------------------------------------------------------------
@@ -89,18 +93,12 @@ int main( int argc, char *argv[] )
 
 					// debug print file
 					std::cout << sSourceCode << std::endl;
-				
-					// TODO: Compile source to bytecode
-					void * const bytecodebufferhandle = nullptr;
+					
+					unilang::error_handler<std::string::const_iterator> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
 
-					if(bytecodebufferhandle)
-					{
-						//TODO: write out bytecode
-					}
-					else
-					{
-						throw std::runtime_error("Compilation failed!");
-					}
+					unilang::ast::function_list AST = unilang::parser::parse_code( sSourceCode, error_handler );
+
+					unilang::code_generator::generate_code( AST, error_handler );
 				}
 				catch(const std::exception& e)
 				{

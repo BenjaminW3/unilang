@@ -49,6 +49,7 @@
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <SubSystem>Console</SubSystem>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -65,7 +66,22 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\code_generator\code_generator.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\parser\parser.cpp" />
+    <ClCompile Include="..\..\src\virtual_machine\vm.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\src\abstract_syntax_tree\abstract_syntax_tree.hpp" />
+    <ClInclude Include="..\..\src\code_generator\code_generator.hpp" />
+    <ClInclude Include="..\..\src\parser\annotation.hpp" />
+    <ClInclude Include="..\..\src\parser\error_handler.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\expression.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\function.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\statement.hpp" />
+    <ClInclude Include="..\..\src\parser\parser.hpp" />
+    <ClInclude Include="..\..\src\parser\skipper.hpp" />
+    <ClInclude Include="..\..\src\virtual_machine\vm.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
