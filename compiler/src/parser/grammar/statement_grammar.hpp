@@ -44,14 +44,14 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 
-				// a statement list consists of one or more statements
+				// a statement list consists of statements
 				statement_list =
-					+statement
+					*statement
 					;
 				statement_list.name("statement_list");
 
 				statement =
-						variable_declaration
+						variable_definition
 					|   assignment
 					|   compound_statement
 					|   if_statement
@@ -60,15 +60,15 @@ namespace unilang
 					;
 				statement.name("statement");
 
-				variable_declaration =
-						lexeme["int" >> !(alnum | '_')] // make sure we have whole words
-					>   identifierGrammar
-					>   -(	'(' 
-						>	expressionGrammar
-						>	')')
-					>   ';'
+				variable_definition =
+						identifierGrammar
+					>	'('
+					//	>	expressionGrammar
+					>	')'
+					>	identifierGrammar
+					//>   ';'
 					;
-				variable_declaration.name("variable_declaration");
+				variable_definition.name("variable_definition");
 
 				assignment =
 						identifierGrammar
@@ -117,7 +117,7 @@ namespace unilang
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(statement_list)
-					(variable_declaration)
+					(variable_definition)
 					(assignment)
 				);
 
@@ -142,7 +142,7 @@ namespace unilang
 				statement;
 
 			qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > 
-				variable_declaration;
+				variable_definition;
 
 			qi::rule<Iterator, ast::assignment(), skipper<Iterator> > 
 				assignment;

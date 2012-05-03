@@ -32,9 +32,7 @@ namespace unilang
 				qi::_4_type _4;
 
 				qi::_val_type _val;
-				//qi::lexeme_type lexeme;
 				qi::string_type string;
-				//qi::omit_type omit;
 
 				using qi::on_error;
 				using qi::on_success;
@@ -44,25 +42,16 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 
-				// a variable identifier begins with a character followed by charcters or numbers
-				variable_definition =
-						identifierGrammar
-					>	'('
-					>	')'
-					>	identifierGrammar
-					;
-				variable_definition.name("variable_definition");
-
 				argument_list =
 						'('
-					>	-( variable_definition % ',')
+					>	-( statementGrammar.variable_definition % ',')
 					>	')'
 					;
 				argument_list.name("argument_list");
 
 				return_list =
 						'('
-					>	-( variable_definition % ',')
+					>	-( statementGrammar.variable_definition % ',')
 					>	')'
 					;
 				return_list.name("return_list");
@@ -80,7 +69,7 @@ namespace unilang
 					>	statementGrammar
 					>	'}'
 					;
-				scoped_block.name("codeblock");
+				scoped_block.name("scoped_block");
 
 				function_definition =
 						identifierGrammar
@@ -93,7 +82,6 @@ namespace unilang
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
-					(variable_definition)
 					(scoped_block)
 					(argument_list)
 					(return_list)
@@ -110,7 +98,6 @@ namespace unilang
 					annotation_function(error_handler.iters)(_val, _1));*/
 			}
 
-			qi::rule<Iterator, ast::variable(), skipper<Iterator> > variable_definition;
 			qi::rule<Iterator, std::list<ast::variable>(), skipper<Iterator> > argument_list;
 			qi::rule<Iterator, std::list<ast::variable>(), skipper<Iterator> > return_list;
 			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > function_header;
