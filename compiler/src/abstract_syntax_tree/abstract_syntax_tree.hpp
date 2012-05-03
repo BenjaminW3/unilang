@@ -2,6 +2,7 @@
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/variant/recursive_variant.hpp>
+#include <boost/variant/get.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/fusion/include/io.hpp>
 #include <boost/optional.hpp>
@@ -152,7 +153,17 @@ namespace unilang
 			statement_list body;
 		};
 
-		typedef std::list<function> function_list;
+		// structure/type/object definitions
+		typedef boost::variant<
+			abstract_syntax_tree::variable,
+			abstract_syntax_tree::function_declaration,
+			abstract_syntax_tree::function
+		> meta_entity;
+
+		struct module
+		{
+			std::list<meta_entity> metaEntities;
+		};
 
 		// print functions for debugging
 		inline std::ostream& operator<<(std::ostream& out, null)
@@ -246,4 +257,9 @@ BOOST_FUSION_ADAPT_STRUCT(
     (std::list<unilang::ast::variable>, arguments)
     (std::list<unilang::ast::variable>, return_values)
     (unilang::ast::statement_list, body)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    unilang::ast::module,
+    (std::list<unilang::ast::meta_entity>, metaEntities)
 )

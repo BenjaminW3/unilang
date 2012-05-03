@@ -96,7 +96,7 @@ int main( int argc, char *argv[] )
 					
 					unilang::error_handler<std::string::const_iterator> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
 
-					unilang::ast::function_list AST = unilang::parser::parse_code( sSourceCode, error_handler );
+					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode, error_handler );
 
 					unilang::code_generator::generate_code( AST, error_handler );
 				}

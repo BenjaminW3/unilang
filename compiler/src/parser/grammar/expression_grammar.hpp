@@ -13,13 +13,17 @@
 // Uncomment this if you want to enable debugging
 #define BOOST_SPIRIT_QI_DEBUG
 ///////////////////////////////////////////////////////////////////////////////
+#include "identifier_grammar.hpp"
 
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_function.hpp>
 #include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
 #include "../annotation.hpp"
+
+#include <boost/spirit/include/qi.hpp>
+#include <boost/spirit/include/phoenix_function.hpp>
+
 #include <vector>
 
 #if defined(_MSC_VER)
@@ -40,7 +44,7 @@ namespace unilang
 		template <typename Iterator>
 		struct expression_grammar : qi::grammar<Iterator, ast::expression(), skipper<Iterator> >
 		{
-			expression_grammar(error_handler<Iterator>& error_handler)
+			expression_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar)
 			  : expression_grammar::base_type(expr)
 			{
 				qi::_1_type _1;
@@ -51,10 +55,6 @@ namespace unilang
 				qi::char_type char_;
 				qi::uint_type uint_;
 				qi::_val_type _val;
-				qi::raw_type raw;
-				qi::lexeme_type lexeme;
-				qi::alpha_type alpha;
-				qi::alnum_type alnum;
 				qi::bool_type bool_;
 
 				using qi::on_error;
@@ -103,22 +103,11 @@ namespace unilang
 					("!", ast::op_not)
 					;
 
-				typenames.add
+				/*typenames.add
 					("int")
 					("float")
 					("string")
-					;
-
-				keywords.add
-					("true")
-					("false")
-					("if")
-					("else")
-					("while")
-					//("int")
-					("void")
-					("return")
-					;
+					;*/
 
 				///////////////////////////////////////////////////////////////////////
 				// Main expression grammar
@@ -172,14 +161,14 @@ namespace unilang
 				primary_expr =
 						uint_
 					|   function_call
-					|   identifier
+					|   identifierGrammar
 					|   bool_
 					|   '(' > expr > ')'
 					;
 				primary_expr.name("primary_expr");
 
 				function_call =
-						(identifier >> '(')
+						(identifierGrammar >> '(')
 					>>   argument_list
 					>>   ')'
 					;
@@ -187,12 +176,6 @@ namespace unilang
 
 				argument_list = -(expr % ',');
 				argument_list.name("argument_list");
-
-				identifier =
-						!keywords
-					>>  raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
-					;
-				identifier.name("identifier");
 
 				///////////////////////////////////////////////////////////////////////
 				// Debugging and error handling and reporting support.
@@ -208,7 +191,6 @@ namespace unilang
 					(primary_expr)
 					(function_call)
 					(argument_list)
-					(identifier)
 				);
 
 				///////////////////////////////////////////////////////////////////////
@@ -248,18 +230,10 @@ namespace unilang
 				argument_list
 				;
 
-			qi::rule<Iterator, ast::identifier(), skipper<Iterator> >
-				identifier
-				;
-
 			qi::symbols<char, ast::optoken>
 				logical_or_op, logical_and_op,
 				equality_op, relational_op,
 				additive_op, multiplicative_op, unary_op
-				;
-
-			qi::symbols<char>
-				keywords, typenames
 				;
 		};
 	}

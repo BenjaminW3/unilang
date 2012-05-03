@@ -6,7 +6,7 @@
 
 #include "parser.hpp"
 
-#include "grammar/function.hpp"
+#include "grammar/global_grammar.hpp"
 #include "skipper.hpp"
 
 #include <iostream>
@@ -19,10 +19,10 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		ast::function_list parse_code( std::string const & sSourceCode, error_handler<std::string::const_iterator> & error_handler )
+		ast::module parse_code( std::string const & sSourceCode, error_handler<std::string::const_iterator> & error_handler )
 		{
 			// The AST we will return
-			ast::function_list ast;
+			ast::module ast;
 
 			// Take the time
 			auto timePointBefore = std::chrono::system_clock::now();
@@ -30,11 +30,11 @@ namespace unilang
 			// initialise parsing
 			std::string::const_iterator cIterBegin = sSourceCode.cbegin();
 			std::string::const_iterator cIterEnd = sSourceCode.cend();
-			function_grammar<std::string::const_iterator> parser(error_handler);
+			global_grammar<std::string::const_iterator> parser(error_handler);
 			skipper<std::string::const_iterator> skipper;
 			
 			// actually parse it now
-			bool success = phrase_parse(cIterBegin, cIterEnd, +parser, skipper, ast);
+			bool success = phrase_parse(cIterBegin, cIterEnd, parser, skipper, ast);
 
 			auto timePointAfter = std::chrono::system_clock::now();
 			long long diff = std::chrono::duration_cast<std::chrono::duration<long, std::ratio<1, 1000>>>(timePointAfter - timePointBefore).count();

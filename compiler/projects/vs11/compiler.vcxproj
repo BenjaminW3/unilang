@@ -76,9 +76,11 @@
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp" />
     <ClInclude Include="..\..\src\parser\annotation.hpp" />
     <ClInclude Include="..\..\src\parser\error_handler.hpp" />
-    <ClInclude Include="..\..\src\parser\grammar\expression.hpp" />
-    <ClInclude Include="..\..\src\parser\grammar\function.hpp" />
-    <ClInclude Include="..\..\src\parser\grammar\statement.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\expression_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\function_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\global_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\identifier_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\statement_grammar.hpp" />
     <ClInclude Include="..\..\src\parser\parser.hpp" />
     <ClInclude Include="..\..\src\parser\skipper.hpp" />
     <ClInclude Include="..\..\src\virtual_machine\vm.hpp" />

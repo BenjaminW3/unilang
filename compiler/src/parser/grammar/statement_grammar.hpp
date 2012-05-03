@@ -1,22 +1,26 @@
 #pragma once
+#include "identifier_grammar.hpp"
+#include "expression_grammar.hpp"
 
-#include "expression.hpp"
 #include "../error_handler.hpp"
+#include "../skipper.hpp"
 #include "../annotation.hpp"
 
 namespace unilang 
 { 
 	namespace parser
 	{
+		namespace qi = boost::spirit::qi;
+		namespace ascii = boost::spirit::ascii;
+
 		///////////////////////////////////////////////////////////////////////////////
 		//  The statement grammar
 		///////////////////////////////////////////////////////////////////////////////
 		template <typename Iterator>
 		struct statement_grammar : qi::grammar<Iterator, ast::statement_list(), skipper<Iterator> >
 		{
-			statement_grammar(error_handler<Iterator>& error_handler)
-			  : statement_grammar::base_type(statement_list), 
-				expr(error_handler)
+			statement_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar, expression_grammar<Iterator> const & expressionGrammar)
+			  : statement_grammar::base_type(statement_list)
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;
@@ -24,9 +28,7 @@ namespace unilang
 				qi::_4_type _4;
 
 				qi::_val_type _val;
-				qi::raw_type raw;
 				qi::lexeme_type lexeme;
-				qi::alpha_type alpha;
 				qi::alnum_type alnum;
 				qi::lit_type lit;
 
@@ -54,24 +56,20 @@ namespace unilang
 					;
 				statement.name("statement");
 
-				identifier =
-						!expr.keywords
-					>>  raw[lexeme[(alpha | '_') >> *(alnum | '_')]]
-					;
-				identifier.name("identifier");
-
 				variable_declaration =
 						lexeme["int" >> !(alnum | '_')] // make sure we have whole words
-					>   identifier
-					>   -('=' > expr)
+					>   identifierGrammar
+					>   -(	'(' 
+						>	expressionGrammar
+						>	')')
 					>   ';'
 					;
 				variable_declaration.name("variable_declaration");
 
 				assignment =
-						identifier
+						identifierGrammar
 					>   '='
-					>   expr
+					>   expressionGrammar
 					>   ';'
 					;
 				assignment.name("assignment");
@@ -79,7 +77,7 @@ namespace unilang
 				if_statement =
 						lit("if")
 					>   '('
-					>   expr
+					>   expressionGrammar
 					>   ')'
 					>   statement
 					>
@@ -93,14 +91,16 @@ namespace unilang
 				while_statement =
 						lit("while")
 					>   '('
-					>   expr
+					>   expressionGrammar
 					>   ')'
 					>   statement
 					;
 				while_statement.name("while_statement");
 
 				compound_statement =
-					'{' >> -statement_list >> '}'
+						'{'
+					>>	-statement_list
+					>>	'}'
 					;
 				compound_statement.name("compound_statement");
 
@@ -113,7 +113,6 @@ namespace unilang
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(statement_list)
-					(identifier)
 					(variable_declaration)
 					(assignment)
 				);
@@ -131,8 +130,6 @@ namespace unilang
 				on_success(return_statement,
 					annotation_function(error_handler.iters)(_val, _1));*/
 			}
-
-			expression_grammar<Iterator> expr;
 
 			qi::rule<Iterator, ast::statement_list(), skipper<Iterator> >
 				statement_list, compound_statement;
@@ -154,9 +151,6 @@ namespace unilang
 
 			/*qi::rule<Iterator, ast::return_statement(), skipper<Iterator> > 
 				return_statement;*/
-
-			qi::rule<Iterator, ast::identifier(), skipper<Iterator> > 
-				identifier;
 		};
 	}
 }

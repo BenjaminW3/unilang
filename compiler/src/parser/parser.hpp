@@ -12,6 +12,6 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		ast::function_list parse_code( std::string const & sSourceCode, error_handler<std::string::const_iterator> & error_handler );
+		ast::module parse_code( std::string const & sSourceCode, error_handler<std::string::const_iterator> & error_handler );
 	}
 }

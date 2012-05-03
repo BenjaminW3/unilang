@@ -74,17 +74,23 @@
     <ClInclude Include="..\..\src\abstract_syntax_tree\abstract_syntax_tree.hpp">
       <Filter>Header Files\abstract_syntax_tree</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\parser\grammar\expression.hpp">
-      <Filter>Header Files\parser\grammar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\parser\grammar\function.hpp">
-      <Filter>Header Files\parser\grammar</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\parser\grammar\statement.hpp">
-      <Filter>Header Files\parser\grammar</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\virtual_machine\vm.hpp">
       <Filter>Header Files\virtual_machine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\global_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\function_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\identifier_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\statement_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\expression_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>
