@@ -5,8 +5,7 @@
 #include "../skipper.hpp"
 #include "../annotation.hpp"
 
-#include <boost/spirit/include/qi.hpp>
-#include <boost/spirit/include/phoenix_function.hpp>
+#include "../spirit.hpp"
 
 namespace unilang
 { 

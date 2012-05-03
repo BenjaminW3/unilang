@@ -2,9 +2,13 @@
 #include "identifier_grammar.hpp"
 #include "expression_grammar.hpp"
 
+#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
 #include "../annotation.hpp"
+
+#include "../spirit.hpp"
 
 namespace unilang 
 { 

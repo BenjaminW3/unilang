@@ -4,9 +4,13 @@
 #include "expression_grammar.hpp"
 #include "statement_grammar.hpp"
 
+#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
 #include "../annotation.hpp"
+
+#include "../spirit.hpp"
 
 namespace unilang
 { 
@@ -41,9 +45,9 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 
-				metaEntityList =	*( functionGrammar | functionGrammar.function_header | functionGrammar.variable_definition );
+				metaEntityList	=	*( functionGrammar | functionGrammar.function_header | functionGrammar.variable_definition );
 
-				module = metaEntityList;
+				module			=	metaEntityList;
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(

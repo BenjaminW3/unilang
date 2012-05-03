@@ -2,9 +2,13 @@
 #include "identifier_grammar.hpp"
 #include "statement_grammar.hpp"
 
+#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
 #include "../annotation.hpp"
+
+#include "../spirit.hpp"
 
 namespace unilang
 { 
@@ -28,9 +32,9 @@ namespace unilang
 				qi::_4_type _4;
 
 				qi::_val_type _val;
-				qi::lexeme_type lexeme;
+				//qi::lexeme_type lexeme;
 				qi::string_type string;
-				qi::omit_type omit;
+				//qi::omit_type omit;
 
 				using qi::on_error;
 				using qi::on_success;
@@ -43,10 +47,9 @@ namespace unilang
 				// a variable identifier begins with a character followed by charcters or numbers
 				variable_definition =
 						identifierGrammar
-					>	omit[lexeme[' ']]
-					>	identifierGrammar
 					>	'('
 					>	')'
+					>	identifierGrammar
 					;
 				variable_definition.name("variable_definition");
 

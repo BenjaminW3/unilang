@@ -92,5 +92,8 @@
     <ClInclude Include="..\..\src\parser\grammar\expression_grammar.hpp">
       <Filter>Header Files\parser\grammar</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\parser\spirit.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

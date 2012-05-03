@@ -1,6 +1,6 @@
 #pragma once
 
-#include <boost/spirit/include/qi.hpp>
+#include "spirit.hpp"
 
 namespace unilang 
 { 

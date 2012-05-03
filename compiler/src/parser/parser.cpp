@@ -9,6 +9,8 @@
 #include "grammar/global_grammar.hpp"
 #include "skipper.hpp"
 
+#include "spirit.hpp"
+
 #include <iostream>
 #include <chrono>
 

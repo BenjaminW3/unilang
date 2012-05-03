@@ -83,6 +83,7 @@
     <ClInclude Include="..\..\src\parser\grammar\statement_grammar.hpp" />
     <ClInclude Include="..\..\src\parser\parser.hpp" />
     <ClInclude Include="..\..\src\parser\skipper.hpp" />
+    <ClInclude Include="..\..\src\parser\spirit.hpp" />
     <ClInclude Include="..\..\src\virtual_machine\vm.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
