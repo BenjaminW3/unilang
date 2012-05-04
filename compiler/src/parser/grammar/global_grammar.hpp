@@ -45,7 +45,7 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 
-				metaEntityList	=	*( functionGrammar | functionGrammar.function_header | statementGrammar.variable_definition );
+				metaEntityList	=	*( functionGrammar | functionGrammar.function_header | statementGrammar.variable_definition_statement );
 
 				module			=	metaEntityList;
 
@@ -65,10 +65,13 @@ namespace unilang
 					annotation_function(error_handler.iters)(_val, _1));*/
 			}
 
+			// Refering to page 234 of the standard, 12.6.2, paragraph 5, the third dashed item reads:
+			// "Then, non-static data members shall be initialized in the order they were declared in the class definition (again regardless of the order of the mem-initializers)."
 			identifier_grammar<Iterator> identifierGrammar;
-			function_grammar<Iterator> functionGrammar;
 			expression_grammar<Iterator> expressionGrammar;
 			statement_grammar<Iterator> statementGrammar;
+			function_grammar<Iterator> functionGrammar;
+
 			qi::rule<Iterator, std::list<ast::meta_entity>(), skipper<Iterator> > metaEntityList;
 			qi::rule<Iterator, ast::module(), skipper<Iterator> > module;
 		};

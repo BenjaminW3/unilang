@@ -1,4 +1,4 @@
-entrypoint () : ( int() iSuccess )
+entrypoint () : ( iSuccess=int()  )
 {
 	iSuccess = 1;
 }

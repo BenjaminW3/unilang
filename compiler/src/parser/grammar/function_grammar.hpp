@@ -82,9 +82,10 @@ namespace unilang
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
-					(scoped_block)
 					(argument_list)
 					(return_list)
+					(function_header)
+					(scoped_block)
 					(function_definition)
 				);
 
@@ -97,9 +98,9 @@ namespace unilang
 				/*on_success(identifier,
 					annotation_function(error_handler.iters)(_val, _1));*/
 			}
-
-			qi::rule<Iterator, std::list<ast::variable>(), skipper<Iterator> > argument_list;
-			qi::rule<Iterator, std::list<ast::variable>(), skipper<Iterator> > return_list;
+			
+			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > argument_list;
+			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > return_list;
 			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > function_header;
 			qi::rule<Iterator, ast::statement_list(), skipper<Iterator> > scoped_block;
 			qi::rule<Iterator, ast::function(), skipper<Iterator> > function_definition;

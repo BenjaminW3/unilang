@@ -51,9 +51,9 @@ namespace unilang
 				statement_list.name("statement_list");
 
 				statement =
-						variable_definition
-					|   assignment
-					|   compound_statement
+						assignment
+					|   variable_definition_statement
+					|	compound_statement
 					|   if_statement
 					|   while_statement
 				//	|   return_statement
@@ -62,13 +62,19 @@ namespace unilang
 
 				variable_definition =
 						identifierGrammar
-					>	'('
-					//	>	expressionGrammar
-					>	')'
+					>	'='
 					>	identifierGrammar
-					//>   ';'
+					>	'('
+					>	-( expressionGrammar % ',')
+					>	')'
 					;
 				variable_definition.name("variable_definition");
+
+				variable_definition_statement =
+						variable_definition
+					>   ';'
+					;
+				variable_definition_statement.name("variable_definition_statement");
 
 				assignment =
 						identifierGrammar
@@ -103,8 +109,8 @@ namespace unilang
 
 				compound_statement =
 						'{'
-					>>	-statement_list
-					>>	'}'
+					>	-statement_list
+					>	'}'
 					;
 				compound_statement.name("compound_statement");
 
@@ -118,7 +124,11 @@ namespace unilang
 				BOOST_SPIRIT_DEBUG_NODES(
 					(statement_list)
 					(variable_definition)
+					(variable_definition_statement)
 					(assignment)
+					(if_statement)
+					(while_statement)
+					(compound_statement)
 				);
 
 				// Error handling: on error in statement_list, call error_handler.
@@ -141,8 +151,8 @@ namespace unilang
 			qi::rule<Iterator, ast::statement(), skipper<Iterator> > 
 				statement;
 
-			qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > 
-				variable_definition;
+			qi::rule<Iterator, ast::variable_definition(), skipper<Iterator> > 
+				variable_definition, variable_definition_statement;
 
 			qi::rule<Iterator, ast::assignment(), skipper<Iterator> > 
 				assignment;

@@ -32,12 +32,6 @@ namespace unilang
 			std::string name;
 		};
 
-		struct variable
-		{
-			identifier type;
-			identifier identifier;
-		};
-
 		typedef boost::variant<
 				null
 			  , bool
@@ -98,10 +92,11 @@ namespace unilang
 			expression rhs;
 		};
 
-		struct variable_declaration
+		struct variable_definition
 		{
-			identifier lhs;
-			boost::optional<expression> rhs;
+			abstract_syntax_tree::identifier identifier;
+			abstract_syntax_tree::identifier type;
+			std::list<expression> rhs;
 		};
 
 		struct if_statement;
@@ -110,7 +105,7 @@ namespace unilang
 		//struct return_statement;
 
 		typedef boost::variant<
-				variable_declaration
+				variable_definition
 			  , assignment
 			  , boost::recursive_wrapper<if_statement>
 			  , boost::recursive_wrapper<while_statement>
@@ -141,21 +136,21 @@ namespace unilang
 		struct function_declaration
 		{
 			identifier function_name;
-			std::list<variable> arguments;
-			std::list<variable> return_values;
+			std::list<variable_definition> arguments;
+			std::list<variable_definition> return_values;
 		};
 
 		struct function
 		{
 			identifier function_name;
-			std::list<variable> arguments;
-			std::list<variable> return_values;
+			std::list<variable_definition> arguments;
+			std::list<variable_definition> return_values;
 			statement_list body;
 		};
 
 		// structure/type/object definitions
 		typedef boost::variant<
-			abstract_syntax_tree::variable,
+			abstract_syntax_tree::variable_definition,
 			abstract_syntax_tree::function_declaration,
 			abstract_syntax_tree::function
 		> meta_entity;
@@ -185,12 +180,6 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable,
-    (unilang::ast::identifier, type)
-    (unilang::ast::identifier, identifier)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::unary,
     (unilang::ast::optoken, operator_)
     (unilang::ast::operand, operand_)
@@ -215,9 +204,10 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable_declaration,
-    (unilang::ast::identifier, lhs)
-    (boost::optional<unilang::ast::expression>, rhs)
+    unilang::ast::variable_definition,
+    (unilang::ast::identifier, identifier)
+    (unilang::ast::identifier, type)
+    (std::list<unilang::ast::expression>, rhs)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -247,15 +237,15 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_declaration,
     (unilang::ast::identifier, function_name)
-    (std::list<unilang::ast::variable>, arguments)
-    (std::list<unilang::ast::variable>, return_values)
+    (std::list<unilang::ast::variable_definition>, arguments)
+    (std::list<unilang::ast::variable_definition>, return_values)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function,
     (unilang::ast::identifier, function_name)
-    (std::list<unilang::ast::variable>, arguments)
-    (std::list<unilang::ast::variable>, return_values)
+    (std::list<unilang::ast::variable_definition>, arguments)
+    (std::list<unilang::ast::variable_definition>, return_values)
     (unilang::ast::statement_list, body)
 )
 
