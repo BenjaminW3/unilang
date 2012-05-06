@@ -1,0 +1,9 @@
+BUGS:
+
+
+TODO:
+
+
+IDEAS:
+-fuzzy-equal, ~=
+-arbitrary-precision
