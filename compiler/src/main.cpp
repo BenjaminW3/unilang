@@ -114,3 +114,12 @@ int main( int argc, char *argv[] )
 
 	return 0;
 }
+
+/*
+the main module needs a function with the signature "entrypoint () : ( uint() )"
+This means it has to have a single uint errorvalue return.
+
+Every variable is const by default.
+To make it changeable add the qualifier symbol '~' in front of the typename
+
+*/
