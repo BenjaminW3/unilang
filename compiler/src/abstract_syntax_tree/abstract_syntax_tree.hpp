@@ -15,19 +15,12 @@ namespace unilang
 		///////////////////////////////////////////////////////////////////////////
 		//  The AST
 		///////////////////////////////////////////////////////////////////////////
-		/*struct tagged
-		{
-			int id; // Used to annotate the AST with the iterator position.
-					// This id is used as a key to a map<int, Iterator>
-					// (not really part of the AST.)
-		};*/
-
 		struct null {};
 		struct unary;
 		struct function_call;
 		struct expression;
 
-		struct identifier //: tagged
+		struct identifier
 		{
 			std::string name;
 		};
@@ -94,9 +87,10 @@ namespace unilang
 
 		struct variable_definition
 		{
-			abstract_syntax_tree::identifier identifier;
-			abstract_syntax_tree::identifier type;
-			std::list<expression> rhs;
+			boost::optional<bool> constQual;
+			identifier type;
+			boost::optional<identifier> name;
+			boost::optional<std::list<expression>> rhs;
 		};
 
 		struct if_statement;
@@ -129,7 +123,7 @@ namespace unilang
 			statement body;
 		};
 
-		/*struct return_statement //: tagged
+		/*struct return_statement
 		{
 		};*/
 
@@ -142,17 +136,15 @@ namespace unilang
 
 		struct function
 		{
-			identifier function_name;
-			std::list<variable_definition> arguments;
-			std::list<variable_definition> return_values;
+			function_declaration decl;
 			statement_list body;
 		};
 
 		// structure/type/object definitions
 		typedef boost::variant<
-			abstract_syntax_tree::variable_definition,
-			abstract_syntax_tree::function_declaration,
-			abstract_syntax_tree::function
+			variable_definition,
+			function_declaration,
+			function
 		> meta_entity;
 
 		struct module
@@ -205,9 +197,10 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::variable_definition,
-    (unilang::ast::identifier, identifier)
+	(boost::optional<bool>, constQual)
     (unilang::ast::identifier, type)
-    (std::list<unilang::ast::expression>, rhs)
+    (boost::optional<unilang::ast::identifier>, name)
+    (boost::optional<std::list<unilang::ast::expression>>, rhs)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -243,9 +236,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function,
-    (unilang::ast::identifier, function_name)
-    (std::list<unilang::ast::variable_definition>, arguments)
-    (std::list<unilang::ast::variable_definition>, return_values)
+    (unilang::ast::function_declaration, decl)
     (unilang::ast::statement_list, body)
 )
 

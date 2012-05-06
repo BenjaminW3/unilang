@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 #include "identifier_grammar.hpp"
 #include "statement_grammar.hpp"
 
@@ -24,7 +24,7 @@ namespace unilang
 		struct function_grammar : qi::grammar<Iterator, ast::function(), skipper<Iterator> >
 		{
 			function_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar, statement_grammar<Iterator> const & statementGrammar)
-			 : function_grammar::base_type(function_definition)
+			 : function_grammar::base_type(functionDefinition)
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;
@@ -33,6 +33,7 @@ namespace unilang
 
 				qi::_val_type _val;
 				qi::string_type string;
+				qi::omit_type omit;
 
 				using qi::on_error;
 				using qi::on_success;
@@ -42,55 +43,61 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 
-				argument_list =
+				parameterDeclarationList =
 						'('
-					>	-( statementGrammar.variable_definition % ',')
-					>	')'
+					>>	-( statementGrammar.variableDefinition % ',')
+					>>	')'
 					;
-				argument_list.name("argument_list");
+				parameterDeclarationList.name("parameterDeclarationList");
 
-				return_list =
+				returnList =
 						'('
-					>	-( statementGrammar.variable_definition % ',')
-					>	')'
+					>>	-( statementGrammar.variableDefinition % ',')
+					>>	')'
 					;
-				return_list.name("return_list");
+				returnList.name("returnList");
 
-				function_header =
+				functionHeader =
 						identifierGrammar
-					>	argument_list
-					>	':'
-					>   return_list
+					//>	':'
+					>>	parameterDeclarationList
+					>>	omit[string("->")]
+					>>   returnList
 					;
-				function_header.name("function_header");
+				functionHeader.name("functionHeader");
 
-				scoped_block =
+				functionDeclaration = 
+						'?'
+					>>	functionHeader
+					;
+				functionDeclaration.name("functionDeclaration");
+
+				scopedBlock =
 						'{'
-					>	statementGrammar
-					>	'}'
+					>>	statementGrammar
+					>>	'}'
 					;
-				scoped_block.name("scoped_block");
+				scopedBlock.name("scopedBlock");
 
-				function_definition =
-						identifierGrammar
-					>	argument_list
-					>	':'
-					>   return_list
-					>   scoped_block
+				functionDefinition =
+						functionHeader
+					>>	-('='
+						>>   scopedBlock)
 					;
-				function_definition.name("function_definition");
+				functionDefinition.name("functionDefinition");
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
-					(argument_list)
-					(return_list)
-					(function_header)
-					(scoped_block)
-					(function_definition)
+					(parameterDeclarationList)
+					(returnList)
+					(functionHeader)
+					(functionDeclaration)
+					(scopedBlock)
+					(functionDefinition)
 				);
 
 				// Error handling: on error in start, call error_handler.
-				on_error<fail>(function_definition,
+				on_error<fail>(functionDefinition,
 					error_handler_function(error_handler)(
 						"Error! Expecting ", _4, _3));
 
@@ -99,11 +106,12 @@ namespace unilang
 					annotation_function(error_handler.iters)(_val, _1));*/
 			}
 			
-			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > argument_list;
-			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > return_list;
-			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > function_header;
-			qi::rule<Iterator, ast::statement_list(), skipper<Iterator> > scoped_block;
-			qi::rule<Iterator, ast::function(), skipper<Iterator> > function_definition;
+			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > parameterDeclarationList;
+			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > returnList;
+			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionHeader;
+			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionDeclaration;
+			qi::rule<Iterator, ast::statement_list(), skipper<Iterator> > scopedBlock;
+			qi::rule<Iterator, ast::function(), skipper<Iterator> > functionDefinition;
 		};
 	}
 }

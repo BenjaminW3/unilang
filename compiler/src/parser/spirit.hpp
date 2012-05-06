@@ -14,5 +14,13 @@
 #define BOOST_SPIRIT_QI_DEBUG
 ///////////////////////////////////////////////////////////////////////////////
 
-#include <boost/spirit/include/qi.hpp>
+//#define BOOST_SPIRIT_USE_PHOENIX_V3 1
+
+//#include <boost/spirit/include/phoenix_core.hpp>
+//#include <boost/spirit/include/phoenix_operator.hpp>
+//#include <boost/spirit/include/phoenix_stl.hpp>
+//#include <boost/spirit/include/phoenix_statement.hpp>
+//#include <boost/spirit/home/phoenix/statement/if.hpp>
 #include <boost/spirit/include/phoenix_function.hpp>
+
+#include <boost/spirit/include/qi.hpp>

@@ -41,13 +41,17 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 				
+				/*typenames.add
+					("int")
+					("uint")
+					;*/
+
 				keywords.add
 					("true")
 					("false")
 					("if")
 					("else")
 					("while")
-					//("int")
 					("void")
 					("return")
 					;
@@ -61,7 +65,7 @@ namespace unilang
 				// To be concise, it exposes an instance  of a boost::iterator_range<Iterator> containing the two iterators (where Iterator is the type of the underlying input stream as passed to qi::parse).
 				// http://boost-spirit.com/home/2010/01/14/why-might-i-want-to-use-the-directive-qiraw/
 
-				// The lexeme[] directive turns off white space skipping. http://www.boost.org/doc/libs/1_41_0/libs/spirit/doc/html/spirit/qi/reference/directive/lexeme.html
+				// The lexeme[] directive turns off white space skipping. http://www.boost.org/doc/libs/1_49_0/libs/spirit/doc/html/spirit/qi/reference/directive/lexeme.html
 				identifier.name("identifier");
 
 				// Debugging and error handling and reporting support.

@@ -45,7 +45,7 @@ namespace unilang
 				typedef function<unilang::error_handler<Iterator> > error_handler_function;
 				//typedef function<unilang::annotation<Iterator> > annotation_function;
 
-				metaEntityList	=	*( functionGrammar | functionGrammar.function_header | statementGrammar.variable_definition_statement );
+				metaEntityList	=	*( functionGrammar | functionGrammar.functionDeclaration | statementGrammar.variableDefinition );
 
 				module			=	metaEntityList;
 
