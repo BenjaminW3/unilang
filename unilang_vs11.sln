@@ -3,6 +3,12 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 11
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "compiler\projects\vs11\compiler.vcxproj", "{90276707-7A3A-0FC8-01E1-B1D81BFE164B}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9BF2B88D-034B-472C-A4DD-2E75FE67CFB7}"
+	ProjectSection(SolutionItems) = preProject
+		README.txt = README.txt
+		TODO.txt = TODO.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
