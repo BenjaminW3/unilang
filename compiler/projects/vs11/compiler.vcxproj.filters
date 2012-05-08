@@ -34,12 +34,6 @@
     <Filter Include="Header Files\abstract_syntax_tree">
       <UniqueIdentifier>{ce78f8a5-d996-4591-9bce-bd53a6f20af0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\virtual_machine">
-      <UniqueIdentifier>{a5136dcf-32bb-49ec-b88c-bd4b91244333}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Header Files\virtual_machine">
-      <UniqueIdentifier>{0dcc9c54-adf1-4531-83ea-285a276e7d8c}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -50,9 +44,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\code_generator.cpp">
       <Filter>Source Files\code_generator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\virtual_machine\vm.cpp">
-      <Filter>Source Files\virtual_machine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -73,9 +64,6 @@
     </ClInclude>
     <ClInclude Include="..\..\src\abstract_syntax_tree\abstract_syntax_tree.hpp">
       <Filter>Header Files\abstract_syntax_tree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\virtual_machine\vm.hpp">
-      <Filter>Header Files\virtual_machine</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\parser\grammar\global_grammar.hpp">
       <Filter>Header Files\parser\grammar</Filter>
