@@ -7,3 +7,9 @@ TODO:
 IDEAS:
 -fuzzy-equal, ~=
 -arbitrary-precision
+
+switch
+[ {register} |
+{value or range) => {expression},
+{value or range) => {expression}...
+]
