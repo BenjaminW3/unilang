@@ -2,7 +2,7 @@
 #include "identifier_grammar.hpp"
 #include "expression_grammar.hpp"
 
-#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+#include "../../ast/ast.hpp"
 
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
@@ -36,7 +36,7 @@ namespace unilang
 				qi::alnum_type alnum;
 				qi::lit_type lit;
 				qi::char_type char_;
-				qi::omit_type omit;
+				//qi::omit_type omit;
 				qi::string_type string;
 				qi::raw_type raw;
 				qi::eps_type eps;
@@ -86,7 +86,7 @@ namespace unilang
 						constQualifier
 					>>	identifierGrammar
 					>>	variableDefinitionIdentifier
-					>>	parameterList
+					//>>	parameterList
 					;
 				variableDefinition.name("variableDefinition");
 
@@ -103,23 +103,23 @@ namespace unilang
 					>>   '('
 					>>   expressionGrammar
 					>>   ')'
-					>>   statement
+					>>   statementList
 					>>
 					   -(
 							lexeme["else" >> !(alnum | '_')] // make sure we have whole words
-						>>   statement
+						>>   statementList
 						)
 					;
 				if_statement.name("if_statement");
 
-				while_statement =
+				/*while_statement =
 						lit("while")
 					>>   '('
 					>>   expressionGrammar
 					>>   ')'
-					>>   statement
+					>>   statementlist
 					;
-				while_statement.name("while_statement");
+				while_statement.name("while_statement");*/
 
 				compound_statement =
 						'{'
@@ -139,7 +139,7 @@ namespace unilang
 					|   variableDefinition
 					|	compound_statement
 					|   if_statement
-					|   while_statement
+				//	|   while_statement
 				//	|   return_statement
 					;
 				statement.name("statement");
@@ -158,7 +158,7 @@ namespace unilang
 					(variableDefinition)
 					(assignment)
 					(if_statement)
-					(while_statement)
+					//(while_statement)
 					(compound_statement)
 					(statement)
 					(statementList)
@@ -193,10 +193,10 @@ namespace unilang
 			qi::rule<Iterator, ast::if_statement(), skipper<Iterator> > 
 				if_statement;
 
-			qi::rule<Iterator, ast::while_statement(), skipper<Iterator> > 
+			/*qi::rule<Iterator, ast::while_statement(), skipper<Iterator> > 
 				while_statement;
 
-			/*qi::rule<Iterator, ast::return_statement(), skipper<Iterator> > 
+			qi::rule<Iterator, ast::return_statement(), skipper<Iterator> > 
 				return_statement;*/
 		};
 	}

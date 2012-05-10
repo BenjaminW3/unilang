@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "../abstract_syntax_tree/abstract_syntax_tree.hpp"
+#include "../ast/ast.hpp"
 #include "error_handler.hpp"
 
 namespace unilang

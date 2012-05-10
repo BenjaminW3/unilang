@@ -2,7 +2,7 @@
 #include "identifier_grammar.hpp"
 #include "statement_grammar.hpp"
 
-#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+#include "../../ast/ast.hpp"
 
 #include "../error_handler.hpp"
 #include "../skipper.hpp"

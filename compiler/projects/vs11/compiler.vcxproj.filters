@@ -31,8 +31,14 @@
     <Filter Include="Header Files\parser\grammar">
       <UniqueIdentifier>{db27c86c-b512-4808-ba37-1f6c4fe1ae4f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\abstract_syntax_tree">
-      <UniqueIdentifier>{ce78f8a5-d996-4591-9bce-bd53a6f20af0}</UniqueIdentifier>
+    <Filter Include="Header Files\log">
+      <UniqueIdentifier>{3cccf860-330c-499d-afd0-a5f9ac9a2f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\log">
+      <UniqueIdentifier>{20f255e8-8b44-4494-ab37-f07ef4a6bb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ast">
+      <UniqueIdentifier>{dc0ee6fa-4300-41b5-b0f1-b8c72c27ed89}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -43,6 +49,12 @@
       <Filter>Source Files\parser</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\code_generator.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\log\log.cpp">
+      <Filter>Source Files\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\if_code_generator.cpp">
       <Filter>Source Files\code_generator</Filter>
     </ClCompile>
   </ItemGroup>
@@ -62,12 +74,6 @@
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp">
       <Filter>Header Files\code_generator</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\abstract_syntax_tree\abstract_syntax_tree.hpp">
-      <Filter>Header Files\abstract_syntax_tree</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\parser\grammar\global_grammar.hpp">
-      <Filter>Header Files\parser\grammar</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\parser\grammar\function_grammar.hpp">
       <Filter>Header Files\parser\grammar</Filter>
     </ClInclude>
@@ -82,6 +88,27 @@
     </ClInclude>
     <ClInclude Include="..\..\src\parser\spirit.hpp">
       <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\log\log.hpp">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\expression_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\identifier_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\function_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\statement_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

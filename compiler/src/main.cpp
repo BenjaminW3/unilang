@@ -8,6 +8,8 @@
 #include "parser/parser.hpp"
 #include "code_generator/code_generator.hpp"
 
+#pragma warning(disable: 4996)		// 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct.
+
 //-----------------------------------------------------------------------------
 //! The main unilang namespace
 //-----------------------------------------------------------------------------
@@ -98,7 +100,7 @@ int main( int argc, char *argv[] )
 
 					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode, error_handler );
 
-					unilang::code_generator::generate_code( AST, error_handler );
+					unilang::code_generator::code_generator gen( AST );
 				}
 				catch(const std::exception& e)
 				{

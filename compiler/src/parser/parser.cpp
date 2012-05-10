@@ -6,7 +6,7 @@
 
 #include "parser.hpp"
 
-#include "grammar/global_grammar.hpp"
+#include "grammar/grammar.hpp"
 #include "skipper.hpp"
 
 #include "spirit.hpp"

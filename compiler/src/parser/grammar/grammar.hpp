@@ -4,7 +4,7 @@
 #include "expression_grammar.hpp"
 #include "statement_grammar.hpp"
 
-#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+#include "../../ast/ast.hpp"
 
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
@@ -47,7 +47,7 @@ namespace unilang
 
 				metaEntityList	=	*( functionGrammar | functionGrammar.functionDeclaration | statementGrammar.variableDefinition );
 
-				module			=	metaEntityList;
+				module			=	metaEntityList.alias();
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(

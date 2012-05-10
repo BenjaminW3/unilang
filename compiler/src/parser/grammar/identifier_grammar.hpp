@@ -1,5 +1,5 @@
 #pragma once
-#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+#include "../../ast/identifier_ast.hpp"
 
 #include "../error_handler.hpp"
 #include "../skipper.hpp"

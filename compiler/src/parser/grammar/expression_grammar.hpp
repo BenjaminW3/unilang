@@ -2,7 +2,7 @@
 
 #include "identifier_grammar.hpp"
 
-#include "../../abstract_syntax_tree/abstract_syntax_tree.hpp"
+#include "../../ast/expression_ast.hpp"
 
 #include "../error_handler.hpp"
 #include "../skipper.hpp"
@@ -97,14 +97,38 @@ namespace unilang
 
 				///////////////////////////////////////////////////////////////////////
 				// Main expression grammar
-				expr =
-					logical_or_expr.alias()
+				
+				unaryOp_expr =
+						(unary_op > expr)
+					;
+				unaryOp_expr.name("unaryOp_expr");
+
+				addOp_expr =
+						expr
+					>>	additive_op
+					>>	expr
+					;
+				addOp_expr.name("addOp_expr");
+
+				binaryOp_expr =
+					addOp_expr.alias()
+					;
+				binaryOp_expr.name("binaryOp_expr");
+
+				expr = 
+					uint_
+					|   bool_
+					|   identifierGrammar
+					|	unaryOp_expr
+					|	binaryOp_expr
+					|   function_call
+					|   '(' > expr > ')'
 					;
 				expr.name("expr");
-
-				logical_or_expr =
+				
+				/*logical_or_expr =
 						logical_and_expr
-					>> *(logical_or_op > logical_and_expr)
+					>>	*(	logical_or_op >	logical_and_expr)
 					;
 				logical_or_expr.name("logical_or_expr");
 
@@ -125,7 +149,7 @@ namespace unilang
 					>> *(relational_op > additive_expr)
 					;
 				relational_expr.name("relational_expr");
-
+				
 				additive_expr =
 						multiplicative_expr
 					>> *(additive_op > multiplicative_expr)
@@ -142,16 +166,7 @@ namespace unilang
 						primary_expr
 					|   (unary_op > unary_expr)
 					;
-				unary_expr.name("unary_expr");
-
-				primary_expr =
-						uint_
-					|   function_call
-					|   identifierGrammar
-					|   bool_
-					|   '(' > expr > ')'
-					;
-				primary_expr.name("primary_expr");
+				unary_expr.name("unary_expr");*/
 
 				function_call =
 						(identifierGrammar >> '(')
@@ -173,10 +188,11 @@ namespace unilang
 					(relational_expr)
 					(additive_expr)
 					(multiplicative_expr)
-					(unary_expr)
-					(primary_expr)
 					(function_call)
 					(argument_list)
+					(unaryOp_expr)
+					(binaryOp_expr)
+					(addOp_expr)
 				);
 
 				///////////////////////////////////////////////////////////////////////
@@ -197,14 +213,19 @@ namespace unilang
 #pragma warning(default: 4512)
 #endif
 			}
+			
+			qi::rule<Iterator, ast::unaryOp(), skipper<Iterator> >
+				unaryOp_expr
+				;
+
+			qi::rule<Iterator, ast::binaryOp(), skipper<Iterator> >
+				binaryOp_expr, addOp_expr
+				;
 
 			qi::rule<Iterator, ast::expression(), skipper<Iterator> >
 				expr, equality_expr, relational_expr,
 				logical_or_expr, logical_and_expr,
-				additive_expr, multiplicative_expr
-				;
-
-			qi::rule<Iterator, ast::operand(), skipper<Iterator> >
+				additive_expr, multiplicative_expr,
 				unary_expr, primary_expr
 				;
 

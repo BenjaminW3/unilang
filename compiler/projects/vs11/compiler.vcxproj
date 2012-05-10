@@ -71,17 +71,24 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\code_generator\code_generator.cpp" />
+    <ClCompile Include="..\..\src\code_generator\if_code_generator.cpp" />
+    <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
     <ClCompile Include="..\..\src\parser\parser.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\src\abstract_syntax_tree\abstract_syntax_tree.hpp" />
+    <ClInclude Include="..\..\src\ast\ast.hpp" />
+    <ClInclude Include="..\..\src\ast\expression_ast.hpp" />
+    <ClInclude Include="..\..\src\ast\function_ast.hpp" />
+    <ClInclude Include="..\..\src\ast\identifier_ast.hpp" />
+    <ClInclude Include="..\..\src\ast\statement_ast.hpp" />
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp" />
+    <ClInclude Include="..\..\src\log\log.hpp" />
     <ClInclude Include="..\..\src\parser\annotation.hpp" />
     <ClInclude Include="..\..\src\parser\error_handler.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\expression_grammar.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\function_grammar.hpp" />
-    <ClInclude Include="..\..\src\parser\grammar\global_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\grammar.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\identifier_grammar.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\statement_grammar.hpp" />
     <ClInclude Include="..\..\src\parser\parser.hpp" />
