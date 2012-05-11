@@ -48,13 +48,6 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		/*llvm::Value * code_generator::operator()(ast::null const &)	// FIXME null really needed?
-		{
-			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(1), uint64_t(0), false));
-		}*/
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(bool const & x)
 		{
 			return llvm::ConstantFP::get(context, llvm::APFloat(double(x)));
@@ -248,6 +241,7 @@ namespace unilang
 			}
 
 			std::vector<llvm::Value*> ArgsV;
+			auto itArg = CalleeF->arg_begin();
 			BOOST_FOREACH(ast::expression const & ex, x.arguments)
 			{
 				ArgsV.push_back((*this)(ex));
@@ -255,6 +249,19 @@ namespace unilang
 				{
 					throw std::runtime_error("Invalid argument returned!");
 				}
+
+				if(ArgsV.back()->getType()!=(*itArg).getType())
+				{
+					std::string type_str;
+					llvm::raw_string_ostream rso(type_str);
+					rso << "Trying to call function '" << x.idf.name << "' with argument number " << (*itArg).getArgNo() << " with type '";
+					ArgsV.back()->getType()->print(rso);
+					rso << "' but function expects a value of type '";
+					(*itArg).getType()->print(rso);
+					rso << "'.";
+					throw std::runtime_error("Argument type mismatch! "+rso.str());
+				}
+				++itArg;
 			}
   
 			return builder.CreateCall(CalleeF, ArgsV, "calltmp");
@@ -300,9 +307,23 @@ namespace unilang
 						{
 							throw std::runtime_error("Invalid right hand side of an assignment!");
 						}
-
-						builder.CreateStore(Val, V->getAllocaInst());
-						return Val;
+						// ->getPointerElementType()
+						if(Val->getType()!=V->getAllocaInst()->getType()->getElementType())
+						{
+							std::string type_str;
+							llvm::raw_string_ostream rso(type_str);
+							rso << "Trying to assign a value of type '";
+							Val->getType()->print(rso);
+							rso << "' to a value of type '";
+							V->getAllocaInst()->getType()->print(rso);
+							rso << "'.";
+							throw std::runtime_error("Assignment type mismatch! "+rso.str());
+						}
+						else
+						{
+							builder.CreateStore(Val, V->getAllocaInst());
+							return Val;
+						}
 					}
 				}
 			}
@@ -616,6 +637,8 @@ def bar() foo(1, 2); # error, unknown function "foo"
 			llvm::PassManager OurPM;
 			// Set up the optimizer pipeline.  Start with registering info about how the target lays out data structures.
 			OurPM.add(new llvm::TargetData(*ee->getTargetData()));
+			//
+			OurPM.add(llvm::createVerifierPass());
 			// Provide basic AliasAnalysis support for GVN.
 			OurPM.add(llvm::createBasicAliasAnalysisPass());
 			// Promote allocas to registers.
