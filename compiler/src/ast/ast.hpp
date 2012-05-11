@@ -16,7 +16,6 @@ namespace unilang
 	{
 		// structure/type/object definitions
 		typedef boost::variant<
-			variable_definition,
 			function_declaration,
 			function
 		> meta_entity;

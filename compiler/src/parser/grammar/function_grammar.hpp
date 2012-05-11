@@ -34,6 +34,7 @@ namespace unilang
 				qi::_val_type _val;
 				qi::string_type string;
 				qi::omit_type omit;
+				qi::lit_type lit;
 
 				using qi::on_error;
 				using qi::on_success;
@@ -81,8 +82,8 @@ namespace unilang
 
 				functionDefinition =
 						functionHeader
-					>>	-('='
-						>>   scopedBlock)
+					>>	-lit('=')
+					>>   -scopedBlock
 					;
 				functionDefinition.name("functionDefinition");
 
