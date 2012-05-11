@@ -493,7 +493,6 @@ namespace unilang
 		llvm::Function * code_generator::operator()(ast::function const & x)
 		{
 			LOG_SCOPE;
-			LOG(x);
 
 			symbolTable.clear();
   
