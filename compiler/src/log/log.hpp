@@ -211,7 +211,7 @@ namespace unilang
 				{
 					if(s_bAllowIndentation)
 					{
-						return std::string(s_uiIndent<<1, ' ');
+						return std::string(s_uiIndent, ' ');
 					}
 					else
 					{

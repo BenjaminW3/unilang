@@ -252,6 +252,8 @@ namespace unilang
 				std::clog
 					<< s.str()
 					<< std::endl;
+
+				std::clog.flush();
 			}
 		}
 	}
