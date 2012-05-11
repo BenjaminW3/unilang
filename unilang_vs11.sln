@@ -9,6 +9,13 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 		TODO.txt = TODO.txt
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test_programs", "test_programs", "{93D89A7E-5475-491F-AE76-7227A72CBE8D}"
+	ProjectSection(SolutionItems) = preProject
+		entrypoint.u = entrypoint.u
+		missingentrypoint.u = missingentrypoint.u
+		test.u = test.u
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -22,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{93D89A7E-5475-491F-AE76-7227A72CBE8D} = {9BF2B88D-034B-472C-A4DD-2E75FE67CFB7}
 	EndGlobalSection
 EndGlobal

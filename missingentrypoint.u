@@ -1,0 +1,4 @@
+missingentrypoint () -> ( ~bool:uiErrorCode() )
+{
+	uiErrorCode = 0;
+}
