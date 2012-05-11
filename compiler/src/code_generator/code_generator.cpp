@@ -74,8 +74,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::identifier const & x)
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			code_generator::VarData * V = getVarFromName(x.name);
 			if(!getVarFromName(x.name))
@@ -99,8 +99,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::unaryOp const & x)
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			llvm::Value *L = x.operand.apply_visitor(*this);
 			switch (x.operator_)
@@ -129,8 +129,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::binaryOp const & x)	// FIXME not FP Operations
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			llvm::Value *L = x.operand1.apply_visitor(*this);
 			llvm::Value *R = x.operand2.apply_visitor(*this);
@@ -224,8 +224,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::function_call const & x)
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			// Look up the name in the global module table.
 			llvm::Function *CalleeF = module->getFunction(x.idf.name);
@@ -278,8 +278,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::assignment const & x)
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			// Look up the name.
 			code_generator::VarData * V = getVarFromName(x.lhs.name);
@@ -333,8 +333,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::variable_definition const& x)
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			bool bHasName = x.name.is_initialized();
 
@@ -391,7 +391,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::statement_list const& x)
 		{
-			RW_LOG_SCOPE;
+			LOG_SCOPE;
 
 			llvm::Value * ret = nullptr;
 			BOOST_FOREACH(ast::statement const& s, x)
@@ -409,7 +409,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		/*llvm::Value * code_generator::operator()(ast::while_statement const& x)
 		{
-			RW_LOG_SCOPE;
+			LOG_SCOPE;
 
 			builder.
 			BOOST_ASSERT(current != 0);
@@ -438,8 +438,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Function * code_generator::operator()(ast::function_declaration const & x)	//FIXME return type not double
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			// Make the function type:  [double](doubles) etc.
 
@@ -492,8 +492,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Function * code_generator::operator()(ast::function const & x)
 		{
-			RW_LOG_SCOPE;
-			RW_LOG_FUNC(x);
+			LOG_SCOPE;
+			LOG(x);
 
 			symbolTable.clear();
   
@@ -608,7 +608,7 @@ def bar() foo(1, 2); # error, unknown function "foo"
 			builder(context),
 			module(new llvm::Module("unilang-JIT", context))
 		{
-			RW_LOG_SCOPE;
+			LOG_SCOPE;
 
 			llvm::InitializeNativeTarget();
 			llvm::llvm_start_multithreaded();
@@ -689,7 +689,7 @@ def bar() foo(1, 2); # error, unknown function "foo"
 		//-----------------------------------------------------------------------------
 		void code_generator::print_assembler() const
 		{
-			RW_LOG_SCOPE;
+			LOG_SCOPE;
 
 			module->dump();
 		}

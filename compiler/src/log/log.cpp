@@ -145,7 +145,7 @@ namespace unilang
 						<< s.str()	
 						<< std::endl;
 				std::string bufstr = buffer.str();
-#if defined RW_LOG_ALWAYS_OUTPUT_DEBUG_STRING || defined _DEBUG
+#if defined LOG_ALWAYS_OUTPUT_DEBUG_STRING || defined _DEBUG
 				OutputDebugStringA(bufstr.c_str());			// http://www.softwareverify.com/blog/?p=261
 #endif
 				file	<< GetDateTimeString()
@@ -190,7 +190,7 @@ namespace unilang
 						<< s.str()
 						<< std::endl;
 				std::string bufstr = buffer.str();
-#if defined RW_LOG_ALWAYS_OUTPUT_DEBUG_STRING || defined _DEBUG
+#if defined LOG_ALWAYS_OUTPUT_DEBUG_STRING || defined _DEBUG
 				OutputDebugStringA(bufstr.c_str());			// http://www.softwareverify.com/blog/?p=261
 #endif		
 				file	<< "<span style='font-size: 10px;background-color:"+GetLogLevelColorString(s.get_level())+"'>"

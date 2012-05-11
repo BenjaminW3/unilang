@@ -56,7 +56,9 @@ namespace unilang
 		inline std::ostream& operator<<(std::ostream& out, function const& x)
 		{
 			out << x.decl << std::endl;
+			out << '{' << std::endl;
 			out << x.body << std::endl;
+			out << '}' << std::endl;
 			return out;
 		}
 	}

@@ -7,55 +7,57 @@
 #include <boost/utility.hpp>
 
 // std-Types
-#include <sstream>			//std::wostringstream
-#include <fstream>			//std::wofstream
+#include <sstream>			//std::ostringstream
+#include <fstream>			//std::ofstream
 #include <mutex>
 #include <string>
 
 //-----------------------------------------------------------------------------
 // defines
 //-----------------------------------------------------------------------------
-#define RW_LOG_FUNC(output)		(unilang::logging::log() << unilang::logging::log_level::quiet << __FUNCSIG__	<<	L" "	<<	output)
+#define LOG(output)				(unilang::logging::log() << unilang::logging::log_level::quiet << output)
 
-#define RW_LOG_SCOPE		RW_LOG_SCOPE_FUNCT(unilang::logging::log_level::quiet)
+#define LOG_FUNC(output)		(unilang::logging::log() << unilang::logging::log_level::quiet << __FUNCSIG__ << " " << output)
 
-#define RW_LOG_SCOPE_FUNCT(level)	unilang::logging::detail::ScopeLogger s##__LINE____FUNCTION__(level, __FUNCSIG__)
+#define LOG_SCOPE				LOG_SCOPE_FUNCT(unilang::logging::log_level::quiet)
+
+#define LOG_SCOPE_FUNCT(level)	unilang::logging::detail::ScopeLogger s##__LINE____FUNCTION__(level, __FUNCSIG__)
 
 // What we could need to debug
 #ifdef RW_DIAGNOSTIC_DEBUG
-	#define RW_LOG_FUNC_DIAGNOSTIC(output)	unilang::logging::log()	<<	unilang::logging::log_level::all	<<	__FUNCSIG__	<<	L" "	<<	output;
-	#define RW_LOG_SCOPE_DIAGNOSTIC		RW_LOG_SCOPE_FUNCT(unilang::logging::log_level::all)
+	#define LOG_FUNC_DIAGNOSTIC(output)	unilang::logging::log()	<<	unilang::logging::log_level::all	<<	__FUNCSIG__	<<	" "	<<	output;
+	#define LOG_SCOPE_DIAGNOSTIC		LOG_SCOPE_FUNCT(unilang::logging::log_level::all)
 #else
-	#define RW_LOG_FUNC_DIAGNOSTIC(output)
-	#define RW_LOG_SCOPE_DIAGNOSTIC
+	#define LOG_FUNC_DIAGNOSTIC(output)
+	#define LOG_SCOPE_DIAGNOSTIC
 #endif
 
 // What we need to debug
 #if (defined RW_ADDITIONAL_DEBUG) || (defined RW_DIAGNOSTIC_DEBUG)
-	#define RW_LOG_FUNC_ADDITIONAL(output)	unilang::logging::log()	<<	unilang::logging::log_level::additional	<<	__FUNCSIG__	<<	L" "	<<	output;
-	#define RW_LOG_SCOPE_ADDITIONAL		RW_LOG_SCOPE_FUNCT(rw::logging::log_level::additional)
+	#define LOG_FUNC_ADDITIONAL(output)	unilang::logging::log()	<<	unilang::logging::log_level::additional	<<	__FUNCSIG__	<<	" "	<<	output;
+	#define LOG_SCOPE_ADDITIONAL		LOG_SCOPE_FUNCT(rw::logging::log_level::additional)
 #else
-	#define RW_LOG_FUNC_ADDITIONAL(f)
-	#define RW_LOG_SCOPE_ADDITIONAL
+	#define LOG_FUNC_ADDITIONAL(f)
+	#define LOG_SCOPE_ADDITIONAL
 #endif
 
 // What users could need on their PC`s
 #if (defined _DEBUG) || (defined RW_ADDITIONAL_DEBUG) || (defined RW_DIAGNOSTIC_DEBUG)
-	#define RW_LOG_FUNC_DEBUG(output)		unilang::logging::log()	<<	unilang::logging::log_level::info	<<	__FUNCSIG__	<<	L" "	<<	output;
-	#define RW_LOG_SCOPE_DEBUG			RW_LOG_SCOPE_FUNCT(unilang::logging::log_level::info)
+	#define LOG_FUNC_DEBUG(output)		unilang::logging::log()	<<	unilang::logging::log_level::info	<<	__FUNCSIG__	<<	" "	<<	output;
+	#define LOG_SCOPE_DEBUG			LOG_SCOPE_FUNCT(unilang::logging::log_level::info)
 #else
-	#define RW_LOG_FUNC_DEBUG(f)
-	#define RW_LOG_SCOPE_DEBUG
+	#define LOG_FUNC_DEBUG(f)
+	#define LOG_SCOPE_DEBUG
 #endif
 
-#define RW_LOG_FUNC_WARNING(output)			unilang::logging::log()	<<	unilang::logging::log_level::warning	<<	__FUNCSIG__	<<	L" "	<<	output;
-#define RW_LOG_FUNC_WARNING_ONCE(output)		{static bool rw_bWarningOnce = false; if(!rw_bWarningOnce){RW_LOG_FUNC_WARNING(output);rw_bWarningOnce=true;}}
+#define LOG_FUNC_WARNING(output)			unilang::logging::log()	<<	unilang::logging::log_level::warning	<<	__FUNCSIG__	<<	" "	<<	output;
+#define LOG_FUNC_WARNING_ONCE(output)		{static bool rw_bWarningOnce = false; if(!rw_bWarningOnce){LOG_FUNC_WARNING(output);rw_bWarningOnce=true;}}
 
-#define RW_LOG_FUNC_ERROR(output)			unilang::logging::log()	<<	unilang::logging::log_level::error	<<	__FUNCSIG__	<<	L" "	<<	output;	RW_DEBUG_BREAK;
+//#define LOG_FUNC_ERROR(output)			unilang::logging::log()	<<	unilang::logging::log_level::error	<<	__FUNCSIG__	<<	" "	<<	output;	DEBUG_BREAK;
 
 // A run-time assertion. In debug builds, violating an assertion stops execution and informs the debugger.
-#define RW_ASSERT_THROW(_expression) if(!(_expression)) {RW_DEBUG_BREAK; throw std::exception(RW_EXCEPTION_STRING(std::wstring(#_expression)+L" Failed"));}
-#define RW_ASSERT_ERROR(_expression) if(!(_expression)) {RW_LOG_FUNC_ERROR(std::wstring(#_expression)+L" Failed");}
+//#define RW_ASSERT_THROW(_expression) if(!(_expression)) {DEBUG_BREAK; throw std::exception(EXCEPTION_STRING(std::wstring(#_expression)+" Failed"));}
+#define RW_ASSERT_ERROR(_expression) if(!(_expression)) {LOG_FUNC_ERROR(std::string(#_expression)+L" Failed");}
 
 namespace unilang
 {
@@ -101,8 +103,8 @@ namespace unilang
 			//-----------------------------------------------------------------------------
 			//! gets the date in the form specified by m_eLogType
 			//!
-			//! if RW_LOG_DATETIME is defined, the Date string will be printed before each message
-			//! if RW_LOG_MS is defined, the time difference between this and the last log call is printed
+			//! if LOG_DATETIME is defined, the Date string will be printed before each message
+			//! if LOG_MS is defined, the time difference between this and the last log call is printed
 			//-----------------------------------------------------------------------------
 			std::string GetDateTimeString();
 
@@ -370,7 +372,7 @@ namespace unilang
 	//! Overloads endl for logstreams.
 	//! endl automatically flushes the stream. The Flush resets the current message log level.
 	//-----------------------------------------------------------------------------
-	inline rw::logging::detail::logstream<rw::logging::detail::RW_LOG_TYPE> & endl(rw::logging::detail::logstream<rw::logging::detail::RW_LOG_TYPE> & out)
+	inline rw::logging::detail::logstream<rw::logging::detail::LOG_TYPE> & endl(rw::logging::detail::logstream<rw::logging::detail::LOG_TYPE> & out)
 	{
 		out.put('\n');
 		out.flush();

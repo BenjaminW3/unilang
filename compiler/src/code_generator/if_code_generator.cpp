@@ -12,7 +12,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::if_statement const& x)
 		{
-			RW_LOG_SCOPE;
+			LOG_SCOPE;
 
 			llvm::Value *CondV = (*this)(x.condition);
 			if (!CondV)
