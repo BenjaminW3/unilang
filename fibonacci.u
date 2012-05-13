@@ -1,0 +1,12 @@
+< () -> ( <uint>uiErrorCode(0) ) >entrypoint
+{
+	uiFib10<uint>(fib(10));
+	usl::print(uiFib10);
+}
+
+<(uint) -> (uint)>fib=
+{
+	|(0) -> (1)
+	|(1) -> (1)
+	|(n) -> (fib(n-1)+fib(n-2))
+}

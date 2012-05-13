@@ -1,4 +1,9 @@
-entrypoint () -> ( uint:uiErrorCode )
+< () -> ( <~uint>uiErrorCode(0) ) > entrypoint
 {
-	uiErrorCode = 0;
+	uiErrorCode = fib(2);/*TODO:const error*/
+}
+
+< (<uint>uiN) -> (<uint>(1)) > fib =
+{
+	/*usl::*/printf( $uiN );
 }

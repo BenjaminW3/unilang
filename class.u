@@ -1,0 +1,9 @@
+< () -> ( <uint>uiErrorCode(0) ) >entrypoint
+{
+	
+}
+
+class object
+{
+	~uint:uiID;
+}
