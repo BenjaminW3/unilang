@@ -97,28 +97,78 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
+		void code_generator::addStringConverters()
+		{
+			/*std::vector<llvm::Type*> Doubles(	x.arguments.size(),	llvm::Type::getDoubleTy(context));
+			llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::get(context),	Doubles, false);
+
+			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x.idf.name, module.get());
+
+			llvm::Constant *double_to_string_func = module->getOrInsertFunction("double_to_string",
+												llvm::Type::getVoidTy(),
+												llvm::PointerType::getUnqual(llvm::Type::Int8Ty),
+												llvm::Type::Int32Ty,
+												llvm::Type::Int32Ty,
+												nullptr);
+
+			 llvm::Value* v = llvm::ConstantArray::get(llvmContext, myString.c_str());*/
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::unaryOp const & x)
 		{
 			LOG_SCOPE;
 			LOG(x);
 
 			llvm::Value *L = x.operand.apply_visitor(*this);
+			if(!L)
+			{
+				std::stringstream sstr;
+				sstr << x.operand;
+				throw std::runtime_error("Invalid value returned from '"+sstr.str()+"'");
+			}
+
 			switch (x.operator_)
 			{
-				case ast::op_negative: 
+				case ast::op_negative:
 					{
 						return builder.CreateNeg(L, "nottmp");
 					}
-				case ast::op_not: 
+				case ast::op_not:
 					{
 						return builder.CreateNot(L, "nottmp");
 					}
-				case ast::op_positive: 
+				case ast::op_positive:
 					{
 						throw std::runtime_error("Unimplemented operation '+' !");
 						//return builder.CreatePos(L, "nottmp");
 					}
-				default: 
+				case ast::op_stringify:
+					{
+						//throw std::runtime_error("Not implemented!");
+
+						if(L->getType()->isDoubleTy())
+						{
+							llvm::Value *Ui = builder.CreateFPToUI(L, llvm::IntegerType::get(context, 8), "FpToUiTmp");
+							if(!Ui)
+							{
+								throw std::runtime_error("CreateFPToUI returned invalid value!");
+							}
+							return builder.CreateAdd(Ui, (*this)(unsigned int(3*16)), "AddTmp");
+						}
+						else
+						{
+							std::string type_str;
+							llvm::raw_string_ostream rso(type_str);
+							rso << "String conversion for type '";
+							L->getType()->print(rso);
+							rso << "' not implemented!";
+							throw std::runtime_error(rso.str());
+						}
+						/*return builder.CreateGlobalString(L, "stringifytmp");*/
+					}
+				default:
 					{
 						throw std::runtime_error("Unknown operation!");
 					}
@@ -222,6 +272,57 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
+		llvm::Value * code_generator::operator()(ast::variable_definition const& x)
+		{
+			LOG_SCOPE;
+			LOG(x);
+
+			bool bHasName = x.name.is_initialized();
+
+			if(bHasName && getVarFromName(x.name.get().name))
+			{
+				throw std::runtime_error("Invalid statement!");
+			}
+
+			llvm::Function *TheFunction = builder.GetInsertBlock()->getParent();
+
+			// FIXME: initialisation
+
+			// Emit the initializer before adding the variable to scope, this prevents
+			// the initializer from referencing the variable itself, and permits stuff
+			// like this:
+			//  var a = 1 in
+			//    var a = a in ...   # refers to outer 'a'.
+			llvm::Value *InitVal = nullptr;
+			/*if (x.parameters.is_initialized())
+			{
+				// FIXME: only one initialisation parameter
+				InitVal = (*this)(x.parameters.get().[0]);
+				if (!InitVal)
+				{
+					throw std::runtime_error("Invalid initialisation parameter!");
+				}
+			}
+			else*/
+			{
+				// If not specified, use 0.0.
+				InitVal = llvm::ConstantFP::get(context, llvm::APFloat(0.0));
+			}/**/
+
+			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, bHasName ? x.name.get().name : "");
+			builder.CreateStore(InitVal, Alloca);
+
+			if(bHasName)
+			{
+				// Remember this variable.
+				symbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.mutableQualifier));
+			}
+
+			return Alloca;
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::function_call const & x)
 		{
 			LOG_SCOPE;
@@ -271,6 +372,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::expression const & x)
 		{
+			LOG(x);
 			return x.apply_visitor(*this);
 		}
 		//-----------------------------------------------------------------------------
@@ -289,9 +391,9 @@ namespace unilang
 			}
 			else
 			{
-				if(V->isConst())
+				if(!V->isMutable())
 				{
-					throw std::runtime_error("Assignment to const variable is impossible! ");
+					throw std::runtime_error("Assignment to const (non-mutable) variable is impossible!");
 				}
 				else
 				{
@@ -302,7 +404,7 @@ namespace unilang
 					else
 					{
 						// Codegen the RHS.
-						llvm::Value *Val = (*this)(x.rhs);
+						llvm::Value *Val = x.rhs.apply_visitor(*this);
 						if(!Val)
 						{
 							throw std::runtime_error("Invalid right hand side of an assignment!");
@@ -331,60 +433,10 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::variable_definition const& x)
-		{
-			LOG_SCOPE;
-			LOG(x);
-
-			bool bHasName = x.name.is_initialized();
-
-			if(bHasName && getVarFromName(x.name.get().name))
-			{
-				throw std::runtime_error("Invalid statement!");
-			}
-
-			llvm::Function *TheFunction = builder.GetInsertBlock()->getParent();
-
-			// FIXME: initialisation
-
-			// Emit the initializer before adding the variable to scope, this prevents
-			// the initializer from referencing the variable itself, and permits stuff
-			// like this:
-			//  var a = 1 in
-			//    var a = a in ...   # refers to outer 'a'.
-			llvm::Value *InitVal = nullptr;
-			/*if (x.rhs.is_initialized())
-			{
-				// FIXME: only one initialisation parameter
-				InitVal = (*this)(x.rhs.get().[0]);
-				if (!InitVal)
-				{
-					throw std::runtime_error("Invalid initialisation parameter!");
-				}
-			}
-			else*/
-			{
-				// If not specified, use 0.0.
-				InitVal = llvm::ConstantFP::get(context, llvm::APFloat(0.0));
-			}/**/
-
-			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, bHasName ? x.name.get().name : "");
-			builder.CreateStore(InitVal, Alloca);
-
-			if(bHasName)
-			{
-				// Remember this variable.
-				symbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.constQual.is_initialized() ? true : false));
-			}
-
-			return Alloca;
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::statement const& x)
 		{
-			return boost::apply_visitor(*this, x);
+			LOG(x);
+			return x.apply_visitor(*this);
 		}
 		//-----------------------------------------------------------------------------
 		//
@@ -392,11 +444,12 @@ namespace unilang
 		llvm::Value * code_generator::operator()(ast::statement_list const& x)
 		{
 			LOG_SCOPE;
+			LOG(x);
 
 			llvm::Value * ret = nullptr;
 			BOOST_FOREACH(ast::statement const& s, x)
 			{
-				ret=(*this)(s);
+				ret=s.apply_visitor(*this);
 				if (!ret)
 				{
 					throw std::runtime_error("Invalid statement!");
@@ -469,7 +522,11 @@ namespace unilang
 					throw std::runtime_error("Redefinition of function with different number of arguments!");	// Log numbers
 				}
 
-				// TODO: type comparison
+				// TODO: type comparison ?
+				/*for (llvm::Function::arg_iterator AI = F->arg_begin(); AI != F->arg_end();	++AI)
+				{
+					AI->getType()
+				}*/
 			}
 
 			// Set names for all arguments.
@@ -493,6 +550,7 @@ namespace unilang
 		llvm::Function * code_generator::operator()(ast::function const & x)
 		{
 			LOG_SCOPE;
+			LOG(x);
 
 			symbolTable.clear();
   

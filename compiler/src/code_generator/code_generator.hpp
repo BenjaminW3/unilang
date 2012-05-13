@@ -29,15 +29,17 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		///////////////////////////////////////////////////////////////////////////
-		//  The Compiler
-		///////////////////////////////////////////////////////////////////////////
+		//#########################################################################
+		//! Generates the code.
+		//#########################################################################
 		class code_generator : public boost::static_visitor<llvm::Value *>
 		{
 		public:
 			code_generator(ast::module const & AST);
 			
 		private:
+			void addStringConverters();
+
 			//-----------------------------------------------------------------------------
 			//! Create an alloca instruction in the entry block of the function.  
 			//! This is used for mutable variables etc.
@@ -78,10 +80,10 @@ namespace unilang
 			class VarData
 			{
 			public:
-				VarData(std::string identifier, llvm::AllocaInst* pMem, bool bConst)
+				VarData(std::string identifier, llvm::AllocaInst* pMem, bool bMutableQualifier)
 					: m_identifier(identifier),
 					m_pMem(pMem),
-					m_bConst(bConst)
+					m_bMutableQualifier(bMutableQualifier)
 				{
 					if(m_identifier.empty())
 					{
@@ -90,12 +92,12 @@ namespace unilang
 				}
 				std::string const & getIdentifier() const {return m_identifier;}
 				llvm::AllocaInst* getAllocaInst() const {return m_pMem;}
-				bool isConst() const {return m_bConst;}
+				bool isMutable() const {return m_bMutableQualifier;}
 
 			private:
 				std::string m_identifier;
 				llvm::AllocaInst* m_pMem;
-				bool m_bConst;
+				bool m_bMutableQualifier;
 			};
 
 			std::vector<llvm::Value*> retValues;

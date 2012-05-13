@@ -30,7 +30,7 @@ namespace unilang
 			 identifierGrammar(error_handler),
 			 expressionGrammar(error_handler, identifierGrammar),
 			 statementGrammar(error_handler, identifierGrammar, expressionGrammar),
-			 functionGrammar(error_handler, identifierGrammar, statementGrammar)
+			 functionGrammar(error_handler, identifierGrammar, expressionGrammar, statementGrammar)
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;
@@ -51,8 +51,8 @@ namespace unilang
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
-					(module)
 					(metaEntityList)
+					(module)
 				);
 
 				// Error handling: on error in start, call error_handler.

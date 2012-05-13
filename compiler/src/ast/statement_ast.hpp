@@ -15,6 +15,9 @@ namespace unilang
 {
 	namespace ast
 	{
+		//#########################################################################
+		//! Assignment consists of a identifier and an expression.
+		//#########################################################################
 		struct assignment
 		{
 			identifier lhs;
@@ -25,43 +28,30 @@ namespace unilang
 			out << x.lhs << "=" << x.rhs << std::endl; return out;
 		}
 
-		struct variable_definition
-		{
-			boost::optional<bool> constQual;
-			identifier type;
-			boost::optional<identifier> name;
-			//boost::optional<std::list<expression>> rhs;
-		};
-		inline std::ostream& operator<<(std::ostream& out, variable_definition const& x)
-		{
-			if(!x.constQual.is_initialized())
-			{
-				out << "~";
-			}
-			out << x.type;
-			if(x.name.is_initialized())
-			{
-				out << ":" << x.name.get().name;
-			}
-			out << "()";
-			return out;
-		}
-
+		// predefinitions for variant
 		struct if_statement;
 		//struct while_statement;
-		struct statement_list;
 		//struct return_statement;
+		struct statement_list;
 
+		//#########################################################################
+		//! A statement could be different things.
+		//#########################################################################
 		typedef boost::variant<
-				variable_definition
-			  , assignment
+				assignment
+			  , expression
 			  , boost::recursive_wrapper<if_statement>
 		//	  , boost::recursive_wrapper<while_statement>
 		//	  , boost::recursive_wrapper<return_statement>
 			  , boost::recursive_wrapper<statement_list>
 			>
 		statement;
+		// predefinition
+		std::ostream& operator<<(std::ostream& out, statement const& x);
 
+		//#########################################################################
+		//! A statement list of multiple statements.
+		//#########################################################################
 		struct statement_list : std::list<statement>
 		{
 		};
@@ -74,6 +64,9 @@ namespace unilang
 			return out;
 		}
 
+		//#########################################################################
+		//! If-statement
+		//#########################################################################
 		struct if_statement
 		{
 			expression condition;
@@ -96,12 +89,18 @@ namespace unilang
 			return out;
 		}
 
+		//#########################################################################
+		//! While statement
+		//#########################################################################
 		/*struct while_statement
 		{
 			expression condition;
 			statement body;
 		};*/
 
+		//#########################################################################
+		//! Return statement
+		//#########################################################################
 		/*struct return_statement
 		{
 		};*/
@@ -110,8 +109,8 @@ namespace unilang
 		{
 			switch(x.which())
 			{
-				case 0: out << boost::get<variable_definition>(x); break;
-				case 1: out << boost::get<assignment>(x); break;
+				case 0: out << boost::get<assignment>(x); break;
+				case 1: out << boost::get<expression>(x); break;
 				case 2: out << boost::get<if_statement>(x); break;
 				//case 3: out << boost::get<while_statement>(x); break;
 				//case 4: out << boost::get<return_statement>(x); break;
@@ -122,15 +121,6 @@ namespace unilang
 		}
 	}
 }
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable_definition,
-	(boost::optional<bool>, constQual)
-    (unilang::ast::identifier, type)
-    (boost::optional<unilang::ast::identifier>, name)
-    //(boost::optional<std::list<unilang::ast::expression>>, rhs)
-)
-
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::assignment,
     (unilang::ast::identifier, lhs)

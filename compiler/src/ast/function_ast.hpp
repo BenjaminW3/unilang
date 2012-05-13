@@ -12,15 +12,19 @@ namespace unilang
 {
 	namespace ast
 	{
+		//#########################################################################
+		//! A Function declaration.
+		//#########################################################################
 		struct function_declaration
 		{
-			identifier idf;
 			std::vector<variable_definition> arguments;
 			std::vector<variable_definition> return_values;
+			identifier idf;
+			bool pureQualifier;
 		};
 		inline std::ostream& operator<<(std::ostream& out, function_declaration const& x)
 		{
-			out << x.idf << "(";
+			out << "< (";
 			bool bFirstArg = true;
 			BOOST_FOREACH(variable_definition const & def , x.arguments)
 			{
@@ -33,7 +37,7 @@ namespace unilang
 			}
 			out << ") -> ";
 
-			out << x.idf << '(';
+			out << '(';
 			bool bFirstRet = true;
 			BOOST_FOREACH(variable_definition const & def , x.return_values)
 			{
@@ -44,10 +48,17 @@ namespace unilang
 				}
 				out << def;
 			}
-			out << ")";
+			out << ") > " << x.idf;
+			if(x.pureQualifier)
+			{
+				out << " =";
+			}
 			return out;
 		}
 
+		//#########################################################################
+		//! A function consisting of its declaration and its body.
+		//#########################################################################
 		struct function
 		{
 			function_declaration decl;
@@ -66,9 +77,10 @@ namespace unilang
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_declaration,
-    (unilang::ast::identifier, idf)
     (std::vector<unilang::ast::variable_definition>, arguments)
     (std::vector<unilang::ast::variable_definition>, return_values)
+    (unilang::ast::identifier, idf)
+	(bool, pureQualifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "identifier_grammar.hpp"
 
@@ -42,6 +42,7 @@ namespace unilang
 				qi::uint_type uint_;
 				qi::_val_type _val;
 				qi::bool_type bool_;
+				qi::matches_type matches;
 
 				using qi::on_error;
 				using qi::on_success;
@@ -87,13 +88,8 @@ namespace unilang
 					("+", ast::op_positive)
 					("-", ast::op_negative)
 					("!", ast::op_not)
+					("$", ast::op_stringify)
 					;
-
-				/*typenames.add
-					("int")
-					("float")
-					("string")
-					;*/
 
 				///////////////////////////////////////////////////////////////////////
 				// Main expression grammar
@@ -103,10 +99,13 @@ namespace unilang
 					;
 				unaryOp_expr.name("unaryOp_expr");
 
-				addOp_expr =
-						expr
+				// without paranthesis left-recursion leads to stack-overflow while parsing
+				addOp_expr = 
+					'('
+					>>	expr
 					>>	additive_op
 					>>	expr
+					>>	')'
 					;
 				addOp_expr.name("addOp_expr");
 
@@ -114,15 +113,16 @@ namespace unilang
 					addOp_expr.alias()
 					;
 				binaryOp_expr.name("binaryOp_expr");
-
+				
 				expr = 
-					uint_
+						uint_
 					|   bool_
-					|   identifierGrammar
+					|   functionCall
+					|	identifierGrammar
 					|	unaryOp_expr
 					|	binaryOp_expr
-					|   function_call
-					|   '(' > expr > ')'
+					|	variableDefinition
+					|	'(' > expr > ')'
 					;
 				expr.name("expr");
 				
@@ -168,19 +168,60 @@ namespace unilang
 					;
 				unary_expr.name("unary_expr");*/
 
-				function_call =
+				argumentList = -(expr % ',');
+				argumentList.name("argumentList");
+
+				functionCall =
 						(identifierGrammar >> '(')
-					>>   argument_list
+					>>   argumentList
 					>>   ')'
 					;
-				function_call.name("function_call");
+				functionCall.name("functionCall");
 
-				argument_list = -(expr % ',');
-				argument_list.name("argument_list");
+				mutableQualifier = 
+					matches['~']
+					;
+				mutableQualifier.name("mutableQualifier");
+
+				variableDefinitionIdentifier = 
+					-identifierGrammar
+					;
+				variableDefinitionIdentifier.name("variableDefinitionIdentifier");
+				
+				parameterList = 
+					-(
+						'('
+						>>	-( expr % ',')
+						>>	')'
+					)
+					;
+				parameterList.name("parameterList");
+
+				//∈↦
+				// A Variable Definition is of the form <type-qualifier><type><identifier><parameterList>
+				// <type-qualifier> can be '~'
+				// <type> one of the predefined or user define types
+				// <identifier> can be: -empty
+				//						-a user defined identifier name surrounded by '[',']'
+				// <parameterList> can be:	-empty, 
+				//							-'()' 
+				//							-a list of expressions seperated by ',' surrounded by '(',')'
+				variableDefinition =
+						'<'
+					>>	mutableQualifier
+					>>	identifierGrammar
+					>>	'>'
+					>>	variableDefinitionIdentifier
+					>>	parameterList
+					;
+				variableDefinition.name("variableDefinition");
 
 				///////////////////////////////////////////////////////////////////////
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
+					(unaryOp_expr)
+					(binaryOp_expr)
+					(addOp_expr)
 					(expr)
 					(logical_or_expr)
 					(logical_and_expr)
@@ -188,11 +229,12 @@ namespace unilang
 					(relational_expr)
 					(additive_expr)
 					(multiplicative_expr)
-					(function_call)
-					(argument_list)
-					(unaryOp_expr)
-					(binaryOp_expr)
-					(addOp_expr)
+					(functionCall)
+					(argumentList)
+					(mutableQualifier)
+					(variableDefinitionIdentifier)
+					(parameterList)
+					(variableDefinition)
 				);
 
 				///////////////////////////////////////////////////////////////////////
@@ -214,6 +256,8 @@ namespace unilang
 #endif
 			}
 			
+			qi::symbols<char, ast::optoken> logical_or_op, logical_and_op, equality_op, relational_op, additive_op, multiplicative_op, unary_op;
+
 			qi::rule<Iterator, ast::unaryOp(), skipper<Iterator> >
 				unaryOp_expr
 				;
@@ -229,19 +273,13 @@ namespace unilang
 				unary_expr, primary_expr
 				;
 
-			qi::rule<Iterator, ast::function_call(), skipper<Iterator> >
-				function_call
-				;
-
-			qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> >
-				argument_list
-				;
-
-			qi::symbols<char, ast::optoken>
-				logical_or_op, logical_and_op,
-				equality_op, relational_op,
-				additive_op, multiplicative_op, unary_op
-				;
+			qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> > argumentList;
+			qi::rule<Iterator, ast::function_call(), skipper<Iterator> > functionCall;
+			
+			qi::rule<Iterator, boost::optional<ast::identifier>(), skipper<Iterator> > variableDefinitionIdentifier;
+			qi::rule<Iterator, bool(), skipper<Iterator> > mutableQualifier;
+			qi::rule<Iterator, boost::optional<std::list<ast::expression>>(), skipper<Iterator> > parameterList;
+			qi::rule<Iterator, ast::variable_definition(), skipper<Iterator> > variableDefinition;
 		};
 	}
 }

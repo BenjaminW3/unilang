@@ -23,7 +23,7 @@ namespace unilang
 		template <typename Iterator>
 		struct function_grammar : qi::grammar<Iterator, ast::function(), skipper<Iterator> >
 		{
-			function_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar, statement_grammar<Iterator> const & statementGrammar)
+			function_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar, expression_grammar<Iterator> const & expressionGrammar, statement_grammar<Iterator> const & statementGrammar)
 			 : function_grammar::base_type(functionDefinition)
 			{
 				qi::_1_type _1;
@@ -34,6 +34,7 @@ namespace unilang
 				qi::_val_type _val;
 				qi::string_type string;
 				qi::omit_type omit;
+				qi::matches_type matches;
 				qi::lit_type lit;
 
 				using qi::on_error;
@@ -46,24 +47,26 @@ namespace unilang
 
 				parameterDeclarationList =
 						'('
-					>>	-( statementGrammar.variableDefinition % ',')
+					>>	-( expressionGrammar.variableDefinition % ',')
 					>>	')'
 					;
 				parameterDeclarationList.name("parameterDeclarationList");
 
 				returnList =
 						'('
-					>>	-( statementGrammar.variableDefinition % ',')
+					>>	-( expressionGrammar.variableDefinition % ',')
 					>>	')'
 					;
 				returnList.name("returnList");
 
 				functionHeader =
-						identifierGrammar
-					//>	':'
+						'<'
 					>>	parameterDeclarationList
 					>>	omit[string("->")]
 					>>   returnList
+					>>	'>'
+					>>	identifierGrammar
+					>>	matches['=']
 					;
 				functionHeader.name("functionHeader");
 
@@ -73,17 +76,9 @@ namespace unilang
 					;
 				functionDeclaration.name("functionDeclaration");
 
-				scopedBlock =
-						'{'
-					>>	statementGrammar
-					>>	'}'
-					;
-				scopedBlock.name("scopedBlock");
-
 				functionDefinition =
 						functionHeader
-					>>	-lit('=')
-					>>   -scopedBlock
+					>>   -statementGrammar.compoundStatement
 					;
 				functionDefinition.name("functionDefinition");
 
@@ -93,7 +88,6 @@ namespace unilang
 					(returnList)
 					(functionHeader)
 					(functionDeclaration)
-					(scopedBlock)
 					(functionDefinition)
 				);
 
@@ -111,7 +105,6 @@ namespace unilang
 			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > returnList;
 			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionHeader;
 			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionDeclaration;
-			qi::rule<Iterator, ast::statement_list(), skipper<Iterator> > scopedBlock;
 			qi::rule<Iterator, ast::function(), skipper<Iterator> > functionDefinition;
 		};
 	}
