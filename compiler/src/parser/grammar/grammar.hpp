@@ -26,7 +26,7 @@ namespace unilang
 		struct global_grammar : qi::grammar<Iterator, ast::module(), skipper<Iterator> >
 		{
 			global_grammar(error_handler<Iterator>& error_handler)
-			 : global_grammar::base_type(module),
+			 : global_grammar::base_type(module, "global_grammar"),
 			 identifierGrammar(error_handler),
 			 expressionGrammar(error_handler, identifierGrammar),
 			 statementGrammar(error_handler, identifierGrammar, expressionGrammar),

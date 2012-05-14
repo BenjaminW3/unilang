@@ -40,6 +40,15 @@
     <Filter Include="Header Files\ast">
       <UniqueIdentifier>{dc0ee6fa-4300-41b5-b0f1-b8c72c27ed89}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ast\semantic_validator">
+      <UniqueIdentifier>{6971b358-7af3-4882-8044-c31e101b099a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast">
+      <UniqueIdentifier>{586ed543-07ff-499a-8f63-d32b83276ac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast\semantic_validator">
+      <UniqueIdentifier>{69905acb-521e-4823-a542-fbef70062895}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -56,6 +65,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\if_code_generator.cpp">
       <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\semantic_validator\purity_validator.cpp">
+      <Filter>Source Files\ast\semantic_validator</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +121,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\parser\grammar\grammar.hpp">
       <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\ast_base.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\semantic_validator\purity_validator.hpp">
+      <Filter>Header Files\ast\semantic_validator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\semantic_validator\semantic_validator.hpp">
+      <Filter>Header Files\ast\semantic_validator</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

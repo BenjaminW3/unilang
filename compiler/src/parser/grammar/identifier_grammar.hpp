@@ -21,7 +21,7 @@ namespace unilang
 		struct identifier_grammar : boost::spirit::qi::grammar<Iterator, ast::identifier(), skipper<Iterator> >
 		{
 			identifier_grammar(error_handler<Iterator>& error_handler)
-			 : identifier_grammar::base_type(identifier)
+			 : identifier_grammar::base_type(identifier, "identifier_grammar")
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;

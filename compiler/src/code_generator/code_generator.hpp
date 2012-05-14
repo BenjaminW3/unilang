@@ -46,8 +46,12 @@ namespace unilang
 			//-----------------------------------------------------------------------------
 			static llvm::AllocaInst * CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName);
 
+			bool m_bErrorOccured;
+			llvm::Value *ErrorV(std::string Str);
+			llvm::Value *FatalErrorV(std::string Str);
+			llvm::Value *InternalErrorV(std::string Str);
+
 		public:
-			//llvm::Value * operator()(ast::null const &);
 			llvm::Value * operator()(unsigned int const & x);
 			llvm::Value * operator()(int const & x);
 			llvm::Value * operator()(bool const & x);
@@ -64,8 +68,7 @@ namespace unilang
 			//llvm::Value * operator()(ast::while_statement const & x);
 			//llvm::Value * operator()(ast::return_statement const & x);
 			llvm::Function * operator()(ast::function_declaration const & x);
-			llvm::Function * operator()(ast::function const & x);
-			//llvm::Value * operator()(ast::module const & x);
+			llvm::Function * operator()(ast::function_definition const & x);
 
 			void print_assembler() const;
 

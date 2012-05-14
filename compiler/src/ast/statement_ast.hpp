@@ -115,7 +115,7 @@ namespace unilang
 				//case 3: out << boost::get<while_statement>(x); break;
 				//case 4: out << boost::get<return_statement>(x); break;
 				case 3: out << boost::get<statement_list>(x); break;
-				default: out << "undefine-expression"; break;
+				default: out << "undefine-statement"; break;
 			}
 			return out;
 		}

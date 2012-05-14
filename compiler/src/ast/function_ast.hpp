@@ -17,16 +17,61 @@ namespace unilang
 		//#########################################################################
 		struct function_declaration
 		{
-			std::vector<variable_definition> arguments;
-			std::vector<variable_definition> return_values;
+			std::vector<type_declaration> argument_types;
+			std::vector<type_declaration> return_types;
 			identifier idf;
 			bool pureQualifier;
 		};
 		inline std::ostream& operator<<(std::ostream& out, function_declaration const& x)
 		{
+			out << "?< (";
+			bool bFirstArg = true;
+			BOOST_FOREACH(type_declaration const & decl , x.argument_types)
+			{
+				if(!bFirstArg)
+				{
+					out << ", ";
+					bFirstArg = false;
+				}
+				out << decl;
+			}
+			out << ") -> ";
+
+			out << '(';
+			bool bFirstRet = true;
+			BOOST_FOREACH(type_declaration const & decl , x.return_types)
+			{
+				if(!bFirstRet)
+				{
+					out << ", ";
+					bFirstRet = false;
+				}
+				out << decl;
+			}
+			out << ") > " << x.idf;
+			if(x.pureQualifier)
+			{
+				out << " =";
+			}
+			return out;
+		}
+
+		//#########################################################################
+		//! A function consisting of its declaration and its body.
+		//#########################################################################
+		struct function_definition
+		{
+			std::vector<variable_definition> argument_definitions;
+			std::vector<variable_definition> return_value_definitions;
+			identifier idf;
+			bool pureQualifier;
+			statement_list body;
+		};
+		inline std::ostream& operator<<(std::ostream& out, function_definition const& x)
+		{
 			out << "< (";
 			bool bFirstArg = true;
-			BOOST_FOREACH(variable_definition const & def , x.arguments)
+			BOOST_FOREACH(variable_definition const & def , x.argument_definitions)
 			{
 				if(!bFirstArg)
 				{
@@ -39,7 +84,7 @@ namespace unilang
 
 			out << '(';
 			bool bFirstRet = true;
-			BOOST_FOREACH(variable_definition const & def , x.return_values)
+			BOOST_FOREACH(variable_definition const & def , x.return_value_definitions)
 			{
 				if(!bFirstRet)
 				{
@@ -53,20 +98,6 @@ namespace unilang
 			{
 				out << " =";
 			}
-			return out;
-		}
-
-		//#########################################################################
-		//! A function consisting of its declaration and its body.
-		//#########################################################################
-		struct function
-		{
-			function_declaration decl;
-			statement_list body;
-		};
-		inline std::ostream& operator<<(std::ostream& out, function const& x)
-		{
-			out << x.decl << std::endl;
 			out << '{' << std::endl;
 			out << x.body << std::endl;
 			out << '}' << std::endl;
@@ -77,14 +108,17 @@ namespace unilang
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_declaration,
-    (std::vector<unilang::ast::variable_definition>, arguments)
-    (std::vector<unilang::ast::variable_definition>, return_values)
+    (std::vector<unilang::ast::type_declaration>, argument_types)
+    (std::vector<unilang::ast::type_declaration>, return_types)
     (unilang::ast::identifier, idf)
 	(bool, pureQualifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::function,
-    (unilang::ast::function_declaration, decl)
+    unilang::ast::function_definition,
+    (std::vector<unilang::ast::variable_definition>, argument_definitions)
+    (std::vector<unilang::ast::variable_definition>, return_value_definitions)
+    (unilang::ast::identifier, idf)
+	(bool, pureQualifier)
     (unilang::ast::statement_list, body)
 )

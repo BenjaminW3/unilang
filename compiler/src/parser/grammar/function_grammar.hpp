@@ -21,10 +21,10 @@ namespace unilang
 		//  The function grammar
 		///////////////////////////////////////////////////////////////////////////////
 		template <typename Iterator>
-		struct function_grammar : qi::grammar<Iterator, ast::function(), skipper<Iterator> >
+		struct function_grammar : qi::grammar<Iterator, ast::function_definition(), skipper<Iterator> >
 		{
 			function_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar, expression_grammar<Iterator> const & expressionGrammar, statement_grammar<Iterator> const & statementGrammar)
-			 : function_grammar::base_type(functionDefinition)
+			 : function_grammar::base_type(functionDefinition, "function_grammar")
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;
@@ -47,47 +47,62 @@ namespace unilang
 
 				parameterDeclarationList =
 						'('
-					>>	-( expressionGrammar.variableDefinition % ',')
+					>>	-( expressionGrammar.typeDeclaration % ',')
 					>>	')'
 					;
 				parameterDeclarationList.name("parameterDeclarationList");
 
-				returnList =
+				returnDeclarationList =
 						'('
-					>>	-( expressionGrammar.variableDefinition % ',')
+					>>	-( expressionGrammar.typeDeclaration % ',')
 					>>	')'
 					;
-				returnList.name("returnList");
+				returnDeclarationList.name("returnDeclarationList");
 
-				functionHeader =
-						'<'
+				functionDeclaration =
+						"?<"
 					>>	parameterDeclarationList
-					>>	omit[string("->")]
-					>>   returnList
+					>>	/*omit[string(*/"->"//)]
+					>>   returnDeclarationList
 					>>	'>'
 					>>	identifierGrammar
 					>>	matches['=']
 					;
-				functionHeader.name("functionHeader");
-
-				functionDeclaration = 
-						'?'
-					>>	functionHeader
-					;
 				functionDeclaration.name("functionDeclaration");
 
+				parameterDefinitionList =
+						'('
+					>>	-( expressionGrammar.variableDefinition % ',')
+					>>	')'
+					;
+				parameterDefinitionList.name("parameterDefinitionList");
+
+				returnDefinitionList =
+						'('
+					>>	-( expressionGrammar.variableDefinition % ',')
+					>>	')'
+					;
+				returnDefinitionList.name("returnDefinitionList");
+
 				functionDefinition =
-						functionHeader
-					>>   -statementGrammar.compoundStatement
+						'<'
+					>>	parameterDefinitionList
+					>>	omit[string("->")]
+					>>   returnDefinitionList
+					>>	'>'
+					>>	identifierGrammar
+					>>	matches['=']
+					>>	-statementGrammar.compoundStatement
 					;
 				functionDefinition.name("functionDefinition");
 
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(parameterDeclarationList)
-					(returnList)
-					(functionHeader)
+					(returnDeclarationList)
 					(functionDeclaration)
+					(parameterDefinitionList)
+					(returnDefinitionList)
 					(functionDefinition)
 				);
 
@@ -100,12 +115,12 @@ namespace unilang
 				/*on_success(identifier,
 					annotation_function(error_handler.iters)(_val, _1));*/
 			}
-			
-			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > parameterDeclarationList;
-			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > returnList;
-			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionHeader;
+			qi::rule<Iterator, std::list<ast::type_declaration>(), skipper<Iterator> > parameterDeclarationList;
+			qi::rule<Iterator, std::list<ast::type_declaration>(), skipper<Iterator> > returnDeclarationList;
 			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionDeclaration;
-			qi::rule<Iterator, ast::function(), skipper<Iterator> > functionDefinition;
+			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > parameterDefinitionList;
+			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > returnDefinitionList;
+			qi::rule<Iterator, ast::function_definition(), skipper<Iterator> > functionDefinition;
 		};
 	}
 }

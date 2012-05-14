@@ -14,12 +14,17 @@ namespace unilang
 {
 	namespace ast
 	{
-		// structure/type/object definitions
+		//#########################################################################
+		//! structure/type/object definitions.
+		//#########################################################################
 		typedef boost::variant<
 			function_declaration,
-			function
+			function_definition
 		> meta_entity;
-
+		
+		//#########################################################################
+		//! A module.
+		//#########################################################################
 		struct module
 		{
 			std::list<meta_entity> metaEntities;

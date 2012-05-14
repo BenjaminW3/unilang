@@ -70,6 +70,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\src\ast\semantic_validator\purity_validator.cpp" />
     <ClCompile Include="..\..\src\code_generator\code_generator.cpp" />
     <ClCompile Include="..\..\src\code_generator\if_code_generator.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
@@ -78,9 +79,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\ast\ast.hpp" />
+    <ClInclude Include="..\..\src\ast\ast_base.hpp" />
     <ClInclude Include="..\..\src\ast\expression_ast.hpp" />
     <ClInclude Include="..\..\src\ast\function_ast.hpp" />
     <ClInclude Include="..\..\src\ast\identifier_ast.hpp" />
+    <ClInclude Include="..\..\src\ast\semantic_validator\purity_validator.hpp" />
+    <ClInclude Include="..\..\src\ast\semantic_validator\semantic_validator.hpp" />
     <ClInclude Include="..\..\src\ast\statement_ast.hpp" />
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp" />
     <ClInclude Include="..\..\src\log\log.hpp" />

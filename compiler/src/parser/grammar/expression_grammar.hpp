@@ -31,7 +31,7 @@ namespace unilang
 		struct expression_grammar : qi::grammar<Iterator, ast::expression(), skipper<Iterator> >
 		{
 			expression_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar)
-			  : expression_grammar::base_type(expr)
+			  : expression_grammar::base_type(expression, "expression_grammar")
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;
@@ -95,16 +95,16 @@ namespace unilang
 				// Main expression grammar
 				
 				unaryOp_expr =
-						(unary_op > expr)
+						(unary_op > expression)
 					;
 				unaryOp_expr.name("unaryOp_expr");
 
 				// without paranthesis left-recursion leads to stack-overflow while parsing
 				addOp_expr = 
 					'('
-					>>	expr
+					>>	expression
 					>>	additive_op
-					>>	expr
+					>>	expression
 					>>	')'
 					;
 				addOp_expr.name("addOp_expr");
@@ -114,7 +114,7 @@ namespace unilang
 					;
 				binaryOp_expr.name("binaryOp_expr");
 				
-				expr = 
+				expression = 
 						uint_
 					|   bool_
 					|   functionCall
@@ -122,9 +122,9 @@ namespace unilang
 					|	unaryOp_expr
 					|	binaryOp_expr
 					|	variableDefinition
-					|	'(' > expr > ')'
+					|	'(' > expression > ')'
 					;
-				expr.name("expr");
+				expression.name("expression");
 				
 				/*logical_or_expr =
 						logical_and_expr
@@ -168,7 +168,7 @@ namespace unilang
 					;
 				unary_expr.name("unary_expr");*/
 
-				argumentList = -(expr % ',');
+				argumentList = -(expression % ',');
 				argumentList.name("argumentList");
 
 				functionCall =
@@ -183,6 +183,14 @@ namespace unilang
 					;
 				mutableQualifier.name("mutableQualifier");
 
+				typeDeclaration =
+						'<'
+					>>	mutableQualifier
+					>>	identifierGrammar
+					>>	'>'
+					;
+				typeDeclaration.name("typeDeclaration");
+
 				variableDefinitionIdentifier = 
 					-identifierGrammar
 					;
@@ -191,7 +199,7 @@ namespace unilang
 				parameterList = 
 					-(
 						'('
-						>>	-( expr % ',')
+						>>	-( expression % ',')
 						>>	')'
 					)
 					;
@@ -207,10 +215,7 @@ namespace unilang
 				//							-'()' 
 				//							-a list of expressions seperated by ',' surrounded by '(',')'
 				variableDefinition =
-						'<'
-					>>	mutableQualifier
-					>>	identifierGrammar
-					>>	'>'
+						typeDeclaration
 					>>	variableDefinitionIdentifier
 					>>	parameterList
 					;
@@ -222,7 +227,7 @@ namespace unilang
 					(unaryOp_expr)
 					(binaryOp_expr)
 					(addOp_expr)
-					(expr)
+					(expression)
 					(logical_or_expr)
 					(logical_and_expr)
 					(equality_expr)
@@ -232,6 +237,7 @@ namespace unilang
 					(functionCall)
 					(argumentList)
 					(mutableQualifier)
+					(typeDeclaration)
 					(variableDefinitionIdentifier)
 					(parameterList)
 					(variableDefinition)
@@ -239,7 +245,7 @@ namespace unilang
 
 				///////////////////////////////////////////////////////////////////////
 				// Error handling: on error in expr, call error_handler.
-				on_error<fail>(	expr,
+				on_error<fail>(	expression,
 								error_handler_function(error_handler)
 								("Error! Expecting ", _4, _3));
 
@@ -266,8 +272,8 @@ namespace unilang
 				binaryOp_expr, addOp_expr
 				;
 
-			qi::rule<Iterator, ast::expression(), skipper<Iterator> >
-				expr, equality_expr, relational_expr,
+			qi::rule<Iterator, ast::expression(), skipper<Iterator> > expression,
+				equality_expr, relational_expr,
 				logical_or_expr, logical_and_expr,
 				additive_expr, multiplicative_expr,
 				unary_expr, primary_expr
@@ -276,8 +282,11 @@ namespace unilang
 			qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> > argumentList;
 			qi::rule<Iterator, ast::function_call(), skipper<Iterator> > functionCall;
 			
-			qi::rule<Iterator, boost::optional<ast::identifier>(), skipper<Iterator> > variableDefinitionIdentifier;
+			
 			qi::rule<Iterator, bool(), skipper<Iterator> > mutableQualifier;
+			qi::rule<Iterator, ast::type_declaration(), skipper<Iterator> > typeDeclaration;
+
+			qi::rule<Iterator, boost::optional<ast::identifier>(), skipper<Iterator> > variableDefinitionIdentifier;
 			qi::rule<Iterator, boost::optional<std::list<ast::expression>>(), skipper<Iterator> > parameterList;
 			qi::rule<Iterator, ast::variable_definition(), skipper<Iterator> > variableDefinition;
 		};

@@ -1,5 +1,6 @@
 #pragma once
 
+#include "ast_base.hpp"
 #include "identifier_ast.hpp"
 
 #include <boost/config/warning_disable.hpp>
@@ -23,16 +24,14 @@ namespace unilang
 		//#########################################################################
 		//! An expression
 		//#########################################################################
-		typedef boost::variant<
-				unsigned int
-			  , bool
-			  , boost::recursive_wrapper<function_call>
-			  , identifier
-			  , boost::recursive_wrapper<unaryOp>
-			  , boost::recursive_wrapper<binaryOp>
-			  , boost::recursive_wrapper<variable_definition>
-			>
-		expression;
+		typedef boost::variant<	unsigned int
+								, bool
+								, boost::recursive_wrapper<function_call>
+								, identifier
+								, boost::recursive_wrapper<unaryOp>
+								, boost::recursive_wrapper<binaryOp>
+								, boost::recursive_wrapper<variable_definition>
+							> expression;
 		std::ostream& operator<<(std::ostream& out, expression const& x);
 
 		//#########################################################################
@@ -85,7 +84,7 @@ namespace unilang
 		//#########################################################################
 		//! A unary operation
 		//#########################################################################
-		struct unaryOp
+		struct unaryOp : public ast_base
 		{
 			optoken operator_;
 			expression operand;
@@ -98,7 +97,7 @@ namespace unilang
 		//#########################################################################
 		//! A binary operation.
 		//#########################################################################
-		struct binaryOp
+		struct binaryOp : public ast_base
 		{
 			expression operand1;
 			optoken operator_;
@@ -112,7 +111,7 @@ namespace unilang
 		//#########################################################################
 		//! A function call.
 		//#########################################################################
-		struct function_call
+		struct function_call : public ast_base
 		{
 			identifier idf;
 			std::list<expression> arguments;
@@ -133,26 +132,37 @@ namespace unilang
 			out << ")";
 			return out;
 		}
-		
 		//#########################################################################
-		//! A variable definition.
+		//! A type declaration.
 		//#########################################################################
-		struct variable_definition
+		struct type_declaration : public ast_base
 		{
 			bool mutableQualifier;
-			identifier type;
-			boost::optional<identifier> name;
-			boost::optional<std::list<expression>> parameters;
+			identifier type_name;
 		};
-		inline std::ostream& operator<<(std::ostream& out, variable_definition const& x)
+		inline std::ostream& operator<<(std::ostream& out, type_declaration const& x)
 		{
 			out << "<";
 			if(x.mutableQualifier)
 			{
 				out << "~";
 			}
+			out << x.type_name << ">";
+			return out;
+		}
+		
+		//#########################################################################
+		//! A variable definition.
+		//#########################################################################
+		struct variable_definition : public ast_base
+		{
+			type_declaration type;
+			boost::optional<identifier> name;
+			boost::optional<std::list<expression>> parameters;
+		};
+		inline std::ostream& operator<<(std::ostream& out, variable_definition const& x)
+		{
 			out << x.type;
-			out << ">";
 			if(x.name.is_initialized())
 			{
 				out << x.name.get().name;
@@ -165,7 +175,6 @@ namespace unilang
 					out << ex;
 				}
 			}
-			
 			out << ")";
 			return out;
 		}
@@ -208,9 +217,14 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable_definition,
+    unilang::ast::type_declaration,
 	(bool, mutableQualifier)
-    (unilang::ast::identifier, type)
+    (unilang::ast::identifier, type_name)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    unilang::ast::variable_definition,
+    (unilang::ast::type_declaration, type)
     (boost::optional<unilang::ast::identifier>, name)
     (boost::optional<std::list<unilang::ast::expression>>, parameters)
 )

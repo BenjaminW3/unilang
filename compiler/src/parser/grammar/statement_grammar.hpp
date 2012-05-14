@@ -24,7 +24,7 @@ namespace unilang
 		struct statement_grammar : qi::grammar<Iterator, ast::statement_list(), skipper<Iterator> >
 		{
 			statement_grammar(error_handler<Iterator>& error_handler, identifier_grammar<Iterator> const & identifierGrammar, expression_grammar<Iterator> const & expressionGrammar)
-			  : statement_grammar::base_type(statementList)
+			  : statement_grammar::base_type(statementList, "statement_grammar")
 			{
 				qi::_1_type _1;
 				qi::_2_type _2;

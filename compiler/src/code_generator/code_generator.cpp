@@ -25,6 +25,28 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
+		llvm::Value *code_generator::ErrorV(std::string Str) 
+		{
+			m_bErrorOccured = true;
+			LOG("ERROR: "+Str); 
+			return nullptr; 
+		}
+		llvm::Value *code_generator::FatalErrorV(std::string Str)
+		{
+			m_bErrorOccured = true;
+			LOG("FATAL ERROR: "+Str);
+			return nullptr; 
+		}
+		llvm::Value *code_generator::InternalErrorV(std::string Str)
+		{
+			m_bErrorOccured = true;
+			LOG("INTERNAL ERROR: "+Str); 
+			return nullptr; 
+		}
+
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		code_generator::VarData * code_generator::getVarFromName( std::string const & name )
 		{
 			auto it = std::find_if(symbolTable.begin(), symbolTable.end(), 
@@ -80,13 +102,13 @@ namespace unilang
 			code_generator::VarData * V = getVarFromName(x.name);
 			if(!getVarFromName(x.name))
 			{
-				throw std::runtime_error("Unknown variable name!");
+				return ErrorV("Undeclared variable name: '"+x.name+"' !");
 			}
 			else
 			{
 				if(!V->getAllocaInst())
 				{
-					throw std::runtime_error("Variable is not allocated!");
+					return InternalErrorV("Variable is not allocated: '"+x.name+"' !");
 				}
 				else
 				{
@@ -126,7 +148,7 @@ namespace unilang
 			{
 				std::stringstream sstr;
 				sstr << x.operand;
-				throw std::runtime_error("Invalid value returned from '"+sstr.str()+"'");
+				return ErrorV("Invalid value returned from '"+sstr.str()+"'");
 			}
 
 			switch (x.operator_)
@@ -141,7 +163,7 @@ namespace unilang
 					}
 				case ast::op_positive:
 					{
-						throw std::runtime_error("Unimplemented operation '+' !");
+						return FatalErrorV("Unimplemented operation '+' !");
 						//return builder.CreatePos(L, "nottmp");
 					}
 				case ast::op_stringify:
@@ -153,7 +175,7 @@ namespace unilang
 							llvm::Value *Ui = builder.CreateFPToUI(L, llvm::IntegerType::get(context, 8), "FpToUiTmp");
 							if(!Ui)
 							{
-								throw std::runtime_error("CreateFPToUI returned invalid value!");
+								return InternalErrorV("CreateFPToUI returned invalid value!");
 							}
 							return builder.CreateAdd(Ui, (*this)(unsigned int(3*16)), "AddTmp");
 						}
@@ -164,13 +186,13 @@ namespace unilang
 							rso << "String conversion for type '";
 							L->getType()->print(rso);
 							rso << "' not implemented!";
-							throw std::runtime_error(rso.str());
+							return FatalErrorV(rso.str());
 						}
 						/*return builder.CreateGlobalString(L, "stringifytmp");*/
 					}
 				default:
 					{
-						throw std::runtime_error("Unknown operation!");
+						return FatalErrorV("Unknown operation!");
 					}
 			}
 		}
@@ -184,9 +206,13 @@ namespace unilang
 
 			llvm::Value *L = x.operand1.apply_visitor(*this);
 			llvm::Value *R = x.operand2.apply_visitor(*this);
-			if (L == 0 || R == 0)
+			if (L == 0)
 			{
-				throw std::runtime_error("Operation code could not be evaluated!");
+				return ErrorV("Left hand side of operation code could not be evaluated!");
+			}
+			if (R == 0)
+			{
+				return ErrorV("Right hand side of operation code could not be evaluated!");
 			}
   
 			switch (x.operator_)
@@ -265,7 +291,7 @@ namespace unilang
 				}
 			default: 
 				{
-					throw std::runtime_error("Unknown operation!");
+					return FatalErrorV("Unknown operation!");
 				}
 			}
 		}
@@ -281,7 +307,7 @@ namespace unilang
 
 			if(bHasName && getVarFromName(x.name.get().name))
 			{
-				throw std::runtime_error("Invalid statement!");
+				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_name.name+"' !");
 			}
 
 			llvm::Function *TheFunction = builder.GetInsertBlock()->getParent();
@@ -300,7 +326,9 @@ namespace unilang
 				InitVal = (*this)(x.parameters.get().[0]);
 				if (!InitVal)
 				{
-					throw std::runtime_error("Invalid initialisation parameter!");
+					std::stringstream sstr;
+					sstr << x.parameters.get().[0];
+					return ErrorV("Invalid initialisation parameter for variable: '"+sstr.str()+"'");
 				}
 			}
 			else*/
@@ -315,7 +343,7 @@ namespace unilang
 			if(bHasName)
 			{
 				// Remember this variable.
-				symbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.mutableQualifier));
+				symbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.type.mutableQualifier));
 			}
 
 			return Alloca;
@@ -332,13 +360,15 @@ namespace unilang
 			llvm::Function *CalleeF = module->getFunction(x.idf.name);
 			if (CalleeF == 0)
 			{
-				throw std::runtime_error("Unknown function referenced! '"+x.idf.name+"'");
+				return ErrorV("Unknown function '"+x.idf.name+"' referenced!");
 			}
   
 			// If argument mismatch error.
 			if (CalleeF->arg_size() != x.arguments.size())
 			{
-				throw std::runtime_error("Incorrect # arguments passed to '"+x.idf.name+"' !");
+				std::stringstream sstr;
+				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x.arguments.size() << " are given.";
+				return ErrorV("Incorrect # arguments passed to '"+x.idf.name+"' ! "+sstr.str());
 			}
 
 			std::vector<llvm::Value*> ArgsV;
@@ -348,7 +378,9 @@ namespace unilang
 				ArgsV.push_back((*this)(ex));
 				if(!ArgsV.back())
 				{
-					throw std::runtime_error("Invalid argument returned!");
+					std::stringstream sstr;
+					sstr << ex;
+					return ErrorV("Invalid argument returned from '" +sstr.str()+ "'!");
 				}
 
 				if(ArgsV.back()->getType()!=(*itArg).getType())
@@ -360,7 +392,7 @@ namespace unilang
 					rso << "' but function expects a value of type '";
 					(*itArg).getType()->print(rso);
 					rso << "'.";
-					throw std::runtime_error("Argument type mismatch! "+rso.str());
+					return ErrorV("Argument type mismatch! "+rso.str());
 				}
 				++itArg;
 			}
@@ -387,19 +419,19 @@ namespace unilang
 			code_generator::VarData * V = getVarFromName(x.lhs.name);
 			if(!V)
 			{
-				throw std::runtime_error("Unknown variable name!");
+				return ErrorV("Undefined variable name '"+x.lhs.name+"' !");
 			}
 			else
 			{
 				if(!V->isMutable())
 				{
-					throw std::runtime_error("Assignment to const (non-mutable) variable is impossible!");
+					return ErrorV("Assignment to const (non-mutable) variable '"+x.lhs.name+"' is impossible!");
 				}
 				else
 				{
 					if(!V->getAllocaInst())
 					{
-						throw std::runtime_error("Variable is not allocated!");
+						return InternalErrorV("Variable '"+x.lhs.name+"' is not allocated!");
 					}
 					else
 					{
@@ -407,7 +439,7 @@ namespace unilang
 						llvm::Value *Val = x.rhs.apply_visitor(*this);
 						if(!Val)
 						{
-							throw std::runtime_error("Invalid right hand side of an assignment!");
+							return ErrorV("Invalid right hand side of an assignment!");
 						}
 						// ->getPointerElementType()
 						if(Val->getType()!=V->getAllocaInst()->getType()->getElementType())
@@ -419,7 +451,7 @@ namespace unilang
 							rso << "' to a value of type '";
 							V->getAllocaInst()->getType()->print(rso);
 							rso << "'.";
-							throw std::runtime_error("Assignment type mismatch! "+rso.str());
+							return ErrorV("Assignment type mismatch! "+rso.str());
 						}
 						else
 						{
@@ -452,7 +484,7 @@ namespace unilang
 				ret=s.apply_visitor(*this);
 				if (!ret)
 				{
-					throw std::runtime_error("Invalid statement!");
+					return ErrorV("Invalid statement!");
 				}
 			}
 			return ret;
@@ -498,7 +530,7 @@ namespace unilang
 
 			//llvm::ArrayType *AT = llvm::ArrayType::get(llvm::Type::getDoubleTy(context), x.return_values.size());
 
-			std::vector<llvm::Type*> Doubles(	x.arguments.size(),	llvm::Type::getDoubleTy(context));
+			std::vector<llvm::Type*> Doubles(	x.argument_types.size(),	llvm::Type::getDoubleTy(context));	// FIXME: only double types?
 			llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(context),	Doubles, false);
 
 			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x.idf.name, module.get());
@@ -509,17 +541,17 @@ namespace unilang
 				// Delete the one we just made and get the existing one.
 				F->eraseFromParent();
 				F = module->getFunction(x.idf.name);
-				std::cout << "Function name conflict! "	<<	x.idf.name	<<	" already existed inside the module. Taking the existing one instead!";
+				//std::cout << "Function name conflict! "	<<	x.idf.name	<<	" already existed inside the module. Taking the existing one instead!" << std::endl;
 				// If F already has a body, reject this.
-				if (!F->empty()) 
+				if (!F->empty())
 				{
-					throw std::runtime_error("Redefinition of function!");
+					return static_cast<llvm::Function*>(ErrorV("Redefinition of function '"+x.idf.name+"' !"));
 				}
     
-				// If F took a different number of args, reject.
-				if (F->arg_size() != x.arguments.size()) 
+				// If F took a different number of args, reject it.
+				if (F->arg_size() != x.argument_types.size())
 				{
-					throw std::runtime_error("Redefinition of function with different number of arguments!");	// Log numbers
+					return static_cast<llvm::Function*>(ErrorV("Definition of function "+x.idf.name+"' with different number of arguments the previous declaration!"));	// TODO: Log numbers
 				}
 
 				// TODO: type comparison ?
@@ -530,9 +562,9 @@ namespace unilang
 			}
 
 			// Set names for all arguments.
-			unsigned int Idx = 0;
+			/*unsigned int Idx = 0;
 
-			for (llvm::Function::arg_iterator AI = F->arg_begin(); Idx != x.arguments.size();	++AI, ++Idx) 
+			for (llvm::Function::arg_iterator AI = F->arg_begin(); Idx != x.argument_types.size();	++AI, ++Idx) 
 			{
 				if(x.arguments[Idx].name.is_initialized())
 				{
@@ -540,24 +572,41 @@ namespace unilang
 
 					AI->setName(x.arguments[Idx].name.get().name);
 				}
-			}
+			}*/
 
 			return F;
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Function * code_generator::operator()(ast::function const & x)
+		llvm::Function * code_generator::operator()(ast::function_definition const & x)
 		{
 			LOG_SCOPE;
-			LOG(x);
 
 			symbolTable.clear();
+
+			// purity test
+			/*if (x.decl.pureQualifier && x.body)
+			{
+				return static_cast<llvm::Function*>(ErrorV("Pure function '"+x.decl.idf.name+"' contains unpure expressions!"));
+			}*/
   
-			llvm::Function *TheFunction = (*this)(x.decl);
+			// build function declaration
+			ast::function_declaration decl;
+			decl.idf = x.idf;
+			decl.pureQualifier = x.pureQualifier;
+			for(ast::variable_definition const & x : x.argument_definitions)
+			{
+				decl.argument_types.push_back(x.type);
+			}
+			for(ast::variable_definition const & x : x.return_value_definitions)
+			{
+				decl.return_types.push_back(x.type);
+			}
+			llvm::Function *TheFunction = (*this)(decl);
 			if (TheFunction == 0)
 			{
-				throw std::runtime_error("Unable to build function declaration for function definition: '"+x.decl.idf.name+"' !");
+				return static_cast<llvm::Function*>(ErrorV("Unable to build function declaration for function definition: '"+x.idf.name+"'!"));
 			}
 
 			// Create a new basic block to start insertion into.
@@ -566,13 +615,13 @@ namespace unilang
 
 			// add the arguments
 			llvm::Function::arg_iterator AI = TheFunction->arg_begin();
-			for (unsigned Idx = 0, e = x.decl.arguments.size(); Idx != e; ++Idx, ++AI)
+			for (unsigned Idx = 0, e = x.argument_definitions.size(); Idx != e; ++Idx, ++AI)
 			{
 				// TODO: Think about order? First all definitions, then parameter passing | one parameter definition and parameter passing a time
-				llvm::Value * V = (*this)(x.decl.arguments[Idx]);
+				llvm::Value * V = (*this)(x.argument_definitions[Idx]);
 				if (!V)
 				{
-					throw std::runtime_error("Unable to create argument!");
+					return static_cast<llvm::Function*>(ErrorV("Unable to create argument!"));
 				}
 
 				// Store the initial value into the var.
@@ -581,9 +630,9 @@ namespace unilang
 
 			// add the return values
 			std::vector<llvm::Value *> retValues;
-			for (unsigned int Idx = 0; Idx != x.decl.return_values.size(); ++Idx)
+			for (unsigned int Idx = 0; Idx != x.return_value_definitions.size(); ++Idx)
 			{
-				retValues.push_back((*this)(x.decl.return_values[Idx]));
+				retValues.push_back((*this)(x.return_value_definitions[Idx]));
 			}
 
 			// add body
@@ -606,7 +655,7 @@ namespace unilang
 					rso << "' from a function returning '";
 					TheFunction->getReturnType()->print(rso);
 					rso << "'.";
-					throw std::runtime_error("Return type mismatch! "+rso.str());
+					return static_cast<llvm::Function*>(ErrorV("Return type mismatch! "+rso.str()));
 				}
 				/*if(!TheFunction->getReturnType()->isPointerTy())
 				{
@@ -624,18 +673,18 @@ namespace unilang
 				if(TheFunction->getReturnType()->isAggregateType())
 				{
 					// FIXME: handle multi-return value functions in result expressions.
-					builder.CreateAggregateRet(retValues.data(), (unsigned int)x.decl.return_values.size());
+					builder.CreateAggregateRet(retValues.data(), (unsigned int)x.return_value_definitions.size());
 				}
 				else
 				{
-					throw std::runtime_error("Unable to return multiple return values from a non aggregate return type function!");
+					return static_cast<llvm::Function*>(ErrorV("Unable to return multiple return values from the non aggregate return type function '"+x.idf.name+"'!"));
 				}
 			}
 
 			// Validate the generated code, checking for consistency.
 			if(llvm::verifyFunction(*TheFunction, llvm::VerifierFailureAction::PrintMessageAction))
 			{
-				throw std::runtime_error("verifyFunction failure");
+				return static_cast<llvm::Function*>(InternalErrorV("verifyFunction failure '"+x.idf.name+"'!"));
 			}
 
 			return TheFunction;
@@ -661,7 +710,8 @@ def bar() foo(1, 2); # error, unknown function "foo"
 		//
 		//-----------------------------------------------------------------------------
 		code_generator::code_generator(ast::module const & AST)
-			:context(llvm::getGlobalContext()),
+			:m_bErrorOccured(false),
+			context(llvm::getGlobalContext()),
 			builder(context),
 			module(new llvm::Module("unilang-JIT", context))
 		{
@@ -674,11 +724,16 @@ def bar() foo(1, 2); # error, unknown function "foo"
 			{
 				meta.apply_visitor(*this);
 			}
+
+			if(m_bErrorOccured)
+			{
+				throw std::runtime_error("Error occured during compilation of module!");
+			}
 			
 			std::string ErrStr;
 			if(llvm::verifyModule(*module.get(), llvm::VerifierFailureAction::ReturnStatusAction, &ErrStr))
 			{
-				throw std::runtime_error(ErrStr);
+				throw std::runtime_error("verifyModule failure! "+ErrStr);
 			}
 			std::cout << std::endl << "########unoptimized#########" << std::endl;
 			module->dump();
