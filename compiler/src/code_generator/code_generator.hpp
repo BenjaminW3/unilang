@@ -44,12 +44,18 @@ namespace unilang
 			//! Create an alloca instruction in the entry block of the function.  
 			//! This is used for mutable variables etc.
 			//-----------------------------------------------------------------------------
-			static llvm::AllocaInst * CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName);
+			static llvm::AllocaInst * CreateEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName);
 
 			bool m_bErrorOccured;
 			llvm::Value *ErrorV(std::string Str);
 			llvm::Value *FatalErrorV(std::string Str);
 			llvm::Value *InternalErrorV(std::string Str);
+			
+			llvm::Type *ErrorType(std::string Str);
+			//-----------------------------------------------------------------------------
+			//! \return The type corresponding to the given Typename
+			//-----------------------------------------------------------------------------
+			llvm::Type* getTypeByName(std::string sTypeName);
 
 		public:
 			llvm::Value * operator()(unsigned int const & x);

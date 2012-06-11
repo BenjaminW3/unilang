@@ -60,11 +60,11 @@ namespace unilang
 				returnDeclarationList.name("returnDeclarationList");
 
 				functionDeclaration =
-						"?<"
+						"?"
 					>>	parameterDeclarationList
 					>>	/*omit[string(*/"->"//)]
 					>>   returnDeclarationList
-					>>	'>'
+					>>	':'
 					>>	identifierGrammar
 					>>	matches['=']
 					;
@@ -85,11 +85,10 @@ namespace unilang
 				returnDefinitionList.name("returnDefinitionList");
 
 				functionDefinition =
-						'<'
-					>>	parameterDefinitionList
+						parameterDefinitionList
 					>>	omit[string("->")]
 					>>   returnDefinitionList
-					>>	'>'
+					>>	':'
 					>>	identifierGrammar
 					>>	matches['=']
 					>>	-statementGrammar.compoundStatement

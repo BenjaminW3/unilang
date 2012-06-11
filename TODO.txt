@@ -8,7 +8,7 @@ IDEAS:
 -fuzzy-equal, ~=
 -arbitrary-precision
 
-list<uint> l = 1 : 2 : 3 : [];
+list<int> l = 1 : 2 : 3 : [];
 
 5 : l; -> list<int>  = [5; 1; 2; 3]
 

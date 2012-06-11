@@ -1,4 +1,4 @@
-entrypoint< () -> ( uiErrorCode<uint>(0) ) >
+entrypoint< () -> ( <int>iErrorCode(0) ) >
 {
 	/*define two lists. First one with concatenation with empty list.*/
 	<[uint]>k(1 : 2 : 3 : [uint]);

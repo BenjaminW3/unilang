@@ -18,7 +18,7 @@
 
 #include "../log/log.hpp"
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -61,42 +61,39 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::AllocaInst * code_generator::CreateEntryBlockAlloca(llvm::Function *TheFunction, const std::string &VarName)	// FIXME pass in type
+		llvm::AllocaInst * code_generator::CreateEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName)
 		{
 			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
 			TheFunction->getEntryBlock().begin());
-			return TmpB.CreateAlloca(llvm::Type::getDoubleTy(llvm::getGlobalContext()), 0,  VarName.c_str());	// TODO: getGlobalContext()?
+			return TmpB.CreateAlloca(pType, 0,  VarName.c_str());
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(bool const & x)
 		{
-			return llvm::ConstantFP::get(context, llvm::APFloat(double(x)));
-			//return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(1), uint64_t(x), false));
+			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(1), uint64_t(x), false));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(unsigned int const & x)
 		{
-			return llvm::ConstantFP::get(context, llvm::APFloat(double(x)));
-			//return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(32), uint64_t(x), false));
+			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(64), uint64_t(x), false));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(int const & x)
 		{
-			return llvm::ConstantFP::get(context, llvm::APFloat(double(x)));
-			//return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(32), uint64_t(x), true));
+			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(64), uint64_t(x), true));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::identifier const & x)
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 			LOG(x);
 
 			code_generator::VarData * V = getVarFromName(x.name);
@@ -140,7 +137,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::unaryOp const & x)
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 			LOG(x);
 
 			llvm::Value *L = x.operand.apply_visitor(*this);
@@ -163,8 +160,7 @@ namespace unilang
 					}
 				case ast::op_positive:
 					{
-						return FatalErrorV("Unimplemented operation '+' !");
-						//return builder.CreatePos(L, "nottmp");
+						return L; // + does not change anything
 					}
 				case ast::op_stringify:
 					{
@@ -201,7 +197,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::binaryOp const & x)	// FIXME not FP Operations
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 			LOG(x);
 
 			llvm::Value *L = x.operand1.apply_visitor(*this);
@@ -298,200 +294,6 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::variable_definition const& x)
-		{
-			LOG_SCOPE;
-			LOG(x);
-
-			bool bHasName = x.name.is_initialized();
-
-			if(bHasName && getVarFromName(x.name.get().name))
-			{
-				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_name.name+"' !");
-			}
-
-			llvm::Function *TheFunction = builder.GetInsertBlock()->getParent();
-
-			// FIXME: initialisation
-
-			// Emit the initializer before adding the variable to scope, this prevents
-			// the initializer from referencing the variable itself, and permits stuff
-			// like this:
-			//  var a = 1 in
-			//    var a = a in ...   # refers to outer 'a'.
-			llvm::Value *InitVal = nullptr;
-			/*if (x.parameters.is_initialized())
-			{
-				// FIXME: only one initialisation parameter
-				InitVal = (*this)(x.parameters.get().[0]);
-				if (!InitVal)
-				{
-					std::stringstream sstr;
-					sstr << x.parameters.get().[0];
-					return ErrorV("Invalid initialisation parameter for variable: '"+sstr.str()+"'");
-				}
-			}
-			else*/
-			{
-				// If not specified, use 0.0.
-				InitVal = llvm::ConstantFP::get(context, llvm::APFloat(0.0));
-			}/**/
-
-			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, bHasName ? x.name.get().name : "");
-			builder.CreateStore(InitVal, Alloca);
-
-			if(bHasName)
-			{
-				// Remember this variable.
-				symbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.type.mutableQualifier));
-			}
-
-			return Alloca;
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::function_call const & x)
-		{
-			LOG_SCOPE;
-			LOG(x);
-
-			// Look up the name in the global module table.
-			llvm::Function *CalleeF = module->getFunction(x.idf.name);
-			if (CalleeF == 0)
-			{
-				return ErrorV("Unknown function '"+x.idf.name+"' referenced!");
-			}
-  
-			// If argument mismatch error.
-			if (CalleeF->arg_size() != x.arguments.size())
-			{
-				std::stringstream sstr;
-				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x.arguments.size() << " are given.";
-				return ErrorV("Incorrect # arguments passed to '"+x.idf.name+"' ! "+sstr.str());
-			}
-
-			std::vector<llvm::Value*> ArgsV;
-			auto itArg = CalleeF->arg_begin();
-			BOOST_FOREACH(ast::expression const & ex, x.arguments)
-			{
-				ArgsV.push_back((*this)(ex));
-				if(!ArgsV.back())
-				{
-					std::stringstream sstr;
-					sstr << ex;
-					return ErrorV("Invalid argument returned from '" +sstr.str()+ "'!");
-				}
-
-				if(ArgsV.back()->getType()!=(*itArg).getType())
-				{
-					std::string type_str;
-					llvm::raw_string_ostream rso(type_str);
-					rso << "Trying to call function '" << x.idf.name << "' with argument number " << (*itArg).getArgNo() << " with type '";
-					ArgsV.back()->getType()->print(rso);
-					rso << "' but function expects a value of type '";
-					(*itArg).getType()->print(rso);
-					rso << "'.";
-					return ErrorV("Argument type mismatch! "+rso.str());
-				}
-				++itArg;
-			}
-  
-			return builder.CreateCall(CalleeF, ArgsV, "calltmp");
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::expression const & x)
-		{
-			LOG(x);
-			return x.apply_visitor(*this);
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::assignment const & x)
-		{
-			LOG_SCOPE;
-			LOG(x);
-
-			// Look up the name.
-			code_generator::VarData * V = getVarFromName(x.lhs.name);
-			if(!V)
-			{
-				return ErrorV("Undefined variable name '"+x.lhs.name+"' !");
-			}
-			else
-			{
-				if(!V->isMutable())
-				{
-					return ErrorV("Assignment to const (non-mutable) variable '"+x.lhs.name+"' is impossible!");
-				}
-				else
-				{
-					if(!V->getAllocaInst())
-					{
-						return InternalErrorV("Variable '"+x.lhs.name+"' is not allocated!");
-					}
-					else
-					{
-						// Codegen the RHS.
-						llvm::Value *Val = x.rhs.apply_visitor(*this);
-						if(!Val)
-						{
-							return ErrorV("Invalid right hand side of an assignment!");
-						}
-						// ->getPointerElementType()
-						if(Val->getType()!=V->getAllocaInst()->getType()->getElementType())
-						{
-							std::string type_str;
-							llvm::raw_string_ostream rso(type_str);
-							rso << "Trying to assign a value of type '";
-							Val->getType()->print(rso);
-							rso << "' to a value of type '";
-							V->getAllocaInst()->getType()->print(rso);
-							rso << "'.";
-							return ErrorV("Assignment type mismatch! "+rso.str());
-						}
-						else
-						{
-							builder.CreateStore(Val, V->getAllocaInst());
-							return Val;
-						}
-					}
-				}
-			}
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::statement const& x)
-		{
-			LOG(x);
-			return x.apply_visitor(*this);
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::statement_list const& x)
-		{
-			LOG_SCOPE;
-			LOG(x);
-
-			llvm::Value * ret = nullptr;
-			BOOST_FOREACH(ast::statement const& s, x)
-			{
-				ret=s.apply_visitor(*this);
-				if (!ret)
-				{
-					return ErrorV("Invalid statement!");
-				}
-			}
-			return ret;
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
 		/*llvm::Value * code_generator::operator()(ast::while_statement const& x)
 		{
 			LOG_SCOPE;
@@ -521,17 +323,51 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
+		llvm::Type *code_generator::ErrorType(std::string Str) 
+		{
+			m_bErrorOccured = true;
+			LOG("ERROR: "+Str);
+			return nullptr; 
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Type* code_generator::getTypeByName(std::string sTypeName)
+		{
+			// FIXME: hard coded types
+			if(sTypeName=="float")
+			{
+				return llvm::Type::getDoubleTy(context);
+			}
+			else if(sTypeName=="int")
+			{
+				return llvm::Type::getInt64Ty(context);
+			}
+			else
+			{
+				return ErrorType("Use of unknown Type: '"+sTypeName+"'.");
+			}
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		llvm::Function * code_generator::operator()(ast::function_declaration const & x)	//FIXME return type not double
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			// Make the function type:  [double](doubles) etc.
+			// create list of argument types
+			std::vector<llvm::Type*> vpArgumentTypes;
+			for( ast::type_declaration const & typeDecl : x.argument_types)
+			{
+				vpArgumentTypes.push_back(getTypeByName(typeDecl.type_name.name));
+			}
+			
+			// create return type
+			// FIXME: only one return value/type
+			llvm::Type* pReturnType = getTypeByName((*x.return_types.begin()).type_name.name);
 
-			//llvm::ArrayType *AT = llvm::ArrayType::get(llvm::Type::getDoubleTy(context), x.return_values.size());
-
-			std::vector<llvm::Type*> Doubles(	x.argument_types.size(),	llvm::Type::getDoubleTy(context));	// FIXME: only double types?
-			llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::getDoubleTy(context),	Doubles, false);
+			llvm::FunctionType *FT = llvm::FunctionType::get(pReturnType,	vpArgumentTypes, false);
 
 			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x.idf.name, module.get());
 
@@ -551,7 +387,7 @@ namespace unilang
 				// If F took a different number of args, reject it.
 				if (F->arg_size() != x.argument_types.size())
 				{
-					return static_cast<llvm::Function*>(ErrorV("Definition of function "+x.idf.name+"' with different number of arguments the previous declaration!"));	// TODO: Log numbers
+					return static_cast<llvm::Function*>(ErrorV("Definition of function "+x.idf.name+"' with different number of arguments then previous declaration!"));	// TODO: Log numbers
 				}
 
 				// TODO: type comparison ?
@@ -581,7 +417,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Function * code_generator::operator()(ast::function_definition const & x)
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 
 			symbolTable.clear();
 
@@ -715,7 +551,7 @@ def bar() foo(1, 2); # error, unknown function "foo"
 			builder(context),
 			module(new llvm::Module("unilang-JIT", context))
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 
 			llvm::InitializeNativeTarget();
 			llvm::llvm_start_multithreaded();
@@ -784,10 +620,10 @@ def bar() foo(1, 2); # error, unknown function "foo"
 				throw std::runtime_error("'entrypoint' not found!");
 			}
 
-			typedef double (*FuncPtr)(double);
+			typedef unsigned int (*FuncPtr)();
 			FuncPtr fptr = reinterpret_cast<FuncPtr>(ee->getPointerToFunction(func));
 
-			std::cout << fptr(0) << std::endl;
+			std::cout << fptr() << std::endl;
 
 			//ee->freeMachineCodeForFunction(vm_get_current_closure);
             ee->runStaticConstructorsDestructors(true);
@@ -801,7 +637,7 @@ def bar() foo(1, 2); # error, unknown function "foo"
 		//-----------------------------------------------------------------------------
 		void code_generator::print_assembler() const
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 
 			module->dump();
 		}

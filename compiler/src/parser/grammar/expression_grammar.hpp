@@ -184,10 +184,8 @@ namespace unilang
 				mutableQualifier.name("mutableQualifier");
 
 				typeDeclaration =
-						'<'
-					>>	mutableQualifier
+						mutableQualifier
 					>>	identifierGrammar
-					>>	'>'
 					;
 				typeDeclaration.name("typeDeclaration");
 
@@ -216,6 +214,7 @@ namespace unilang
 				//							-a list of expressions seperated by ',' surrounded by '(',')'
 				variableDefinition =
 						typeDeclaration
+					>>	":"
 					>>	variableDefinitionIdentifier
 					>>	parameterList
 					;

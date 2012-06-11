@@ -1,11 +1,8 @@
-?< (<uint>) -> (<uint>) > fib =
+?(int,int)->(int):add =					/* predeclaration of pure function*/
 
-< () -> ( <~uint>uiErrorCode(0) ) > entrypoint
+()->(~int:iErrorCode(1)):entrypoint		/*define entry-point, initialize iErrorCode with 1*/
 {
-	uiErrorCode = fib(2);
+	iErrorCode = add(-1,1);				/*assign the result of -1+1 to iErrorCode*/
 }
 
-< (<uint>uiN) -> (<uint>(1)) > fib =
-{
-	/*usl::print( $uiN );*/
-}
+(int:i1, int:i2)->(int:(i1+i2): add =	/* definition of predeclared pure function*/

@@ -21,7 +21,8 @@ namespace unilang
 	void print_usage()
 	{
 		std::cout << "Available options:\n";
-		std::cout << "  /compile filename.u out.asm  - Compile the specified program to the file out.asm\n";
+		std::cout << "  /exec filename.u		       - Execute the specified program\n";
+		//std::cout << "  /compile filename.u out.asm  - Compile the specified program to the file out.asm\n";
 		std::cout << std::endl;
 	}
 }
@@ -45,7 +46,64 @@ int main( int argc, char *argv[] )
 #ifdef DEBUG
 			std::cout << i << " " << vsParameters[i] << std::endl;
 #endif
-			if(vsParameters[i] == "/compile")
+			if(vsParameters[i] == "/exec")
+			{
+				// read out the input file name
+				if(++i >= vsParameters.size())
+				{
+					std::cout << "Error: Expected a filename after /exec option. None was given.\n\n";
+					break;
+				}
+				std::tr2::sys::path const pInPath(vsParameters[i]);
+				if(!std::tr2::sys::is_regular_file(pInPath))
+				{
+					std::cout << "Error: The input  for the /exec option is no valid file: \""+ pInPath.file_string() +"\"\n\n";
+					break;
+				}
+				if(pInPath.extension() != ".u")
+				{
+					std::cout << "Error: The input  for the /exec option is no valid file. The '.u' extension is required: \""+ pInPath.file_string() +"\"\n\n";
+					break;
+				}
+
+				try
+				{
+					std::cout << "Compiling: " << pInPath.file_string() << "\n";
+					 
+					std::ifstream ifs ( pInPath.file_string() , std::ifstream::in );
+					if(!ifs)
+					{
+						throw std::runtime_error("Unable to open file: "+pInPath.file_string());
+					}
+					std::string sSourceCode;
+					// reserve the space in the string
+					ifs.seekg(0, std::ios::end);   
+					sSourceCode.reserve(static_cast<size_t>(ifs.tellg()));
+					ifs.seekg(0, std::ios::beg);
+
+					sSourceCode.assign((std::istreambuf_iterator<char>(ifs)),
+										std::istreambuf_iterator<char>());
+					ifs.close();
+
+					// debug print file
+					std::cout << sSourceCode << std::endl;
+					
+					unilang::error_handler<std::string::const_iterator> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
+
+					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode, error_handler );
+
+					unilang::code_generator::code_generator gen( AST );
+				}
+				catch(const std::exception& e)
+				{
+					std::cout << "Error: " << e.what() << std::endl;
+				}
+				catch(...)
+				{
+					std::cout << "Unknown error!" << std::endl;
+				}
+			}
+			/*else if(vsParameters[i] == "/compile")
 			{
 				// read out the input file name
 				if(++i >= vsParameters.size())
@@ -110,7 +168,7 @@ int main( int argc, char *argv[] )
 				{
 					std::cout << "Unknown error!" << std::endl;
 				}
-			}
+			}*/
 		}
 	}
 

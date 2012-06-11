@@ -142,12 +142,11 @@ namespace unilang
 		};
 		inline std::ostream& operator<<(std::ostream& out, type_declaration const& x)
 		{
-			out << "<";
 			if(x.mutableQualifier)
 			{
 				out << "~";
 			}
-			out << x.type_name << ">";
+			out << x.type_name;
 			return out;
 		}
 		

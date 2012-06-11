@@ -24,7 +24,7 @@ namespace unilang
 		};
 		inline std::ostream& operator<<(std::ostream& out, function_declaration const& x)
 		{
-			out << "?< (";
+			out << "? (";
 			bool bFirstArg = true;
 			BOOST_FOREACH(type_declaration const & decl , x.argument_types)
 			{
@@ -48,7 +48,7 @@ namespace unilang
 				}
 				out << decl;
 			}
-			out << ") > " << x.idf;
+			out << ") : " << x.idf;
 			if(x.pureQualifier)
 			{
 				out << " =";
@@ -69,7 +69,7 @@ namespace unilang
 		};
 		inline std::ostream& operator<<(std::ostream& out, function_definition const& x)
 		{
-			out << "< (";
+			out << " (";
 			bool bFirstArg = true;
 			BOOST_FOREACH(variable_definition const & def , x.argument_definitions)
 			{
@@ -93,7 +93,7 @@ namespace unilang
 				}
 				out << def;
 			}
-			out << ") > " << x.idf;
+			out << ") : " << x.idf;
 			if(x.pureQualifier)
 			{
 				out << " =";

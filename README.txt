@@ -23,8 +23,8 @@ This means that there can not be types with multiple words like "unsigned long l
 Separation of identifiers and other things must be done with seperation characters like ':',';',',','|' etc...
 There are also no short forms of if, for, etc. due to this rule. the {} have to be given explicitly.
 
-The main module needs a function with the signature "<() -> ( uint() )> entrypoint"
-This means it has to have a single uint errorcode return value.
+The main module needs a function with the signature "<() -> ( int() )> entrypoint"
+This means it has to have a single integer errorcode return value.
 
 Every variable is const by default.
 To make it changeable add the qualifier symbol '~' in front of the typename

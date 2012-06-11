@@ -1,9 +1,9 @@
-< () -> ( <uint>uiErrorCode(0) ) >entrypoint
+< () -> ( <int>iErrorCode(0) ) >entrypoint
 {
 	
 }
 
 class object
 {
-	~uint:uiID;
+	~int:iID;
 }

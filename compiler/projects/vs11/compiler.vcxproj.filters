@@ -49,6 +49,12 @@
     <Filter Include="Source Files\ast\semantic_validator">
       <UniqueIdentifier>{69905acb-521e-4823-a542-fbef70062895}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\code_generator\statements">
+      <UniqueIdentifier>{0f74d492-21c9-4c90-8c21-4e8f6b887cae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\expressions">
+      <UniqueIdentifier>{26a76f87-f39a-4d3a-893a-4ec32cf15e88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -63,11 +69,26 @@
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>Source Files\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\if_code_generator.cpp">
-      <Filter>Source Files\code_generator</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ast\semantic_validator\purity_validator.cpp">
       <Filter>Source Files\ast\semantic_validator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statments\assignment.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statments\if.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\variable_definition.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statments\statement.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\function_call.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\expression.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

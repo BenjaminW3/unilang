@@ -1,7 +1,7 @@
-< () -> ( <uint>uiErrorCode(0) ) >entrypoint
+< () -> ( <int>iErrorCode(0) ) >entrypoint
 {
-	uiFib10<uint>(fib(10));
-	usl::print(uiFib10);
+	<uint>uiFib10(fib(10));
+	usl::print(iFib10);
 }
 
 <(uint) -> (uint)>fib=

@@ -1,7 +1,8 @@
 #if defined(_MSC_VER)
-#pragma warning(disable: 4127)	// warning C4127: conditional expression is constant
-#pragma warning(disable: 4512)	// warning C4512: assignment operator could not be generated
-#pragma warning(disable: 4100)	// warning C4100: 'x' : unreferenced formal parameter
+#pragma warning(disable: 4127)		// warning C4127: conditional expression is constant
+#pragma warning(disable: 4512)		// warning C4512: assignment operator could not be generated
+#pragma warning(disable: 4100)		// warning C4100: 'x' : unreferenced formal parameter
+#pragma warning(disable: 4996)		// 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct.
 #endif
 
 #include "parser.hpp"

@@ -1,7 +1,6 @@
-#include "code_generator.hpp"
-//#include <boost/foreach.hpp>
+#include "../code_generator.hpp"
 
-#include "../log/log.hpp"
+#include "../../log/log.hpp"
 
 namespace unilang 
 { 
@@ -12,7 +11,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::if_statement const& x)
 		{
-			LOG_SCOPE;
+			LOG_SCOPE_DEBUG;
 
 			llvm::Value *CondV = (*this)(x.condition);
 			if (!CondV)
