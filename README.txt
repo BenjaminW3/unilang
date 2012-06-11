@@ -18,12 +18,12 @@ Author
 
 Benjamin W.
 
-One essential rule is that whitespace should never have any semantic.
+During design of the language one essential rule was that whitespace should never have any semantic.
 This means that there can not be types with multiple words like "unsigned long long" in c++.
 Separation of identifiers and other things must be done with seperation characters like ':',';',',','|' etc...
 There are also no short forms of if, for, etc. due to this rule. the {} have to be given explicitly.
 
-The main module needs a function with the signature "entrypoint () : ( uint() )"
+The main module needs a function with the signature "<() -> ( uint() )> entrypoint"
 This means it has to have a single uint errorcode return value.
 
 Every variable is const by default.
