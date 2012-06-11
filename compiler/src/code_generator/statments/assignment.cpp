@@ -37,7 +37,7 @@ namespace unilang
 					else
 					{
 						// Codegen the RHS.
-						llvm::Value *Val = x.rhs.apply_visitor(*this);
+						llvm::Value *Val = (*this)(x.rhs);
 						if(!Val)
 						{
 							return ErrorV("Invalid right hand side of an assignment!");

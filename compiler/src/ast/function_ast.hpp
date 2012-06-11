@@ -5,7 +5,6 @@
 
 #include <boost/config/warning_disable.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/foreach.hpp>
 #include <vector>
 
 namespace unilang 
@@ -26,7 +25,7 @@ namespace unilang
 		{
 			out << "? (";
 			bool bFirstArg = true;
-			BOOST_FOREACH(type_declaration const & decl , x.argument_types)
+			for(type_declaration const & decl : x.argument_types)
 			{
 				if(!bFirstArg)
 				{
@@ -39,7 +38,7 @@ namespace unilang
 
 			out << '(';
 			bool bFirstRet = true;
-			BOOST_FOREACH(type_declaration const & decl , x.return_types)
+			for(type_declaration const & decl : x.return_types)
 			{
 				if(!bFirstRet)
 				{
@@ -71,7 +70,7 @@ namespace unilang
 		{
 			out << " (";
 			bool bFirstArg = true;
-			BOOST_FOREACH(variable_definition const & def , x.argument_definitions)
+			for(variable_definition const & def : x.argument_definitions)
 			{
 				if(!bFirstArg)
 				{
@@ -84,7 +83,7 @@ namespace unilang
 
 			out << '(';
 			bool bFirstRet = true;
-			BOOST_FOREACH(variable_definition const & def , x.return_value_definitions)
+			for(variable_definition const & def : x.return_value_definitions)
 			{
 				if(!bFirstRet)
 				{

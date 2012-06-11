@@ -1,7 +1,5 @@
 #include "code_generator.hpp"
 
-#include <boost/foreach.hpp>
-
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
@@ -140,11 +138,11 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value *L = x.operand.apply_visitor(*this);
+			llvm::Value *L = x.operand_.apply_visitor(*this);
 			if(!L)
 			{
 				std::stringstream sstr;
-				sstr << x.operand;
+				sstr << x.operand_;
 				return ErrorV("Invalid value returned from '"+sstr.str()+"'");
 			}
 
@@ -195,101 +193,106 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::binaryOp const & x)	// FIXME not FP Operations
+		llvm::Value * code_generator::operator()(ast::expression const & x)	// FIXME not FP Operations
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value *L = x.operand1.apply_visitor(*this);
-			llvm::Value *R = x.operand2.apply_visitor(*this);
+			llvm::Value *L = x.first.apply_visitor(*this);
 			if (L == 0)
 			{
 				return ErrorV("Left hand side of operation code could not be evaluated!");
 			}
-			if (R == 0)
+
+			for( ast::operation const & op : x.rest)
 			{
-				return ErrorV("Right hand side of operation code could not be evaluated!");
-			}
+				llvm::Value *R = op.operand_.apply_visitor(*this);
+				if (R == 0)
+				{
+					R = ErrorV("Right hand side of operation code could not be evaluated!");
+				}
   
-			switch (x.operator_)
-			{
-			case ast::op_plus:
+				switch (op.operator_)
 				{
-					L = builder.CreateFAdd(L, R, "addtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_minus:
-				{
-					L = builder.CreateFSub(L, R, "subtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_times:
-				{
-					L = builder.CreateFMul(L, R, "multmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_divide:
-				{
-					L = builder.CreateFDiv(L, R, "divtmp");		// FIXME CreateUDiv
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_equal:
-				{
-					L = builder.CreateFCmpUEQ(L, R, "equtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_not_equal:
-				{
-					L = builder.CreateFCmpUNE(L, R, "nequtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_less:
-				{
-					L = builder.CreateFCmpULT(L, R, "lttmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_less_equal:
-				{
-					L = builder.CreateFCmpULE(L, R, "ltequtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_greater:
-				{
-					L = builder.CreateFCmpUGT(L, R, "gttmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_greater_equal:
-				{
-					L = builder.CreateFCmpUGE(L, R, "gtequtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_and:
-				{
-					L = builder.CreateAnd(L, R, "andtmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			case ast::op_or:
-				{
-					L = builder.CreateOr(L, R, "ortmp");
-					// Convert bool 0/1 to double 0.0 or 1.0
-					return builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
-				}
-			default: 
-				{
-					return FatalErrorV("Unknown operation!");
+				case ast::op_plus:
+					{
+						L = builder.CreateFAdd(L, R, "addtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_minus:
+					{
+						L = builder.CreateFSub(L, R, "subtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_times:
+					{
+						L = builder.CreateFMul(L, R, "multmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_divide:
+					{
+						L = builder.CreateFDiv(L, R, "divtmp");		// FIXME CreateUDiv
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_equal:
+					{
+						L = builder.CreateFCmpUEQ(L, R, "equtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_not_equal:
+					{
+						L = builder.CreateFCmpUNE(L, R, "nequtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_less:
+					{
+						L = builder.CreateFCmpULT(L, R, "lttmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_less_equal:
+					{
+						L = builder.CreateFCmpULE(L, R, "ltequtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_greater:
+					{
+						L = builder.CreateFCmpUGT(L, R, "gttmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_greater_equal:
+					{
+						L = builder.CreateFCmpUGE(L, R, "gtequtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_and:
+					{
+						L = builder.CreateAnd(L, R, "andtmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				case ast::op_or:
+					{
+						L = builder.CreateOr(L, R, "ortmp");
+						// Convert bool 0/1 to double 0.0 or 1.0
+						L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+					}
+				default: 
+					{
+						L = FatalErrorV("Unknown operation!");
+					}
 				}
 			}
+			return L;
 		}
 		//-----------------------------------------------------------------------------
 		//
@@ -556,7 +559,7 @@ def bar() foo(1, 2); # error, unknown function "foo"
 			llvm::InitializeNativeTarget();
 			llvm::llvm_start_multithreaded();
 
-			BOOST_FOREACH(ast::meta_entity const & meta, AST.metaEntities)
+			for(ast::meta_entity const & meta : AST.metaEntities)
 			{
 				meta.apply_visitor(*this);
 			}

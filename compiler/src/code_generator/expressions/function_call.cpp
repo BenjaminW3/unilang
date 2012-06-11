@@ -34,7 +34,7 @@ namespace unilang
 			// argument type match?
 			std::vector<llvm::Value*> ArgsV;
 			auto itArg = CalleeF->arg_begin();
-			BOOST_FOREACH(ast::expression const & ex, x.arguments)
+			for(ast::expression const & ex: x.arguments)
 			{
 				ArgsV.push_back((*this)(ex));
 				if(!ArgsV.back())

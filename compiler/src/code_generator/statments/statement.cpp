@@ -2,8 +2,6 @@
 
 #include "../../log/log.hpp"
 
-#include <boost/foreach.hpp>
-
 namespace unilang 
 { 
 	namespace code_generator
@@ -25,7 +23,7 @@ namespace unilang
 			LOG(x);
 
 			llvm::Value * ret = nullptr;
-			BOOST_FOREACH(ast::statement const& s, x)
+			for(ast::statement const& s : x)
 			{
 				ret=s.apply_visitor(*this);
 				if (!ret)

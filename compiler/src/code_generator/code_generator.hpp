@@ -63,9 +63,9 @@ namespace unilang
 			llvm::Value * operator()(bool const & x);
 			llvm::Value * operator()(ast::identifier const & x);
 			llvm::Value * operator()(ast::unaryOp const & x);
-			llvm::Value * operator()(ast::binaryOp const & x);
 			llvm::Value * operator()(ast::function_call const & x);
 			llvm::Value * operator()(ast::expression const & x);
+			llvm::Value * operator()(ast::operand const & x);
 			llvm::Value * operator()(ast::assignment const & x);
 			llvm::Value * operator()(ast::variable_definition const & x);
 			llvm::Value * operator()(ast::statement_list const & x);

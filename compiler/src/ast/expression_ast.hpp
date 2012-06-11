@@ -7,7 +7,6 @@
 #include <boost/variant/recursive_variant.hpp>
 #include <boost/variant/get.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
-#include <boost/foreach.hpp>
 #include <boost/optional.hpp>
 #include <list>
 
@@ -16,23 +15,23 @@ namespace unilang
 	namespace ast
 	{
 		// predefinitions
-		struct variable_definition;
-		struct unaryOp;
-		struct binaryOp;
 		struct function_call;
+		struct unaryOp;
+		struct expression;
+		struct variable_definition;
 
 		//#########################################################################
-		//! An expression
+		//! A operand
 		//#########################################################################
-		typedef boost::variant<	unsigned int
-								, bool
-								, boost::recursive_wrapper<function_call>
-								, identifier
-								, boost::recursive_wrapper<unaryOp>
-								, boost::recursive_wrapper<binaryOp>
-								, boost::recursive_wrapper<variable_definition>
-							> expression;
-		std::ostream& operator<<(std::ostream& out, expression const& x);
+		typedef boost::variant<		unsigned int
+								  ,	bool
+								  , boost::recursive_wrapper<function_call>
+								  , identifier
+								  , boost::recursive_wrapper<unaryOp>
+								  , boost::recursive_wrapper<expression>
+								  , boost::recursive_wrapper<variable_definition>
+							>operand;
+		std::ostream& operator<<(std::ostream& out, operand const& x);
 
 		//#########################################################################
 		//! Optokens
@@ -87,25 +86,43 @@ namespace unilang
 		struct unaryOp : public ast_base
 		{
 			optoken operator_;
-			expression operand;
+			operand operand_;
 		};
 		inline std::ostream& operator<<(std::ostream& out, unaryOp const& x)
 		{
-			out << x.operator_ << "(" << x.operand << ")"; return out;
+			out << x.operator_ << "(" << x.operand_ << ")"; return out;
 		}
-
+		
 		//#########################################################################
-		//! A binary operation.
+		//! ??? unaryOp
 		//#########################################################################
-		struct binaryOp : public ast_base
+		struct operation : public ast_base
 		{
-			expression operand1;
 			optoken operator_;
-			expression operand2;
+			operand operand_;
 		};
-		inline std::ostream& operator<<(std::ostream& out, binaryOp const& x)
+		inline std::ostream& operator<<(std::ostream& out, operation const& x)
 		{
-			out << "(" << x.operand1 << ")" << x.operator_ << "(" << x.operand2 << ")"; return out;
+			out << x.operator_;
+			out << x.operand_;
+			return out;
+		}
+		//#########################################################################
+		//! An expression
+		//#########################################################################
+		struct expression : public ast_base
+		{
+			operand first;
+			std::list<operation> rest;
+		};
+		inline std::ostream& operator<<(std::ostream& out, expression const& x)
+		{
+			out << x.first; 
+			for(operation const & op : x.rest)
+			{
+				out << op;
+			}
+			return out;
 		}
 
 		//#########################################################################
@@ -120,7 +137,7 @@ namespace unilang
 		{
 			out << x.idf << "(";
 			bool bFirst = true;
-			BOOST_FOREACH(expression const & ex , x.arguments)
+			for(expression const & ex : x.arguments)
 			{
 				if(!bFirst)
 				{
@@ -169,7 +186,7 @@ namespace unilang
 			out << "(";
 			if(x.parameters.is_initialized())
 			{
-				BOOST_FOREACH(expression const & ex , x.parameters.get())
+				for(expression const & ex : x.parameters.get())
 				{
 					out << ex;
 				}
@@ -178,7 +195,7 @@ namespace unilang
 			return out;
 		}
 
-		inline std::ostream& operator<<(std::ostream& out, expression const& x)
+		inline std::ostream& operator<<(std::ostream& out, operand const& x)
 		{
 			switch(x.which())
 			{
@@ -187,7 +204,7 @@ namespace unilang
 				case 2: out << boost::get<function_call>(x); break;
 				case 3: out << boost::get<identifier>(x); break;
 				case 4: out << boost::get<unaryOp>(x); break;
-				case 5: out << boost::get<binaryOp>(x); break;
+				case 5: out << boost::get<expression>(x); break;
 				case 6: out << boost::get<variable_definition>(x); break;
 				default: out << "undefined-expression"; break;
 			}
@@ -205,14 +222,19 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::unaryOp,
     (unilang::ast::optoken, operator_)
-    (unilang::ast::expression, operand)
+    (unilang::ast::operand, operand_)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::binaryOp,
-    (unilang::ast::expression, operand1)
+    unilang::ast::operation,
     (unilang::ast::optoken, operator_)
-    (unilang::ast::expression, operand2)
+    (unilang::ast::operand, operand_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    unilang::ast::expression,
+    (unilang::ast::operand, first)
+    (std::list<unilang::ast::operation>, rest)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

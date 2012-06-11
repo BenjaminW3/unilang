@@ -28,25 +28,35 @@ namespace unilang
 			}
 			bool isPure(ast::unaryOp const & x)
 			{
-				return isPure(x.operand);
+				return isPure(x.operand_);
 			}
-			bool isPure(ast::binaryOp const & x)
+			bool isPure(ast::expression const & x)
 			{
-				return isPure(x.operand1) && isPure(x.operand2);
+				if(!isPure(x.first)){return false;}
+				// all rest have to be pure
+				for(ast::operation const & op : x.rest)
+				{
+					if(!isPure(op)) {return false;}
+				}
+				return true;
+			}
+			bool isPure(ast::operation const & x)
+			{
+				return isPure(x.operand_);
 			}
 			bool isPure(ast::function_call const & x)
 			{
 				// FIXME: pure test for function itself
 
 				// all parameters have to be pure
-				BOOST_FOREACH(ast::expression const & ex , x.arguments)
+				for(ast::expression const & ex : x.arguments)
 				{
 					if(!isPure(ex)) {return false;}
 				}
 
 				return true;
 			}
-			bool isPure(ast::expression const & x)
+			bool isPure(ast::operand const & x)
 			{
 				switch(x.which())
 				{
@@ -55,7 +65,7 @@ namespace unilang
 					case 2: return isPure(boost::get<ast::function_call>(x)); break;
 					case 3: return isPure(boost::get<ast::identifier>(x)); break;
 					case 4: return isPure(boost::get<ast::unaryOp>(x)); break;
-					case 5: return isPure(boost::get<ast::binaryOp>(x)); break;
+					case 5: return isPure(boost::get<ast::expression>(x)); break;
 					case 6: return isPure(boost::get<ast::variable_definition>(x)); break;
 					default: throw std::runtime_error("undefined-expression"); break;
 				}
@@ -71,7 +81,7 @@ namespace unilang
 				// all parameters have to be pure
 				if(x.parameters.is_initialized())
 				{
-					BOOST_FOREACH(ast::expression const & ex , x.parameters.get())
+					for(ast::expression const & ex : x.parameters.get())
 					{
 						if(!isPure(ex)) {return false;}
 					}
@@ -81,7 +91,7 @@ namespace unilang
 			}
 			bool isPure(ast::statement_list const & x)
 			{
-				BOOST_FOREACH(ast::statement const & st , x)
+				for(ast::statement const & st : x)
 				{
 					if(!isPure(st)) {return false;}
 				}

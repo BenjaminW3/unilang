@@ -8,7 +8,6 @@
 #include <boost/variant/get.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/optional.hpp>
-#include <boost/foreach.hpp>
 #include <list>
 
 namespace unilang 
@@ -57,7 +56,7 @@ namespace unilang
 		};
 		inline std::ostream& operator<<(std::ostream& out, statement_list const& x)
 		{
-			BOOST_FOREACH(statement const & st , x)
+			for(statement const & st : x)
 			{
 				out << st << std::endl;
 			}

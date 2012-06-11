@@ -9,7 +9,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::expression const & x)
+		llvm::Value * code_generator::operator()(ast::operand const & x)
 		{
 			LOG(x);
 			return x.apply_visitor(*this);

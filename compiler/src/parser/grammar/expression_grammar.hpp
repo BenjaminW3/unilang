@@ -94,39 +94,12 @@ namespace unilang
 				///////////////////////////////////////////////////////////////////////
 				// Main expression grammar
 				
-				unaryOp_expr =
-						(unary_op > expression)
-					;
-				unaryOp_expr.name("unaryOp_expr");
-
-				// without paranthesis left-recursion leads to stack-overflow while parsing
-				addOp_expr = 
-					'('
-					>>	expression
-					>>	additive_op
-					>>	expression
-					>>	')'
-					;
-				addOp_expr.name("addOp_expr");
-
-				binaryOp_expr =
-					addOp_expr.alias()
-					;
-				binaryOp_expr.name("binaryOp_expr");
-				
-				expression = 
-						uint_
-					|   bool_
-					|   functionCall
-					|	identifierGrammar
-					|	unaryOp_expr
-					|	binaryOp_expr
-					|	variableDefinition
-					|	'(' > expression > ')'
+				expression =
+					logical_or_expr.alias()
 					;
 				expression.name("expression");
 				
-				/*logical_or_expr =
+				logical_or_expr =
 						logical_and_expr
 					>>	*(	logical_or_op >	logical_and_expr)
 					;
@@ -166,7 +139,17 @@ namespace unilang
 						primary_expr
 					|   (unary_op > unary_expr)
 					;
-				unary_expr.name("unary_expr");*/
+				unary_expr.name("unary_expr");
+
+				primary_expr =
+						uint_
+					|   bool_
+					|   functionCall
+					|   identifierGrammar
+					|	variableDefinition
+					|   '(' > expression > ')'
+					;
+				primary_expr.name("primary_expr");
 
 				argumentList = -(expression % ',');
 				argumentList.name("argumentList");
@@ -224,10 +207,9 @@ namespace unilang
 				// Debugging and error handling and reporting support.
 #ifdef _DEBUG
 				BOOST_SPIRIT_DEBUG_NODES(
-					(unaryOp_expr)
-					(binaryOp_expr)
-					(addOp_expr)
 					(expression)
+					(unary_expr)
+					(primary_expr)
 					(logical_or_expr)
 					(logical_and_expr)
 					(equality_expr)
@@ -263,25 +245,19 @@ namespace unilang
 			}
 			
 			qi::symbols<char, ast::optoken> logical_or_op, logical_and_op, equality_op, relational_op, additive_op, multiplicative_op, unary_op;
-
-			qi::rule<Iterator, ast::unaryOp(), skipper<Iterator> >
-				unaryOp_expr
-				;
-
-			qi::rule<Iterator, ast::binaryOp(), skipper<Iterator> >
-				binaryOp_expr, addOp_expr
+			
+			qi::rule<Iterator, ast::operand(), skipper<Iterator> >
+				unary_expr, primary_expr
 				;
 
 			qi::rule<Iterator, ast::expression(), skipper<Iterator> > expression,
 				equality_expr, relational_expr,
 				logical_or_expr, logical_and_expr,
-				additive_expr, multiplicative_expr,
-				unary_expr, primary_expr
+				additive_expr, multiplicative_expr
 				;
 
 			qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> > argumentList;
 			qi::rule<Iterator, ast::function_call(), skipper<Iterator> > functionCall;
-			
 			
 			qi::rule<Iterator, bool(), skipper<Iterator> > mutableQualifier;
 			qi::rule<Iterator, ast::type_declaration(), skipper<Iterator> > typeDeclaration;

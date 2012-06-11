@@ -13,7 +13,6 @@ namespace unilang
 			bool isPure(bool const & x);
 			bool isPure(ast::identifier const & x);
 			bool isPure(ast::unaryOp const & x);
-			bool isPure(ast::binaryOp const & x);
 			bool isPure(ast::function_call const & x);
 			bool isPure(ast::expression const & x);
 			bool isPure(ast::assignment const & x);
