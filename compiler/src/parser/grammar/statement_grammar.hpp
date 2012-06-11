@@ -114,7 +114,7 @@ namespace unilang
 					*statement
 					;
 				statementList.name("statementList");
-
+#ifdef _DEBUG
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(assignmentStatement)
@@ -126,7 +126,7 @@ namespace unilang
 					(statement)
 					(statementList)
 				);
-
+#endif
 				// Error handling: on error in statement_list, call error_handler.
 				on_error<fail>(statementList,
 					error_handler_function(error_handler)(

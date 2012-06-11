@@ -95,7 +95,7 @@ namespace unilang
 					>>	-statementGrammar.compoundStatement
 					;
 				functionDefinition.name("functionDefinition");
-
+#ifdef _DEBUG
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(parameterDeclarationList)
@@ -105,7 +105,7 @@ namespace unilang
 					(returnDefinitionList)
 					(functionDefinition)
 				);
-
+#endif
 				// Error handling: on error in start, call error_handler.
 				on_error<fail>(functionDefinition,
 					error_handler_function(error_handler)(

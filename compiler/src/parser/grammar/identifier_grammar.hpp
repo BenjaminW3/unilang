@@ -62,12 +62,12 @@ namespace unilang
 
 				// The lexeme[] directive turns off white space skipping. http://www.boost.org/doc/libs/1_49_0/libs/spirit/doc/html/spirit/qi/reference/directive/lexeme.html
 				identifier.name("identifier");
-
+#ifdef _DEBUG
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(identifier)
 				);
-
+#endif
 				// Error handling: on error in start, call error_handler.
 				on_error<fail>(identifier,
 					error_handler_function(error_handler)(

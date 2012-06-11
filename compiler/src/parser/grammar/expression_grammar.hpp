@@ -223,6 +223,7 @@ namespace unilang
 
 				///////////////////////////////////////////////////////////////////////
 				// Debugging and error handling and reporting support.
+#ifdef _DEBUG
 				BOOST_SPIRIT_DEBUG_NODES(
 					(unaryOp_expr)
 					(binaryOp_expr)
@@ -242,7 +243,7 @@ namespace unilang
 					(parameterList)
 					(variableDefinition)
 				);
-
+#endif
 				///////////////////////////////////////////////////////////////////////
 				// Error handling: on error in expr, call error_handler.
 				on_error<fail>(	expression,

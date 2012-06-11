@@ -48,13 +48,13 @@ namespace unilang
 				metaEntityList	=	*( functionGrammar | functionGrammar.functionDeclaration );
 
 				module			=	metaEntityList.alias();
-
+#ifdef _DEBUG
 				// Debugging and error handling and reporting support.
 				BOOST_SPIRIT_DEBUG_NODES(
 					(metaEntityList)
 					(module)
 				);
-
+#endif
 				// Error handling: on error in start, call error_handler.
 				on_error<fail>(module,
 					error_handler_function(error_handler)(
