@@ -27,11 +27,9 @@ namespace unilang
 			bool bFirstArg = true;
 			for(type_declaration const & decl : x.argument_types)
 			{
-				if(!bFirstArg)
-				{
-					out << ", ";
-					bFirstArg = false;
-				}
+				if(bFirstArg){bFirstArg = false;}
+				else{out << ", ";}
+
 				out << decl;
 			}
 			out << ") -> ";
@@ -40,11 +38,9 @@ namespace unilang
 			bool bFirstRet = true;
 			for(type_declaration const & decl : x.return_types)
 			{
-				if(!bFirstRet)
-				{
-					out << ", ";
-					bFirstRet = false;
-				}
+				if(bFirstRet){bFirstRet = false;}
+				else{out << ", ";}
+
 				out << decl;
 			}
 			out << ") : " << x.idf;
@@ -72,11 +68,9 @@ namespace unilang
 			bool bFirstArg = true;
 			for(variable_definition const & def : x.argument_definitions)
 			{
-				if(!bFirstArg)
-				{
-					out << ", ";
-					bFirstArg = false;
-				}
+				if(bFirstArg){bFirstArg = false;}
+				else{out << ", ";}
+
 				out << def;
 			}
 			out << ") -> ";
@@ -85,11 +79,9 @@ namespace unilang
 			bool bFirstRet = true;
 			for(variable_definition const & def : x.return_value_definitions)
 			{
-				if(!bFirstRet)
-				{
-					out << ", ";
-					bFirstRet = false;
-				}
+				if(bFirstRet){bFirstArg = false;}
+				else{out << ", ";}
+
 				out << def;
 			}
 			out << ") : " << x.idf;

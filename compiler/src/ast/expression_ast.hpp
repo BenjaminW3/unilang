@@ -17,8 +17,8 @@ namespace unilang
 		// predefinitions
 		struct function_call;
 		struct unaryOp;
-		struct expression;
 		struct variable_definition;
+		struct expression;
 
 		//#########################################################################
 		//! A operand
@@ -28,8 +28,8 @@ namespace unilang
 								  , boost::recursive_wrapper<function_call>
 								  , identifier
 								  , boost::recursive_wrapper<unaryOp>
-								  , boost::recursive_wrapper<expression>
 								  , boost::recursive_wrapper<variable_definition>
+								  , boost::recursive_wrapper<expression>
 							>operand;
 		std::ostream& operator<<(std::ostream& out, operand const& x);
 
@@ -59,22 +59,22 @@ namespace unilang
 		{
 			switch(x)
 			{
-				case op_plus: out << "op_plus"; break;
-				case op_minus: out << "op_minus"; break;
-				case op_times: out << "op_times"; break;
-				case op_divide: out << "op_divide"; break;
-				case op_positive: out << "op_positive"; break;
-				case op_negative: out << "op_negative"; break;
-				case op_not: out << "op_not"; break;
-				case op_stringify: out << "op_stringify"; break;
-				case op_equal: out << "op_equal"; break;
-				case op_not_equal: out << "op_not_equal"; break;
-				case op_less: out << "op_less"; break;
-				case op_less_equal: out << "op_less_equal"; break;
-				case op_greater: out << "op_greater"; break;
-				case op_greater_equal: out << "op_greater_equal"; break;
-				case op_and: out << "op_and"; break;
-				case op_or: out << "op_or"; break;
+				case op_plus: out << "+"; break;
+				case op_minus: out << "-"; break;
+				case op_times: out << "*"; break;
+				case op_divide: out << "/"; break;
+				case op_positive: out << "+"; break;
+				case op_negative: out << "-"; break;
+				case op_not: out << "!"; break;
+				case op_stringify: out << "$"; break;
+				case op_equal: out << "=="; break;
+				case op_not_equal: out << "!="; break;
+				case op_less: out << "<"; break;
+				case op_less_equal: out << "<="; break;
+				case op_greater: out << ">"; break;
+				case op_greater_equal: out << ">="; break;
+				case op_and: out << "&"; break;
+				case op_or: out << "|"; break;
 				default: out << "unknown-operation"; break;
 			}
 			return out;
@@ -90,7 +90,7 @@ namespace unilang
 		};
 		inline std::ostream& operator<<(std::ostream& out, unaryOp const& x)
 		{
-			out << x.operator_ << "(" << x.operand_ << ")"; return out;
+			out << x.operator_ << x.operand_; return out;
 		}
 		
 		//#########################################################################
@@ -139,11 +139,9 @@ namespace unilang
 			bool bFirst = true;
 			for(expression const & ex : x.arguments)
 			{
-				if(!bFirst)
-				{
-					out << ", ";
-					bFirst = false;
-				}
+				if(bFirst){bFirst = false;}
+				else{out << ", ";}
+
 				out << ex;
 			}
 			out << ")";
@@ -181,7 +179,7 @@ namespace unilang
 			out << x.type;
 			if(x.name.is_initialized())
 			{
-				out << x.name.get().name;
+				out << ":" << x.name.get().name;
 			}
 			out << "(";
 			if(x.parameters.is_initialized())
@@ -204,8 +202,8 @@ namespace unilang
 				case 2: out << boost::get<function_call>(x); break;
 				case 3: out << boost::get<identifier>(x); break;
 				case 4: out << boost::get<unaryOp>(x); break;
-				case 5: out << boost::get<expression>(x); break;
-				case 6: out << boost::get<variable_definition>(x); break;
+				case 5: out << boost::get<variable_definition>(x); break;
+				case 6: out << boost::get<expression>(x); break;
 				default: out << "undefined-expression"; break;
 			}
 			return out;

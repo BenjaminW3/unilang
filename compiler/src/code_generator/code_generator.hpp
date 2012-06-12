@@ -56,6 +56,11 @@ namespace unilang
 			//! \return The type corresponding to the given Typename
 			//-----------------------------------------------------------------------------
 			llvm::Type* getTypeByName(std::string sTypeName);
+			
+			//-----------------------------------------------------------------------------
+			//! \return The value returned from the execution of 'L op R'.
+			//-----------------------------------------------------------------------------
+			llvm::Value * code_generator::CreateOperation(llvm::Value * L, llvm::Value * R, ast::optoken const & op);
 
 		public:
 			llvm::Value * operator()(unsigned int const & x);

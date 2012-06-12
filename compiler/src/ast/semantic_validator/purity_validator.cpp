@@ -22,28 +22,6 @@ namespace unilang
 			{
 				return true;
 			}
-			bool isPure(ast::identifier const & )
-			{
-				return true;
-			}
-			bool isPure(ast::unaryOp const & x)
-			{
-				return isPure(x.operand_);
-			}
-			bool isPure(ast::expression const & x)
-			{
-				if(!isPure(x.first)){return false;}
-				// all rest have to be pure
-				for(ast::operation const & op : x.rest)
-				{
-					if(!isPure(op)) {return false;}
-				}
-				return true;
-			}
-			bool isPure(ast::operation const & x)
-			{
-				return isPure(x.operand_);
-			}
 			bool isPure(ast::function_call const & x)
 			{
 				// FIXME: pure test for function itself
@@ -56,23 +34,13 @@ namespace unilang
 
 				return true;
 			}
-			bool isPure(ast::operand const & x)
+			bool isPure(ast::identifier const & )
 			{
-				switch(x.which())
-				{
-					case 0: return isPure(boost::get<unsigned int>(x)); break;
-					case 1: return isPure(boost::get<bool>(x)); break;
-					case 2: return isPure(boost::get<ast::function_call>(x)); break;
-					case 3: return isPure(boost::get<ast::identifier>(x)); break;
-					case 4: return isPure(boost::get<ast::unaryOp>(x)); break;
-					case 5: return isPure(boost::get<ast::expression>(x)); break;
-					case 6: return isPure(boost::get<ast::variable_definition>(x)); break;
-					default: throw std::runtime_error("undefined-expression"); break;
-				}
+				return true;
 			}
-			bool isPure(ast::assignment const & )
+			bool isPure(ast::unaryOp const & x)
 			{
-				return false;
+				return isPure(x.operand_);
 			}
 			bool isPure(ast::variable_definition const & x)
 			{
@@ -88,6 +56,38 @@ namespace unilang
 				}
 				// it has to be non mutable
 				return (!x.type.mutableQualifier);
+			}
+			bool isPure(ast::operation const & x)
+			{
+				return isPure(x.operand_);
+			}
+			bool isPure(ast::expression const & x)
+			{
+				if(!isPure(x.first)){return false;}
+				// all rest have to be pure
+				for(ast::operation const & op : x.rest)
+				{
+					if(!isPure(op)) {return false;}
+				}
+				return true;
+			}
+			bool isPure(ast::operand const & x)
+			{
+				switch(x.which())
+				{
+					case 0: return isPure(boost::get<unsigned int>(x)); break;
+					case 1: return isPure(boost::get<bool>(x)); break;
+					case 2: return isPure(boost::get<ast::function_call>(x)); break;
+					case 3: return isPure(boost::get<ast::identifier>(x)); break;
+					case 4: return isPure(boost::get<ast::unaryOp>(x)); break;
+					case 5: return isPure(boost::get<ast::variable_definition>(x)); break;
+					case 6: return isPure(boost::get<ast::expression>(x)); break;
+					default: throw std::runtime_error("undefined-expression"); break;
+				}
+			}
+			bool isPure(ast::assignment const & )
+			{
+				return false;
 			}
 			bool isPure(ast::statement_list const & x)
 			{
