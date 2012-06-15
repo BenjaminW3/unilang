@@ -55,6 +55,9 @@
     <Filter Include="Source Files\code_generator\expressions">
       <UniqueIdentifier>{26a76f87-f39a-4d3a-893a-4ec32cf15e88}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\code_generator\functions">
+      <UniqueIdentifier>{eb57754a-34e2-407a-944e-267230a7b812}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -89,6 +92,24 @@
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\expressions\expression.cpp">
       <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\unary.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\identifier.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\basic_types.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statments\while.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\functions\function_declaration.cpp">
+      <Filter>Source Files\code_generator\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\functions\function_definition.cpp">
+      <Filter>Source Files\code_generator\functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

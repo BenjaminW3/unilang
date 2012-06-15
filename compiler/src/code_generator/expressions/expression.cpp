@@ -76,6 +76,10 @@ namespace unilang
 						{
 							return builder.CreateFDiv(L, R, "divtmp");
 						}
+					case ast::op_reminder:
+						{
+							return builder.CreateFRem(L, R, "remtmp");
+						}
 					case ast::op_equal:
 						{
 							return builder.CreateFCmpUEQ(L, R, "equtmp");
@@ -133,6 +137,10 @@ namespace unilang
 					case ast::op_divide:
 						{
 							return builder.CreateSDiv(L, R, "divtmp");
+						}
+					case ast::op_reminder:
+						{
+							return builder.CreateSRem(L, R, "remtmp");
 						}
 					case ast::op_equal:
 						{

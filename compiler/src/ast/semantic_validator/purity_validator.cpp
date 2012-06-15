@@ -10,6 +10,10 @@ namespace unilang
 	{
 		namespace purity_validator
 		{
+			bool isPure(long double const & )
+			{
+				return true;
+			}
 			bool isPure(unsigned int const & )
 			{
 				return true;
@@ -75,13 +79,15 @@ namespace unilang
 			{
 				switch(x.which())
 				{
-					case 0: return isPure(boost::get<unsigned int>(x)); break;
-					case 1: return isPure(boost::get<bool>(x)); break;
-					case 2: return isPure(boost::get<ast::function_call>(x)); break;
-					case 3: return isPure(boost::get<ast::identifier>(x)); break;
-					case 4: return isPure(boost::get<ast::unaryOp>(x)); break;
-					case 5: return isPure(boost::get<ast::variable_definition>(x)); break;
-					case 6: return isPure(boost::get<ast::expression>(x)); break;
+					case 0: return isPure(boost::get<long double>(x)); break;
+					case 1: return isPure(boost::get<unsigned int>(x)); break;
+					case 2: return isPure(boost::get<int>(x)); break;
+					case 3: return isPure(boost::get<bool>(x)); break;
+					case 4: return isPure(boost::get<ast::function_call>(x)); break;
+					case 5: return isPure(boost::get<ast::identifier>(x)); break;
+					case 6: return isPure(boost::get<ast::unaryOp>(x)); break;
+					case 7: return isPure(boost::get<ast::variable_definition>(x)); break;
+					case 8: return isPure(boost::get<ast::expression>(x)); break;
 					default: throw std::runtime_error("undefined-expression"); break;
 				}
 			}

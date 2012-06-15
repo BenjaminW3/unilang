@@ -12,6 +12,9 @@
 
 #include <vector>
 
+//#include <boost/spirit/include/qi_lit.hpp>
+
+
 #if defined(_MSC_VER)
 //#pragma warning(disable: 4127)	// warning C4127: conditional expression is constant
 //#pragma warning(disable: 4512)	// warning C4512: assignment operator could not be generated
@@ -39,9 +42,13 @@ namespace unilang
 				qi::_4_type _4;
 
 				qi::char_type char_;
-				qi::uint_type uint_;
 				qi::_val_type _val;
+				qi::real_parser<long double, qi::strict_real_policies<long double> > float_; // needed because the float_type parser would parse all integers
+				qi::uint_type uint_;
+				qi::int_type int_;
 				qi::bool_type bool_;
+				qi::lit_type lit;
+				qi::omit_type omit;
 				qi::matches_type matches;
 
 				using qi::on_error;
@@ -82,6 +89,7 @@ namespace unilang
 				multiplicative_op.add
 					("*", ast::op_times)
 					("/", ast::op_divide)
+					("%", ast::op_reminder)
 					;
 
 				unary_op.add
@@ -142,7 +150,9 @@ namespace unilang
 				unary_expr.name("unary_expr");
 
 				primary_expr =
-						uint_
+						float_
+					|	uint_
+					|	int_
 					|   bool_
 					|   functionCall
 					|   identifierGrammar
@@ -155,7 +165,8 @@ namespace unilang
 				argumentList.name("argumentList");
 
 				functionCall =
-						(identifierGrammar >> '(')
+						identifierGrammar
+					>> '('
 					>>   argumentList
 					>>   ')'
 					;
@@ -172,8 +183,14 @@ namespace unilang
 					;
 				typeDeclaration.name("typeDeclaration");
 
+				variableDefinitionSeperator = 
+					lit(":")
+					;
+				variableDefinitionSeperator.name("variableDefinitionSeperator");
+
 				variableDefinitionIdentifier = 
-					-identifierGrammar
+					/*	variableDefinitionSeperator
+					>>*/	identifierGrammar
 					;
 				variableDefinitionIdentifier.name("variableDefinitionIdentifier");
 				
@@ -186,19 +203,18 @@ namespace unilang
 					;
 				parameterList.name("parameterList");
 
-				//∈↦
-				// A Variable Definition is of the form <type-qualifier><type><identifier><parameterList>
+				// A Variable Definition is of the form [<type-qualifier>]<type>[:<identifier>][<parameterList>]
 				// <type-qualifier> can be '~'
 				// <type> one of the predefined or user define types
 				// <identifier> can be: -empty
-				//						-a user defined identifier name surrounded by '[',']'
+				//						-a user defined identifier
 				// <parameterList> can be:	-empty, 
 				//							-'()' 
 				//							-a list of expressions seperated by ',' surrounded by '(',')'
 				variableDefinition =
 						typeDeclaration
-					>>	":"
-					>>	variableDefinitionIdentifier
+					>>	variableDefinitionSeperator
+					>>	-variableDefinitionIdentifier
 					>>	parameterList
 					;
 				variableDefinition.name("variableDefinition");
@@ -261,8 +277,9 @@ namespace unilang
 			
 			qi::rule<Iterator, bool(), skipper<Iterator> > mutableQualifier;
 			qi::rule<Iterator, ast::type_declaration(), skipper<Iterator> > typeDeclaration;
-
-			qi::rule<Iterator, boost::optional<ast::identifier>(), skipper<Iterator> > variableDefinitionIdentifier;
+			
+			qi::rule<Iterator, skipper<Iterator> > variableDefinitionSeperator;
+			qi::rule<Iterator, ast::identifier(), skipper<Iterator> > variableDefinitionIdentifier;
 			qi::rule<Iterator, boost::optional<std::list<ast::expression>>(), skipper<Iterator> > parameterList;
 			qi::rule<Iterator, ast::variable_definition(), skipper<Iterator> > variableDefinition;
 		};

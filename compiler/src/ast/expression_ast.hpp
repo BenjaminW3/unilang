@@ -23,13 +23,15 @@ namespace unilang
 		//#########################################################################
 		//! A operand
 		//#########################################################################
-		typedef boost::variant<		unsigned int
-								  ,	bool
-								  , boost::recursive_wrapper<function_call>
-								  , identifier
-								  , boost::recursive_wrapper<unaryOp>
-								  , boost::recursive_wrapper<variable_definition>
-								  , boost::recursive_wrapper<expression>
+		typedef boost::variant<	long double,
+								unsigned int,
+								int,
+								bool,
+								boost::recursive_wrapper<function_call>,
+								identifier,
+								boost::recursive_wrapper<unaryOp>,
+								boost::recursive_wrapper<variable_definition>,
+								boost::recursive_wrapper<expression>
 							>operand;
 		std::ostream& operator<<(std::ostream& out, operand const& x);
 
@@ -42,6 +44,7 @@ namespace unilang
 			op_minus,
 			op_times,
 			op_divide,
+			op_reminder,
 			op_positive,
 			op_negative,
 			op_not,
@@ -63,6 +66,7 @@ namespace unilang
 				case op_minus: out << "-"; break;
 				case op_times: out << "*"; break;
 				case op_divide: out << "/"; break;
+				case op_reminder: out << "%"; break;
 				case op_positive: out << "+"; break;
 				case op_negative: out << "-"; break;
 				case op_not: out << "!"; break;
@@ -153,7 +157,7 @@ namespace unilang
 		struct type_declaration : public ast_base
 		{
 			bool mutableQualifier;
-			identifier type_name;
+			identifier type_identifier;
 		};
 		inline std::ostream& operator<<(std::ostream& out, type_declaration const& x)
 		{
@@ -161,7 +165,7 @@ namespace unilang
 			{
 				out << "~";
 			}
-			out << x.type_name;
+			out << x.type_identifier;
 			return out;
 		}
 		
@@ -197,13 +201,15 @@ namespace unilang
 		{
 			switch(x.which())
 			{
-				case 0: out << boost::get<unsigned int>(x); break;
-				case 1: out << boost::get<bool>(x); break;
-				case 2: out << boost::get<function_call>(x); break;
-				case 3: out << boost::get<identifier>(x); break;
-				case 4: out << boost::get<unaryOp>(x); break;
-				case 5: out << boost::get<variable_definition>(x); break;
-				case 6: out << boost::get<expression>(x); break;
+				case 0: out << boost::get<long double>(x); break;
+				case 1: out << boost::get<unsigned int>(x); break;
+				case 2: out << boost::get<int>(x); break;
+				case 3: out << boost::get<bool>(x); break;
+				case 4: out << boost::get<function_call>(x); break;
+				case 5: out << boost::get<identifier>(x); break;
+				case 6: out << boost::get<unaryOp>(x); break;
+				case 7: out << boost::get<variable_definition>(x); break;
+				case 8: out << boost::get<expression>(x); break;
 				default: out << "undefined-expression"; break;
 			}
 			return out;
@@ -238,7 +244,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::type_declaration,
 	(bool, mutableQualifier)
-    (unilang::ast::identifier, type_name)
+    (unilang::ast::identifier, type_identifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

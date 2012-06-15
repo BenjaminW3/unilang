@@ -1,11 +1,11 @@
-< () -> ( <int>iErrorCode(0) ) >entrypoint
+()->( <int>iErrorCode(0) ):entrypoint
 {
 	/*should print 14*/
 	usl::print(sigma(function<(uint:x)->(uint(x*x))>,[1, 2, 3]);
 }
 
 /*higher order functions*/
-<( ( (<uint>) -> (<uint>) ), [<uint>] ) -> (<uint>)>sigma=
+( (<uint>)->(<uint>), [<uint>] ) -> (<uint>):sigma
 {
 	|(f, [])	->	0
 	|(f, x::l)	->	f(x) + sigma(f,l)

@@ -17,13 +17,13 @@ entrypoint< () -> ( <int>iErrorCode(0) ) >
 }
 
 /*sorting*/
-<([uint]) -> ([uint])>sort=
+<([uint]) -> ([uint])>sort
 {
 	| []	->	[]
 	| x::l	->	insert(x,(sort(l))
 }
 
-<(uint, [uint]) -> ([uint])>insert=
+<(uint, [uint]) -> ([uint])>insert
 {
 	|(elem, [])		->	[elem]
 	|(elem, x::l)	->	(elem < x) ? (elem::x::l) : (x::insert(elem,l));

@@ -47,7 +47,6 @@ namespace unilang
 					("if")
 					("else")
 					("while")
-					("void")
 					("return")
 					;
 

@@ -1,12 +1,13 @@
-< () -> ( <int>iErrorCode(0) ) >entrypoint
+()->( ~int:iErrorCode(0) ):entrypoint
 {
-	<uint>uiFib10(fib(10));
-	usl::print(iFib10);
+	int:iFib10(fib(10));
+	iErrorCode = iFib10;
+	/*usl::print(iFib10);*/
 }
 
-<(uint) -> (uint)>fib=
+/*FIXME only uint*/
+(int:n)->(int:f):fib
 {
-	|(0) -> (1)
-	|(1) -> (1)
-	|(n) -> (fib(n-1)+fib(n-2))
+	if(n<1)	{f=1;}
+	else	{f=fib(n-1)+fib(n-2);}
 }

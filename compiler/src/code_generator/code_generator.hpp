@@ -63,6 +63,7 @@ namespace unilang
 			llvm::Value * code_generator::CreateOperation(llvm::Value * L, llvm::Value * R, ast::optoken const & op);
 
 		public:
+			llvm::Value * operator()(long double const & x);
 			llvm::Value * operator()(unsigned int const & x);
 			llvm::Value * operator()(int const & x);
 			llvm::Value * operator()(bool const & x);

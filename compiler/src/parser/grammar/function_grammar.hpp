@@ -33,9 +33,7 @@ namespace unilang
 
 				qi::_val_type _val;
 				qi::string_type string;
-				//qi::omit_type omit;
 				qi::matches_type matches;
-				qi::lit_type lit;
 
 				using qi::on_error;
 				using qi::on_success;
@@ -63,7 +61,7 @@ namespace unilang
 						"?"
 					>>	matches['~']
 					>>	parameterDeclarationList
-					>>	/*omit[string(*/"->"//)]
+					>>	"->"
 					>>   returnDeclarationList
 					>>	':'
 					>>	identifierGrammar
@@ -87,7 +85,7 @@ namespace unilang
 				functionDefinition =
 						matches['~']
 					>>	parameterDefinitionList
-					>>	/*omit[string(*/"->"//)]
+					>>	"->"
 					>>   returnDefinitionList
 					>>	':'
 					>>	identifierGrammar

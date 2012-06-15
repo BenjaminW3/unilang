@@ -60,5 +60,52 @@ namespace unilang
   
 			return builder.CreateCall(CalleeF, ArgsV, "calltmp");
 		}
+		/*
+		if (printf == null) {
+            // declare printf
+            LLVMOpaqueType[] printfArgTypes = {
+                I.LLVMPointerType(I.LLVMInt8Type(), 0)
+            };
+            LLVMOpaqueType printfFunctionType =
+                I.LLVMFunctionType(I.LLVMInt32Type(),
+                                   printfArgTypes,
+                                   1,
+                                   1);
+            printf = I.LLVMAddFunction(module, "printf", printfFunctionType);
+        }
+        MLType type = typer.visit(node);
+        LLVMOpaqueValue arg =
+            (LLVMOpaqueValue)((Visit)node.get(0)).visit(this);
+        if (type.name().equals("int")) {
+            if (dn == null) {
+                dn = I.LLVMBuildGlobalString(builder, "%d\n", "dn");
+            }
+            LLVMOpaqueValue[] gepArray = {
+                I.LLVMConstInt(I.LLVMInt32Type(), 0, 0),
+                I.LLVMConstInt(I.LLVMInt32Type(), 0, 0)
+            };
+            LLVMOpaqueValue dn2 =
+                I.LLVMBuildInBoundsGEP(builder, dn, gepArray, 2, "");
+            LLVMOpaqueValue[] callArgs = new LLVMOpaqueValue[2];        
+            callArgs[0] = dn2;
+            callArgs[1] = arg;
+            I.LLVMBuildCall(builder, printf, callArgs, 2, "");
+        } else if (type.name().equals("string")) {
+            if (sn == null) {
+                sn = I.LLVMBuildGlobalString(builder, "%s\n", "sn");
+            }
+            LLVMOpaqueValue[] gepArray = {
+               I.LLVMConstInt(I.LLVMInt32Type(), 0, 0),
+               I.LLVMConstInt(I.LLVMInt32Type(), 0, 0)
+            };
+            LLVMOpaqueValue sn2 =
+                I.LLVMBuildInBoundsGEP(builder, sn, gepArray, 2, "");
+            LLVMOpaqueValue[] callArgs = new LLVMOpaqueValue[2];
+            callArgs[0] = sn2;
+            callArgs[1] = arg;
+            I.LLVMBuildCall(builder, printf, callArgs, 2, "");
+        }
+        return null;
+		*/
 	}
 }

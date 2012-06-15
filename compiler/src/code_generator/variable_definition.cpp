@@ -9,6 +9,15 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
+		llvm::AllocaInst * code_generator::CreateEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName)
+		{
+			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
+			TheFunction->getEntryBlock().begin());
+			return TmpB.CreateAlloca(pType, 0,  VarName.c_str());
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::operator()(ast::variable_definition const & x)
 		{
 			LOG_SCOPE_DEBUG;
@@ -20,7 +29,7 @@ namespace unilang
 			// redefinition?
 			if(bHasName && getVarFromName(x.name.get().name))
 			{
-				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_name.name+"' !");
+				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_identifier.name+"' !");
 			}
 
 			llvm::Function * TheFunction = builder.GetInsertBlock()->getParent();
@@ -29,7 +38,7 @@ namespace unilang
 			llvm::Value * InitVal = nullptr;
 			
 			// FIXME: hard coded types
-			if(x.type.type_name.name == "int")
+			if(x.type.type_identifier.name == "int")
 			{
 				if (x.parameters.is_initialized())
 				{
@@ -43,14 +52,14 @@ namespace unilang
 							sstr << *x.parameters.get().begin();
 							auto sVarName = bHasName ? " '"+x.name.get().name+"'" : "";
 							// TODO: output real parameter number
-							return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable"+sVarName+" of type '"+x.type.type_name.name+"'");
+							return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable"+sVarName+" of type '"+x.type.type_identifier.name+"'");
 						}
 					}
 					else
 					{
 						std::stringstream sstr;
 						sstr << x.parameters.get().size();
-						return ErrorV("Variable of type '"+x.type.type_name.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
+						return ErrorV("Variable of type '"+x.type.type_identifier.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
 					}
 				}
 				else
@@ -58,7 +67,7 @@ namespace unilang
 					InitVal = llvm::ConstantInt::get(context, llvm::APInt(64, 0, true)); // 64bit, initial 0, signed
 				}
 			}
-			if(x.type.type_name.name == "float")
+			if(x.type.type_identifier.name == "float")
 			{
 				if (x.parameters.is_initialized())
 				{
@@ -72,14 +81,14 @@ namespace unilang
 							sstr << *x.parameters.get().begin();
 							auto sVarName = bHasName ? " '"+x.name.get().name+"'" : "";
 							// TODO: output real parameter number
-							return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable"+sVarName+" of type '"+x.type.type_name.name+"'");
+							return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable"+sVarName+" of type '"+x.type.type_identifier.name+"'");
 						}
 					}
 					else
 					{
 						std::stringstream sstr;
 						sstr << x.parameters.get().size();
-						return ErrorV("Variable of type '"+x.type.type_name.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
+						return ErrorV("Variable of type '"+x.type.type_identifier.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
 					}
 				}
 				else
@@ -90,7 +99,7 @@ namespace unilang
 			}
 
 			// allocate in function head
-			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, getTypeByName(x.type.type_name.name), bHasName ? x.name.get().name : "");
+			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, getTypeByName(x.type.type_identifier.name), bHasName ? x.name.get().name : "");
 			builder.CreateStore(InitVal, Alloca);
 
 			// remember this variable in symbol table

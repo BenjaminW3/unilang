@@ -8,6 +8,7 @@ namespace unilang
 	{
 		namespace purity_validator
 		{
+			bool isPure(long double const & x);
 			bool isPure(unsigned int const & x);
 			bool isPure(int const & x);
 			bool isPure(bool const & x);

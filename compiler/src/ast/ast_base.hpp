@@ -8,8 +8,8 @@ namespace unilang
 	{
 		struct ast_base abstract
 		{
-			std::string::iterator m_itBegin;
-			std::string::iterator m_itEnd;
+			//std::string::iterator m_itBegin;
+			//std::string::iterator m_itEnd;
 		};
 	}
 }
