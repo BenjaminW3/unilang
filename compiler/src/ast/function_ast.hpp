@@ -16,14 +16,19 @@ namespace unilang
 		//#########################################################################
 		struct function_declaration
 		{
+			bool unpureQualifier;
 			std::vector<type_declaration> argument_types;
 			std::vector<type_declaration> return_types;
 			identifier idf;
-			bool pureQualifier;
 		};
 		inline std::ostream& operator<<(std::ostream& out, function_declaration const& x)
 		{
-			out << "? (";
+			out << "?";
+			if(x.unpureQualifier)
+			{
+				out << " ~";
+			}
+			out << "(";
 			bool bFirstArg = true;
 			for(type_declaration const & decl : x.argument_types)
 			{
@@ -43,11 +48,8 @@ namespace unilang
 
 				out << decl;
 			}
-			out << ") : " << x.idf;
-			if(x.pureQualifier)
-			{
-				out << " =";
-			}
+			out << ")";
+			out << ":" << x.idf;
 			return out;
 		}
 
@@ -56,15 +58,19 @@ namespace unilang
 		//#########################################################################
 		struct function_definition
 		{
+			bool unpureQualifier;
 			std::vector<variable_definition> argument_definitions;
 			std::vector<variable_definition> return_value_definitions;
 			identifier idf;
-			bool pureQualifier;
 			statement_list body;
 		};
 		inline std::ostream& operator<<(std::ostream& out, function_definition const& x)
 		{
-			out << " (";
+			if(x.unpureQualifier)
+			{
+				out << "~";
+			}
+			out << "(";
 			bool bFirstArg = true;
 			for(variable_definition const & def : x.argument_definitions)
 			{
@@ -84,11 +90,8 @@ namespace unilang
 
 				out << def;
 			}
-			out << ") : " << x.idf;
-			if(x.pureQualifier)
-			{
-				out << " =";
-			}
+			out << ")";
+			out << ":" << x.idf;
 			out << '{' << std::endl;
 			out << x.body << std::endl;
 			out << '}' << std::endl;
@@ -99,17 +102,17 @@ namespace unilang
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_declaration,
+	(bool, unpureQualifier)
     (std::vector<unilang::ast::type_declaration>, argument_types)
     (std::vector<unilang::ast::type_declaration>, return_types)
     (unilang::ast::identifier, idf)
-	(bool, pureQualifier)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_definition,
+	(bool, unpureQualifier)
     (std::vector<unilang::ast::variable_definition>, argument_definitions)
     (std::vector<unilang::ast::variable_definition>, return_value_definitions)
     (unilang::ast::identifier, idf)
-	(bool, pureQualifier)
     (unilang::ast::statement_list, body)
 )

@@ -33,7 +33,7 @@ namespace unilang
 
 				qi::_val_type _val;
 				qi::string_type string;
-				qi::omit_type omit;
+				//qi::omit_type omit;
 				qi::matches_type matches;
 				qi::lit_type lit;
 
@@ -61,12 +61,12 @@ namespace unilang
 
 				functionDeclaration =
 						"?"
+					>>	matches['~']
 					>>	parameterDeclarationList
 					>>	/*omit[string(*/"->"//)]
 					>>   returnDeclarationList
 					>>	':'
 					>>	identifierGrammar
-					>>	matches['=']
 					;
 				functionDeclaration.name("functionDeclaration");
 
@@ -85,12 +85,12 @@ namespace unilang
 				returnDefinitionList.name("returnDefinitionList");
 
 				functionDefinition =
-						parameterDefinitionList
-					>>	omit[string("->")]
+						matches['~']
+					>>	parameterDefinitionList
+					>>	/*omit[string(*/"->"//)]
 					>>   returnDefinitionList
 					>>	':'
 					>>	identifierGrammar
-					>>	matches['=']
 					>>	-statementGrammar.compoundStatement
 					;
 				functionDefinition.name("functionDefinition");
