@@ -8,7 +8,7 @@
 #include "parser/parser.hpp"
 #include "code_generator/code_generator.hpp"
 
-#pragma warning(disable: 4996)		// 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct.
+//#pragma warning(disable: 4996)		// 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct.
 
 //-----------------------------------------------------------------------------
 //! The main unilang namespace
@@ -68,7 +68,7 @@ int main( int argc, char *argv[] )
 
 				try
 				{
-					std::cout << "Compiling: " << pInPath.file_string() << "\n";
+					std::cout << "Compiling: '" << pInPath.file_string() << "'\n";
 					 
 					std::ifstream ifs ( pInPath.file_string() , std::ifstream::in );
 					if(!ifs)
@@ -77,7 +77,7 @@ int main( int argc, char *argv[] )
 					}
 					std::string sSourceCode;
 					// reserve the space in the string
-					ifs.seekg(0, std::ios::end);   
+					ifs.seekg(0, std::ios::end);
 					sSourceCode.reserve(static_cast<size_t>(ifs.tellg()));
 					ifs.seekg(0, std::ios::beg);
 
@@ -86,7 +86,9 @@ int main( int argc, char *argv[] )
 					ifs.close();
 
 					// debug print file
+					std::cout << std::endl << "#########SourceCode#########" << std::endl;
 					std::cout << sSourceCode << std::endl;
+					std::cout << "############################" << std::endl << std::endl;
 					
 					unilang::error_handler<std::string::const_iterator> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
 

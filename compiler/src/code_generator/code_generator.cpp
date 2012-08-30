@@ -1,8 +1,11 @@
 #include "code_generator.hpp"
 
+#pragma warning(push)
+
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4244)		// 'argument' : conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 
 #include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/TargetSelect.h"
@@ -13,6 +16,8 @@
 #include "llvm/Analysis/Passes.h"
 #include "llvm/Target/TargetData.h"
 #include "llvm/Transforms/Scalar.h"
+
+#pragma warning(pop)
 
 #include "../log/log.hpp"
 
@@ -126,7 +131,8 @@ namespace unilang
 
 			llvm::InitializeNativeTarget();
 			llvm::llvm_start_multithreaded();
-
+			
+			std::cout << std::endl << "##########CodeGen###########" << std::endl;
 			for(ast::meta_entity const & meta : AST.metaEntities)
 			{
 				meta.apply_visitor(*this);
@@ -136,6 +142,7 @@ namespace unilang
 			{
 				throw std::runtime_error("Error occured during compilation of module!");
 			}
+			std::cout << "############################" << std::endl << std::endl;
 			
 			std::string ErrStr;
 			if(llvm::verifyModule(*module.get(), llvm::VerifierFailureAction::ReturnStatusAction, &ErrStr))

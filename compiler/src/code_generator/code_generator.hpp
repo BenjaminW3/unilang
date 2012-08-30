@@ -11,10 +11,11 @@
 #pragma warning(disable: 4996)		// unsafe usage of std::copy
 
 #pragma warning(push)
-#pragma warning(disable: 4100)		// unreferenced formal parameter
+//#pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
-#pragma warning(disable: 4355)		// "this" in initializer list
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
+//#pragma warning(disable: 4355)		// "this" in initializer list
 #pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
 #pragma warning(disable: 4245)		// 'return' : conversion from 'int' to 'unsigned int', signed/unsigned mismatch
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
@@ -22,8 +23,10 @@
 
 #include "llvm/LLVMContext.h"
 #include "llvm/Module.h"
-#include "llvm/Support/IRBuilder.h"
+#include "llvm/IRBuilder.h"
 #include "llvm/DerivedTypes.h"
+
+#pragma warning(pop)
 
 namespace unilang 
 { 
@@ -122,4 +125,3 @@ namespace unilang
 		};
 	}
 }
-#pragma warning(pop)

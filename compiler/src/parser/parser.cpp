@@ -24,6 +24,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		ast::module parse_code( std::string const & sSourceCode, error_handler<std::string::const_iterator> & error_handler )
 		{
+			std::cout << std::endl << "###########Parsing##########" << std::endl;
+
 			// The AST we will return
 			ast::module ast;
 
@@ -46,7 +48,7 @@ namespace unilang
 			// return the ast only if it was successfull
 			if (success && cIterBegin == cIterEnd)
 			{
-				std::cout << "Parsing successful!\n";
+				std::cout << "############################" << std::endl << std::endl;
 				return ast;
 			}
 			else

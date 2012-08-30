@@ -49,7 +49,7 @@ namespace unilang
 
 			// add the arguments
 			llvm::Function::arg_iterator AI = TheFunction->arg_begin();
-			for (unsigned Idx = 0, e = x.argument_definitions.size(); Idx != e; ++Idx, ++AI)
+			for (size_t Idx = 0, e = x.argument_definitions.size(); Idx != e; ++Idx, ++AI)
 			{
 				// TODO: Think about order? First all definitions, then parameter passing | one parameter definition and parameter passing a time
 				llvm::Value * V = (*this)(x.argument_definitions[Idx]);
