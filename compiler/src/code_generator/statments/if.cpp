@@ -16,6 +16,7 @@ namespace unilang
 			llvm::Value *CondV = (*this)(x.condition);
 			if (!CondV)
 			{
+				//FIXME: no throw!
 				throw std::runtime_error("Invalid condition!");
 			}
   
@@ -40,6 +41,7 @@ namespace unilang
 			llvm::Value *ThenV = (*this)(x.then);
 			if (!ThenV) 
 			{
+				//FIXME: no throw!
 				throw std::runtime_error("Invalid then block!");
 			}
   
@@ -56,6 +58,7 @@ namespace unilang
 				ElseV = (*this)(x.else_.get());
 				if (!ElseV)
 				{
+					//FIXME: no throw!
 					throw std::runtime_error("Invalid else block!");
 				}
   

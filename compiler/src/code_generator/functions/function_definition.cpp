@@ -55,8 +55,8 @@ namespace unilang
 				llvm::Value * V = (*this)(x.parameter_declarations[Idx]);
 				if (!V)
 				{
-					auto sVarName = x.parameter_declarations[Idx].name.is_initialized() ? " '"+x.parameter_declarations[Idx].name.get().name+"'" : "";
-					return static_cast<llvm::Function*>(ErrorV("Unable to create parameter '"+ sVarName+"'"));
+					const auto sVarName = x.parameter_declarations[Idx].name.is_initialized() ? " '"+x.parameter_declarations[Idx].name.get().name+"'" : "";
+					return static_cast<llvm::Function*>(ErrorV("Unable to create parameter '"+ sVarName+"' from function '"+x.idf.name+"'"));
 				}
 
 				// create storage for the parameter
@@ -68,6 +68,11 @@ namespace unilang
 			for (unsigned int Idx = 0; Idx != x.return_value_definitions.size(); ++Idx)
 			{
 				retValues.push_back((*this)(x.return_value_definitions[Idx]));
+				if(!retValues.back())
+				{
+					const auto sVarName = x.return_value_definitions[Idx].decl.name.is_initialized() ? " '"+x.return_value_definitions[Idx].decl.name.get().name+"'" : "";
+					return static_cast<llvm::Function*>(ErrorV("Unable to create return value '"+ sVarName+"' from function '"+x.idf.name+"'"));
+				}
 			}
 
 			// add body
@@ -81,13 +86,17 @@ namespace unilang
 			else if(retValues.size() == 1)
 			{
 				llvm::Value *RetVal = builder.CreateLoad(retValues[0], "loadret");
+				if(!RetVal)
+				{
+					return static_cast<llvm::Function*>(ErrorV("Unable to create load return from function '"+x.idf.name+"'"));
+				}
 				if(RetVal->getType() != TheFunction->getReturnType())
 				{
 					std::string type_str;
 					llvm::raw_string_ostream rso(type_str);
 					rso << "Trying to return '";
 					RetVal->getType()->print(rso);
-					rso << "' from a function returning '";
+					rso << "' from a function '"+x.idf.name+" 'returning '";
 					TheFunction->getReturnType()->print(rso);
 					rso << "'.";
 					return static_cast<llvm::Function*>(ErrorV("Return type mismatch! "+rso.str()));

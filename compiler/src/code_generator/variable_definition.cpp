@@ -13,7 +13,7 @@ namespace unilang
 		{
 			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
 			TheFunction->getEntryBlock().begin());
-			std::string sTempName = "EntryBlockAlloca_" + VarName;
+			const std::string sTempName = "EntryBlockAlloca_" + VarName;
 			return TmpB.CreateAlloca(pType, 0,  sTempName.c_str());
 		}
 		//-----------------------------------------------------------------------------
@@ -25,7 +25,7 @@ namespace unilang
 			LOG(x);
 
 			// has name?
-			bool bHasName = x.name.is_initialized();
+			const bool bHasName = x.name.is_initialized();
 
 			// redefinition?
 			if(bHasName && getVarFromName(x.name.get().name))
@@ -59,7 +59,7 @@ namespace unilang
 			LOG(x);
 
 			// has name?
-			bool bHasName = x.decl.name.is_initialized();
+			const bool bHasName = x.decl.name.is_initialized();
 
 			// redefinition?
 			if(bHasName && getVarFromName(x.decl.name.get().name))
@@ -81,22 +81,22 @@ namespace unilang
 				}
 				else if(x.parameters.size()==1)
 				{
-					// FIXME: convert initialisation parameter expression to type needed
+					// TODO: if expression not int, convert initialisation parameter expression
 					InitVal = (*this)(*x.parameters.begin());
 					if (!InitVal)
 					{
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
-						auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
 						// TODO: output real parameter number
-						return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable "+sVarName+" of type '"+x.decl.type.type_identifier.name+"'");
+						return ErrorV("Invalid 1. initialisation parameter '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"'");
 					}
 					else if(!InitVal->getType()->isIntegerTy())
 					{
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
-						auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("Expression '"+sstr.str()+"' for variable "+sVarName+" of type '"+x.decl.type.type_identifier.name+"' is not of the required type 'int'.");
+						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is not of the required type 'int'.");
 					}
 				}
 				else
@@ -115,21 +115,21 @@ namespace unilang
 				}
 				else if(x.parameters.size()==1)
 				{
-					// TODO: if epression not float, convert initialisation parameter expression
+					// TODO: if expression not float, convert initialisation parameter expression
 					InitVal = (*this)(*x.parameters.begin());
 					if (!InitVal)
 					{
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
-						auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable "+sVarName+" of type '"+x.decl.type.type_identifier.name+"'");
+						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+						return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"'");
 					}
 					else if(!InitVal->getType()->isFloatingPointTy())
 					{
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
-						auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("Expression '"+sstr.str()+"' for variable "+sVarName+" of type '"+x.decl.type.type_identifier.name+"' is not of the required type 'float'.");
+						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is not of the required type 'float'.");
 					}
 				}
 				else

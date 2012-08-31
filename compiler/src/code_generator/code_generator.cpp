@@ -53,7 +53,7 @@ namespace unilang
 		code_generator::VarData * code_generator::getVarFromName( std::string const & name )
 		{
 			// FIXME: acces to variables defined in previous methods
-			auto it = std::find_if(symbolTable.begin(), symbolTable.end(), 
+			const auto it = std::find_if(symbolTable.begin(), symbolTable.end(), 
 				[&name](VarData const & var){ return (var.getIdentifier() == name); }
 				);
 			if(it!=symbolTable.end())

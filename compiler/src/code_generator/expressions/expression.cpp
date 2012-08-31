@@ -43,7 +43,7 @@ namespace unilang
 				}
 
 				// FIXME: Type upcast possible?
-				//L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"booltmp");
+				//L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"UItoFP");
 
 				L = CreateOperation(L, R, op.operator_);
 			}
@@ -54,7 +54,15 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * code_generator::CreateOperation(llvm::Value * L, llvm::Value * R, ast::optoken const & op)
 		{
-			if(L->getType() == R->getType())
+			if(!L)
+			{
+				return ErrorV( "Invalid L Value for operand." );
+			}
+			else if(!R)
+			{
+				return ErrorV( "Invalid R Value for operand." );
+			}
+			else if(L->getType() == R->getType())
 			{
 				if(L->getType()->isFloatingPointTy())
 				{
