@@ -29,13 +29,13 @@ namespace unilang
 			ast::function_declaration decl;
 			decl.idf = x.idf;
 			decl.unpureQualifier = x.unpureQualifier;
-			for(ast::variable_definition const & x : x.argument_definitions)
+			for(ast::variable_declaration const & x : x.parameter_declarations)
 			{
-				decl.argument_types.push_back(x.type);
+				decl.parameter_types.push_back(x.type);
 			}
 			for(ast::variable_definition const & x : x.return_value_definitions)
 			{
-				decl.return_types.push_back(x.type);
+				decl.return_types.push_back(x.decl.type);
 			}
 			llvm::Function *TheFunction = (*this)(decl);
 			if (TheFunction == 0)
@@ -47,18 +47,19 @@ namespace unilang
 			llvm::BasicBlock *BB = llvm::BasicBlock::Create(context, "entry", TheFunction);
 			builder.SetInsertPoint(BB);
 
-			// add the arguments
+			// add the parameters
 			llvm::Function::arg_iterator AI = TheFunction->arg_begin();
-			for (size_t Idx = 0, e = x.argument_definitions.size(); Idx != e; ++Idx, ++AI)
+			for (size_t Idx = 0, e = x.parameter_declarations.size(); Idx != e; ++Idx, ++AI)
 			{
-				// TODO: Think about order? First all definitions, then parameter passing | one parameter definition and parameter passing a time
-				llvm::Value * V = (*this)(x.argument_definitions[Idx]);
+				// TODO: Think about order? l->r, r->l
+				llvm::Value * V = (*this)(x.parameter_declarations[Idx]);
 				if (!V)
 				{
-					return static_cast<llvm::Function*>(ErrorV("Unable to create argument!"));
+					auto sVarName = x.parameter_declarations[Idx].name.is_initialized() ? " '"+x.parameter_declarations[Idx].name.get().name+"'" : "";
+					return static_cast<llvm::Function*>(ErrorV("Unable to create parameter '"+ sVarName+"'"));
 				}
 
-				// Store the initial value into the var.
+				// create storage for the parameter
 				builder.CreateStore(AI, V);
 			}
 

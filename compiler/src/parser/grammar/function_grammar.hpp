@@ -70,7 +70,7 @@ namespace unilang
 
 				parameterDefinitionList =
 						'('
-					>>	-( expressionGrammar.variableDefinition % ',')
+					>>	-( expressionGrammar.variableDeclaration % ',')
 					>>	')'
 					;
 				parameterDefinitionList.name("parameterDefinitionList");
@@ -115,7 +115,7 @@ namespace unilang
 			qi::rule<Iterator, std::list<ast::type_declaration>(), skipper<Iterator> > parameterDeclarationList;
 			qi::rule<Iterator, std::list<ast::type_declaration>(), skipper<Iterator> > returnDeclarationList;
 			qi::rule<Iterator, ast::function_declaration(), skipper<Iterator> > functionDeclaration;
-			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > parameterDefinitionList;
+			qi::rule<Iterator, std::list<ast::variable_declaration>(), skipper<Iterator> > parameterDefinitionList;
 			qi::rule<Iterator, std::list<ast::variable_definition>(), skipper<Iterator> > returnDefinitionList;
 			qi::rule<Iterator, ast::function_definition(), skipper<Iterator> > functionDefinition;
 		};

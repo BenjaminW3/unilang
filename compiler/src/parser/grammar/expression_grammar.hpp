@@ -183,23 +183,34 @@ namespace unilang
 					;
 				typeDeclaration.name("typeDeclaration");
 
-				variableDefinitionSeperator = 
+				variableTypeIdfSeperator = 
 					lit(":")
 					;
-				variableDefinitionSeperator.name("variableDefinitionSeperator");
+				variableTypeIdfSeperator.name("variableTypeIdfSeperator");
 
-				variableDefinitionIdentifier = 
-					/*	variableDefinitionSeperator
+				variableIdentifier = 
+						/*':'variableDefinitionSeperator
 					>>*/	identifierGrammar
 					;
-				variableDefinitionIdentifier.name("variableDefinitionIdentifier");
+				variableIdentifier.name("variableIdentifier");
 				
+				
+				// A Variable Declaration is of the form [<type-qualifier>]<type>[:<identifier>]
+				// <type-qualifier> can be '~'
+				// <type> one of the predefined or user define types
+				// <identifier> can be: -empty
+				//						-a user defined identifier
+				variableDeclaration =
+						typeDeclaration
+					>>	variableTypeIdfSeperator
+					>>	-(variableIdentifier)
+					;
+				variableDefinition.name("variableDeclaration");
+
 				parameterList = 
-					-(
-						'('
-						>>	-( expression % ',')
-						>>	')'
-					)
+					'('
+					>>	-( expression % ',')
+					>>	')'
 					;
 				parameterList.name("parameterList");
 
@@ -208,13 +219,10 @@ namespace unilang
 				// <type> one of the predefined or user define types
 				// <identifier> can be: -empty
 				//						-a user defined identifier
-				// <parameterList> can be:	-empty, 
-				//							-'()' 
+				// <parameterList> can be:	-'()' 
 				//							-a list of expressions seperated by ',' surrounded by '(',')'
 				variableDefinition =
-						typeDeclaration
-					>>	variableDefinitionSeperator
-					>>	-variableDefinitionIdentifier
+						variableDeclaration
 					>>	parameterList
 					;
 				variableDefinition.name("variableDefinition");
@@ -236,8 +244,9 @@ namespace unilang
 					(argumentList)
 					(mutableQualifier)
 					(typeDeclaration)
-					(variableDefinitionIdentifier)
+					(variableIdentifier)
 					(parameterList)
+					(variableDeclaration)
 					(variableDefinition)
 				);
 #endif
@@ -278,9 +287,10 @@ namespace unilang
 			qi::rule<Iterator, bool(), skipper<Iterator> > mutableQualifier;
 			qi::rule<Iterator, ast::type_declaration(), skipper<Iterator> > typeDeclaration;
 			
-			qi::rule<Iterator, skipper<Iterator> > variableDefinitionSeperator;
-			qi::rule<Iterator, ast::identifier(), skipper<Iterator> > variableDefinitionIdentifier;
-			qi::rule<Iterator, boost::optional<std::list<ast::expression>>(), skipper<Iterator> > parameterList;
+			qi::rule<Iterator, skipper<Iterator> > variableTypeIdfSeperator;
+			qi::rule<Iterator, /*boost::optional<*/ast::identifier/*>*/(), skipper<Iterator> > variableIdentifier;
+			qi::rule<Iterator, std::list<ast::expression>(), skipper<Iterator> > parameterList;
+			qi::rule<Iterator, ast::variable_declaration(), skipper<Iterator> > variableDeclaration;
 			qi::rule<Iterator, ast::variable_definition(), skipper<Iterator> > variableDefinition;
 		};
 	}

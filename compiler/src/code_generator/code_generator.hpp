@@ -76,6 +76,7 @@ namespace unilang
 			llvm::Value * operator()(ast::expression const & x);
 			llvm::Value * operator()(ast::operand const & x);
 			llvm::Value * operator()(ast::assignment const & x);
+			llvm::Value * operator()(ast::variable_declaration const & x);
 			llvm::Value * operator()(ast::variable_definition const & x);
 			llvm::Value * operator()(ast::statement_list const & x);
 			llvm::Value * operator()(ast::statement const & x);

@@ -16,19 +16,19 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			// create list of argument types
-			std::vector<llvm::Type*> vpArgumentTypes;
-			for( ast::type_declaration const & typeDecl : x.argument_types)
+			// create list of parameters types
+			std::vector<llvm::Type*> vpParameterTypes;
+			for( ast::type_declaration const & typeDecl : x.parameter_types)
 			{
 				//FIXME: mutable not saved.
-				vpArgumentTypes.push_back(getTypeByName(typeDecl.type_identifier.name));
+				vpParameterTypes.push_back(getTypeByName(typeDecl.type_identifier.name));
 			}
 			
 			// create return type
 			// FIXME: only one return value/type
 			llvm::Type* pReturnType = getTypeByName((*x.return_types.begin()).type_identifier.name);
 
-			llvm::FunctionType *FT = llvm::FunctionType::get(pReturnType,	vpArgumentTypes, false);
+			llvm::FunctionType *FT = llvm::FunctionType::get(pReturnType,	vpParameterTypes, false);
 
 			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x.idf.name, module.get());
 
@@ -46,21 +46,21 @@ namespace unilang
 				}
     
 				// If F took a different number of args, reject it.
-				if (F->arg_size() != x.argument_types.size())
+				if (F->arg_size() != x.parameter_types.size())
 				{
-					return static_cast<llvm::Function*>(ErrorV("Definition of function "+x.idf.name+"' with different number of arguments then previous declaration!"));	// TODO: Log numbers
+					return static_cast<llvm::Function*>(ErrorV("Definition of function "+x.idf.name+"' with different number of parameters then previous declaration!"));	// TODO: Log numbers
 				}
 
 				unsigned int uiArg=0;
 				for (llvm::Function::arg_iterator AI = F->arg_begin(); AI != F->arg_end();	++AI, ++uiArg)
 				{
-					llvm::Type * pDefType = getTypeByName(x.argument_types[uiArg].type_identifier.name);
+					llvm::Type * pDefType = getTypeByName(x.parameter_types[uiArg].type_identifier.name);
 					//FIXME: mutable not checked.
 					if(AI->getType()!=pDefType)
 					{
 						std::string type_str;
 						llvm::raw_string_ostream rso(type_str);
-						rso << "Definition of function "+x.idf.name+"' differs from declaration in " << uiArg+1 << ". argument type. '";
+						rso << "Definition of function "+x.idf.name+"' differs from declaration in " << uiArg+1 << ". parameter type. '";
 						AI->getType()->print(rso);
 						rso << "' was declared but '";
 						pDefType->print(rso);
@@ -71,14 +71,14 @@ namespace unilang
 			}
 
 			// declared types do not have names!
-			/*// Set names for all arguments.
+			/*// Set names for all parameters.
 			unsigned int Idx = 0;
-			for (llvm::Function::arg_iterator AI = F->arg_begin(); Idx != x.argument_types.size();	++AI, ++Idx) 
+			for (llvm::Function::arg_iterator AI = F->arg_begin(); Idx != x.parameter_types.size();	++AI, ++Idx) 
 			{
-				if(x.argument_types[Idx].identifier.is_initialized())
+				if(x.parameter_types[Idx].identifier.is_initialized())
 				{
-					// FIXME check for conflicting argument names
-					AI->setName(x.argument_types[Idx].identifier.name.get().name);
+					// FIXME check for conflicting parameter names
+					AI->setName(x.parameter_types[Idx].identifier.name.get().name);
 				}
 			}*/
 

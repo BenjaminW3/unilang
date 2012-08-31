@@ -46,20 +46,27 @@ namespace unilang
 			{
 				return isPure(x.operand_);
 			}
+			bool isPure(ast::type_declaration const & x)
+			{
+				// it has to be non mutable
+				return (!x.mutableQualifier);
+			}
+			bool isPure(ast::variable_declaration const & x)
+			{
+				// it has to be non mutable
+				return isPure(x.type);
+			}
 			bool isPure(ast::variable_definition const & x)
 			{
 				// FIXME: constructor has to be pure!
 
 				// all parameters have to be pure
-				if(x.parameters.is_initialized())
+				for(ast::expression const & ex : x.parameters)
 				{
-					for(ast::expression const & ex : x.parameters.get())
-					{
-						if(!isPure(ex)) {return false;}
-					}
+					if(!isPure(ex)) {return false;}
 				}
 				// it has to be non mutable
-				return (!x.type.mutableQualifier);
+				return isPure(x.decl);
 			}
 			bool isPure(ast::operation const & x)
 			{
@@ -128,7 +135,16 @@ namespace unilang
 			}
 			bool isPure(ast::function_definition const & x)
 			{
-				return false;
+				if(x.unpureQualifier){return false;}
+				for(ast::variable_definition const & ret : x.return_value_definitions)
+				{
+					if(!isPure(ret)) {return false;}
+				}
+				for(ast::variable_declaration const & arg : x.parameter_declarations)
+				{
+					if(!isPure(arg)) {return false;}
+				}
+				return isPure(x.body);
 			}
 		}
 	}

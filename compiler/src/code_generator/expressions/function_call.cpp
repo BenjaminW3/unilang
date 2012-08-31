@@ -18,7 +18,7 @@ namespace unilang
 
 			// Look up the name in the global module table.
 			llvm::Function *CalleeF = module->getFunction(x.idf.name);
-			if (CalleeF == 0)
+			if (!CalleeF)
 			{
 				return ErrorV("Unknown function '"+x.idf.name+"' referenced!");
 			}
@@ -41,7 +41,7 @@ namespace unilang
 				{
 					std::stringstream sstr;
 					sstr << ex;
-					return ErrorV("Invalid argument returned from '" +sstr.str()+ "'!");
+					return ErrorV("Invalid argument returned from '" +sstr.str()+ "' !");
 				}
 
 				if(ArgsV.back()->getType()!=(*itArg).getType())

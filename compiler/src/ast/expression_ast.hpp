@@ -168,30 +168,38 @@ namespace unilang
 			out << x.type_identifier;
 			return out;
 		}
-		
 		//#########################################################################
-		//! A variable definition.
+		//! A variable declaration.
 		//#########################################################################
-		struct variable_definition : public ast_base
+		struct variable_declaration : public ast_base
 		{
 			type_declaration type;
 			boost::optional<identifier> name;
-			boost::optional<std::list<expression>> parameters;
 		};
-		inline std::ostream& operator<<(std::ostream& out, variable_definition const& x)
+		inline std::ostream& operator<<(std::ostream& out, variable_declaration const& x)
 		{
 			out << x.type;
 			if(x.name.is_initialized())
 			{
 				out << ":" << x.name.get().name;
 			}
-			out << "(";
-			if(x.parameters.is_initialized())
+			return out;
+		}
+
+		//#########################################################################
+		//! A variable definition.
+		//#########################################################################
+		struct variable_definition : public ast_base
+		{
+			variable_declaration decl;
+			std::list<expression> parameters;
+		};
+		inline std::ostream& operator<<(std::ostream& out, variable_definition const& x)
+		{
+			out << x.decl;
+			for(expression const & ex : x.parameters)
 			{
-				for(expression const & ex : x.parameters.get())
-				{
-					out << ex;
-				}
+				out << ex;
 			}
 			out << ")";
 			return out;
@@ -248,8 +256,13 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable_definition,
+    unilang::ast::variable_declaration,
     (unilang::ast::type_declaration, type)
     (boost::optional<unilang::ast::identifier>, name)
-    (boost::optional<std::list<unilang::ast::expression>>, parameters)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    unilang::ast::variable_definition,
+    (unilang::ast::variable_declaration, decl)
+    (std::list<unilang::ast::expression>, parameters)
 )

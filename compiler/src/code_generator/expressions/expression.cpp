@@ -25,7 +25,7 @@ namespace unilang
 			LOG(x);
 
 			llvm::Value *L = x.first.apply_visitor(*this);
-			if (L == 0)
+			if (!L)
 			{
 				std::stringstream sstr;
 				sstr << "Operand '" << x.first << "' in expression '" << x << "' could not be evaluated!";
@@ -35,7 +35,7 @@ namespace unilang
 			for( ast::operation const & op : x.rest)
 			{
 				llvm::Value *R = op.operand_.apply_visitor(*this);
-				if (R == 0)
+				if (!R)
 				{
 					std::stringstream sstr;
 					sstr << "Operand '" << op.operand_ << "' in expression '" << x << "' could not be evaluated!";
