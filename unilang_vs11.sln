@@ -7,6 +7,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution 
 	ProjectSection(SolutionItems) = preProject
 		README.txt = README.txt
 		TODO.txt = TODO.txt
+		unilang.ico = unilang.ico
+		unilang.png = unilang.png
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test_programs", "test_programs", "{93D89A7E-5475-491F-AE76-7227A72CBE8D}"
