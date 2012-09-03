@@ -8,12 +8,73 @@
 
 namespace unilang
 {
-    ///////////////////////////////////////////////////////////////////////////////
+   ///////////////////////////////////////////////////////////////////////////////
     //  The annotation handler links the AST to a map of iterator positions
     //  for the purpose of subsequent semantic error handling when the
     //  program is being compiled.
     ///////////////////////////////////////////////////////////////////////////////
-/*    template <typename Iterator>
+    struct set_annotation_id
+    {
+        typedef void result_type;
+
+        size_t id;
+        set_annotation_id(size_t id) : id(id) {}
+
+        void operator()(ast::function_call& x) const
+        {
+            x.idf.id = id;
+        }
+
+        template <typename T>
+        void dispatch(T& x, boost::mpl::true_) const
+        {
+            x.id = id;
+        }
+
+        template <typename T>
+        void dispatch(T& x, boost::mpl::false_) const
+        {
+            // no-op
+        }
+
+        template <typename T>
+        void operator()(T& x) const
+        {
+            typename boost::is_base_of<ast::tagged, T> is_tagged;
+            dispatch(x, is_tagged);
+        }
+    };
+
+    struct get_annotation_id
+    {
+        typedef size_t result_type;
+
+        size_t operator()(ast::function_call& x) const
+        {
+            return x.idf.id;
+        }
+
+        template <typename T>
+        size_t dispatch(T& x, boost::mpl::true_) const
+        {
+            return x.id;
+        }
+
+        template <typename T>
+        size_t dispatch(T& x, boost::mpl::false_) const
+        {
+            return -1;
+        }
+
+        template <typename T>
+        size_t operator()(T& x) const
+        {
+            typename boost::is_base_of<ast::tagged, T> is_tagged;
+            return dispatch(x, is_tagged);
+        }
+    };
+
+    template <typename Iterator>
     struct annotation
     {
         template <typename, typename>
@@ -23,66 +84,48 @@ namespace unilang
         annotation(std::vector<Iterator>& iters)
           : iters(iters) {}
 
-        struct set_id
-        {
-            typedef void result_type;
-
-            int id;
-            set_id(int id) : id(id) {}
-
-            void operator()(ast::function_call& x) const
-            {
-                x.idf.id = id;
-            }
-
-            void operator()(ast::identifier& x) const
-            {
-                x.id = id;
-            }
-#if defined(_MSC_VER)
-#pragma warning(disable: 4100)	// warning C4100: 'x' : unreferenced formal parameter
-#endif
-            template <typename T>
-            void operator()(T& x) const
-            {
-                // no-op
-            }
-        };
-#if defined(_MSC_VER)
-#pragma warning(default: 4100)
-#endif
         void operator()(ast::operand& ast, Iterator pos) const
         {
-            int id = iters.size();
+            size_t id = iters.size();
             iters.push_back(pos);
-            boost::apply_visitor(set_id(id), ast);
+            boost::apply_visitor(set_annotation_id(id), ast);
+            ast.id = id;
         }
+
+        /*void operator()(ast::primary_expr& ast, Iterator pos) const
+        {
+            size_t id = iters.size();
+            iters.push_back(pos);
+            boost::apply_visitor(set_annotation_id(id), ast);
+            ast.id = id;
+        }*/
+
         void operator()(ast::variable_declaration& ast, Iterator pos) const
         {
-            int id = iters.size();
+            size_t id = iters.size();
             iters.push_back(pos);
             ast.lhs.id = id;
         }
 
         void operator()(ast::assignment& ast, Iterator pos) const
         {
-            int id = iters.size();
+            size_t id = iters.size();
             iters.push_back(pos);
             ast.lhs.id = id;
         }
 
-        void operator()(ast::return_statement& ast, Iterator pos) const
+        /*void operator()(ast::return_statement& ast, Iterator pos) const
         {
-            int id = iters.size();
+            size_t id = iters.size();
             iters.push_back(pos);
             ast.id = id;
-        }
+        }*/
 
         void operator()(ast::identifier& ast, Iterator pos) const
         {
-            int id = iters.size();
+            size_t id = iters.size();
             iters.push_back(pos);
             ast.id = id;
         }
-    };*/
+    };
 }
