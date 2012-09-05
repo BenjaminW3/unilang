@@ -23,7 +23,6 @@ namespace unilang
 			functionGrammar(error_handler, identifierGrammar, expressionGrammar, statementGrammar, lexer)
 		{
 			qi::_1_type _1;
-			//qi::_2_type _2;
 			qi::_3_type _3;
 			qi::_4_type _4;
 
@@ -46,7 +45,8 @@ namespace unilang
 			);
 #endif
 			// Error handling: on error in start, call error_handler.
-			on_error<fail>(module, error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(metaEntityList,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(module,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
 			//on_success(metaEntityList, annotation_function(error_handler.iters)(_val, _1));

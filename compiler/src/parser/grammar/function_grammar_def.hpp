@@ -24,13 +24,8 @@ namespace unilang
 			: function_grammar::base_type(functionDefinition, "function_grammar")
 		{
 			qi::_1_type _1;
-			//qi::_2_type _2;
 			qi::_3_type _3;
 			qi::_4_type _4;
-
-			//qi::_val_type _val;
-			qi::string_type string;
-			qi::matches_type matches;
 
 			using qi::on_error;
 			using qi::on_success;
@@ -42,48 +37,48 @@ namespace unilang
 
 			parameterDeclarationList =
 					'('
-				>>	-( expressionGrammar.typeDeclaration % ',')
-				>>	')'
+				>	-( expressionGrammar.typeDeclaration % ',')
+				>	')'
 				;
 			parameterDeclarationList.name("parameterDeclarationList");
 
 			returnDeclarationList =
 					'('
-				>>	-( expressionGrammar.typeDeclaration % ',')
-				>>	')'
+				>	-( expressionGrammar.typeDeclaration % ',')
+				>	')'
 				;
 			returnDeclarationList.name("returnDeclarationList");
 
 			functionDeclaration =
 					'?'
-				>>	matches['~']
-				>>	parameterDeclarationList
-				>>	lexer("->")
-				>>  returnDeclarationList
-				>>	':'
-				>>	identifierGrammar
+				>	expressionGrammar.mutableQualifier
+				>	parameterDeclarationList
+				>	lexer("->")
+				>	returnDeclarationList
+				>	':'
+				>	identifierGrammar
 				;
 			functionDeclaration.name("functionDeclaration");
 
 			parameterDefinitionList =
 					'('
-				>>	-( expressionGrammar.variableDeclaration % ',')
-				>>	')'
+				>	-( expressionGrammar.variableDeclaration % ',')
+				>	')'
 				;
 			parameterDefinitionList.name("parameterDefinitionList");
 
 			returnDefinitionList =
 					'('
-				>>	-( expressionGrammar.variableDefinition % ',')
-				>>	')'
+				>	-( expressionGrammar.variableDefinition % ',')
+				>	')'
 				;
 			returnDefinitionList.name("returnDefinitionList");
 
 			functionDefinition =
-					matches['~']
+					expressionGrammar.mutableQualifier
 				>>	parameterDefinitionList
 				>>	lexer("->")
-				>>  returnDefinitionList
+				>>	returnDefinitionList
 				>>	':'
 				>>	identifierGrammar
 				>>	-statementGrammar.compoundStatement
@@ -101,7 +96,12 @@ namespace unilang
 			);
 #endif
 			// Error handling: on error in start, call error_handler.
-			on_error<fail>(functionDefinition, error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(parameterDeclarationList,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(returnDeclarationList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(functionDeclaration,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(parameterDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(returnDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(functionDefinition,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
 			/*on_success(identifier, annotation_function(error_handler.iters)(_val, _1));*/

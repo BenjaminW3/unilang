@@ -22,17 +22,11 @@ namespace unilang
 			: expression_grammar::base_type(expression, "expression_grammar")
 		{
 			qi::_1_type _1;
-			//qi::_2_type _2;
 			qi::_3_type _3;
 			qi::_4_type _4;
 			qi::_val_type _val;
 
 			qi::tokenid_mask_type tokenid_mask;
-
-			//qi::real_parser<long double, qi::strict_real_policies<long double> > float_; // needed because the float_type parser would parse all integers
-			//qi::uint_type uint_;
-			//qi::lit_type lit;
-			//qi::omit_type omit;
 			qi::matches_type matches;
 
 			using qi::on_error;
@@ -64,10 +58,10 @@ namespace unilang
 			postfix_expr.name("postfix_expr");
 
 			primary_expr =
-					lexer.lit_float		// float_
-				|	lexer.lit_uint		// uint_
-				|	lexer.lit_int		// int_
-				|   lexer.lit_boolean	// bool_
+					lexer.lit_float
+				|	lexer.lit_uint
+				|	lexer.lit_int
+				|   lexer.lit_boolean
 				|   identifierGrammar
 				|	variableDefinition
 				|   '(' > expression > ')'
@@ -78,10 +72,9 @@ namespace unilang
 			argumentList.name("argumentList");
 
 			functionCall =
-					identifierGrammar
-					>> '('
-					>>   argumentList
-					>>   ')'
+					(identifierGrammar	>> '(')
+					>>   argumentList		// TODO >
+					>>   ')'				// TODO >
 				;
 			functionCall.name("functionCall");
 
@@ -96,7 +89,7 @@ namespace unilang
 				;
 			typeDeclaration.name("typeDeclaration");
 
-			boost::spirit::eps_type eps;
+			//boost::spirit::eps_type eps;
 			variableIdentifier =
 				-(
 					/*	':'
@@ -105,8 +98,7 @@ namespace unilang
 				)
 				;
 			variableIdentifier.name("variableIdentifier");
-				
-				
+
 			// A Variable Declaration is of the form [<type-qualifier>]<type>[:<identifier>]
 			// <type-qualifier> can be '~'
 			// <type> one of the predefined or user define types
@@ -117,7 +109,7 @@ namespace unilang
 				>>	':'
 				>>	variableIdentifier
 				;
-			variableDefinition.name("variableDeclaration");
+			variableDeclaration.name("variableDeclaration");
 
 			parameterList = 
 				'('
@@ -152,14 +144,25 @@ namespace unilang
 				(mutableQualifier)
 				(typeDeclaration)
 				(variableIdentifier)
-				(parameterList)
 				(variableDeclaration)
+				(parameterList)
 				(variableDefinition)
 			);
 #endif
 			///////////////////////////////////////////////////////////////////////
 			// Error handling: on error in expr, call error_handler.
-			on_error<fail>(	expression, error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	expression,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	unary_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	postfix_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	primary_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	functionCall,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	argumentList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	mutableQualifier,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	typeDeclaration,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	variableIdentifier,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	variableDeclaration,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	parameterList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	variableDefinition,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			///////////////////////////////////////////////////////////////////////
 			// Annotation: on success, call annotation.

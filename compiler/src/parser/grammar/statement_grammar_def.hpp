@@ -21,7 +21,6 @@ namespace unilang
 			: statement_grammar::base_type(statementList, "statement_grammar")
 		{
 			qi::_1_type _1;
-			qi::_2_type _2;
 			qi::_3_type _3;
 			qi::_4_type _4;
 
@@ -31,7 +30,7 @@ namespace unilang
 			using qi::on_success;
 			using qi::fail;
 			using boost::phoenix::function;
-			using boost::phoenix::val;
+			//using boost::phoenix::val;
 
 			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
 			//typedef function<unilang::annotation<Iterator> > annotation_function;
@@ -46,47 +45,45 @@ namespace unilang
 				
 			expressionStatement =
 					expressionGrammar
-				>>	';'
+				>	';'
 				;
 			expressionStatement.name("expressionStatement");
 
 			ifStatement =
 					lexer("if")
-				>>	'('
-				>>	expressionGrammar
-				>>	')'
-				>>	'{'
-				>>   statementList
-				>>	'}'
-				>>
-					-(
+				>	'('
+				>	expressionGrammar
+				>	')'
+				>	compoundStatement
+				>	-(
 						lexer("else")
-					>>	'{'
-					>>   statementList
-					>>	'}'
+					>	compoundStatement
 					)
 				;
 			ifStatement.name("ifStatement");
 
 			/*whileStatement =
 					lexer("while")
-				>>   '('
-				>>   expressionGrammar
-				>>   ')'
-				>>   statementlist
+				>   '('
+				>   expressionGrammar
+				>   ')'
+				>	'{'
+				>   statementlist
+				>	'}'
 				;
 			whileStatement.name("whileStatement");*/
 
 
 			/*returnStatement =
-					lexeme["return" >> !(alnum | '_')] // make sure we have whole words
-				>>   ';'
+					lexer("return") 
+				>	-expressionGrammar
+				>   ';'
 				;
 			returnStatement.name("returnStatement");*/
 
 			compoundStatement =
 					'{'
-				>>	-statementList
+				>>	statementList
 				>>	'}'
 				;
 			compoundStatement.name("compoundStatement");
@@ -120,7 +117,13 @@ namespace unilang
 			);
 #endif
 			// Error handling: on error in statement_list, call error_handler.
-			on_error<fail>(statementList, error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(assignmentStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(expressionStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(ifStatement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			//on_error<fail>(whileStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			//on_error<fail>(returnStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(statement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(statementList,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
 			/*on_success(assignmentStatement, annotation_function(error_handler.iters)(_val, _1));
