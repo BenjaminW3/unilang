@@ -2,6 +2,8 @@
 
 #include "../log/log.hpp"
 
+#include "llvm/Support/raw_ostream.h"
+
 namespace unilang 
 { 
 	namespace code_generator
@@ -45,7 +47,7 @@ namespace unilang
 			// remember this variable in symbol table
 			if(bHasName)
 			{
-				symbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.type.mutableQualifier));
+				vLocalSymbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.type.mutableQualifier));
 			}
 
 			return Alloca;
@@ -93,10 +95,16 @@ namespace unilang
 					}
 					else if(!InitVal->getType()->isIntegerTy())
 					{
+						std::string type_str;
+						llvm::raw_string_ostream rso(type_str);
+						InitVal->getType()->print(rso);
+
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
+
 						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is not of the required type 'int'.");
+
+						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
 					}
 				}
 				else
@@ -126,10 +134,19 @@ namespace unilang
 					}
 					else if(!InitVal->getType()->isFloatingPointTy())
 					{
+						// FIXME: Type upcast possible?
+						//L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"UItoFP");
+						
+						std::string type_str;
+						llvm::raw_string_ostream rso(type_str);
+						InitVal->getType()->print(rso);
+
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
+
 						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is not of the required type 'float'.");
+
+						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
 					}
 				}
 				else
@@ -147,7 +164,7 @@ namespace unilang
 			// remember this variable in symbol table
 			if(bHasName)
 			{
-				symbolTable.push_back(code_generator::VarData(x.decl.name.get().name, Alloca, x.decl.type.mutableQualifier));
+				vLocalSymbolTable.push_back(code_generator::VarData(x.decl.name.get().name, Alloca, x.decl.type.mutableQualifier));
 			}
 
 			return Alloca;

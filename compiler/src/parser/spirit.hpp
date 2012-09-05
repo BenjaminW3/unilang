@@ -10,11 +10,18 @@
 ///////////////////////////////////////////////////////////////////////////////
 
 ///////////////////////////////////////////////////////////////////////////////
-// Uncomment this if you want to enable debuggin
+// Uncomment this if you want to enable debugging
 #ifdef _DEBUG
 	#define BOOST_SPIRIT_QI_DEBUG
 #endif
 ///////////////////////////////////////////////////////////////////////////////
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4100)		// unreferenced formal parameter
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4512)		// assignment operator could not be generated
+#endif
 
 //#define BOOST_SPIRIT_USE_PHOENIX_V3 1
 
@@ -26,3 +33,7 @@
 #include <boost/spirit/include/phoenix_function.hpp>
 
 #include <boost/spirit/include/qi.hpp>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

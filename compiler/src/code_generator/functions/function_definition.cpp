@@ -3,7 +3,6 @@
 #include "../../log/log.hpp"
 
 #include "llvm/Support/raw_ostream.h"
-
 #include "llvm/Analysis/Verifier.h"
 
 namespace unilang 
@@ -17,7 +16,7 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 
-			symbolTable.clear();
+			vLocalSymbolTable.clear();
 
 			// purity test
 			/*if (x.decl.pureQualifier && x.body)

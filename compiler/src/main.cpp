@@ -4,11 +4,8 @@
 
 #include <filesystem>
 
-#include "parser/error_handler.hpp"
 #include "parser/parser.hpp"
 #include "code_generator/code_generator.hpp"
-
-//#pragma warning(disable: 4996)		// 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct.
 
 //-----------------------------------------------------------------------------
 //! The main unilang namespace
@@ -76,13 +73,11 @@ int main( int argc, char *argv[] )
 						throw std::runtime_error("Unable to open file: "+pInPath.file_string());
 					}
 					std::string sSourceCode;
-					// reserve the space in the string
-					ifs.seekg(0, std::ios::end);
-					sSourceCode.reserve(static_cast<size_t>(ifs.tellg()));
-					ifs.seekg(0, std::ios::beg);
-
-					sSourceCode.assign((std::istreambuf_iterator<char>(ifs)),
-										std::istreambuf_iterator<char>());
+					ifs.unsetf(std::ios::skipws); // No white space skipping!
+					std::copy(
+								std::istream_iterator<char>(ifs),
+								std::istream_iterator<char>(),
+								std::back_inserter(sSourceCode));
 					ifs.close();
 
 					// debug print file
@@ -90,9 +85,7 @@ int main( int argc, char *argv[] )
 					std::cout << sSourceCode << std::endl;
 					std::cout << "############################" << std::endl << std::endl;
 					
-					unilang::error_handler<std::string::const_iterator> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
-
-					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode, error_handler );
+					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode );
 
 					unilang::code_generator::code_generator gen( AST );
 				}
@@ -144,21 +137,17 @@ int main( int argc, char *argv[] )
 						throw std::runtime_error("Unable to open file: "+pInPath.file_string());
 					}
 					std::string sSourceCode;
-					// reserve the space in the string
-					ifs.seekg(0, std::ios::end);   
-					sSourceCode.reserve(static_cast<size_t>(ifs.tellg()));
-					ifs.seekg(0, std::ios::beg);
-
-					sSourceCode.assign((std::istreambuf_iterator<char>(ifs)),
-										std::istreambuf_iterator<char>());
+					ifs.unsetf(std::ios::skipws); // No white space skipping!
+					std::copy(
+								std::istream_iterator<char>(ifs),
+								std::istream_iterator<char>(),
+								std::back_inserter(sSourceCode));
 					ifs.close();
 
 					// debug print file
 					std::cout << sSourceCode << std::endl;
 					
-					unilang::error_handler<std::string::const_iterator> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
-
-					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode, error_handler );
+					unilang::ast::module AST = unilang::parser::parse_code( sSourceCode );
 
 					unilang::code_generator::code_generator gen( AST );
 				}

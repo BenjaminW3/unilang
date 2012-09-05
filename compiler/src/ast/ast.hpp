@@ -1,13 +1,16 @@
 #pragma once
 
+#include "ast_base.hpp"
 #include "identifier_ast.hpp"
 #include "expression_ast.hpp"
 #include "statement_ast.hpp"
 #include "function_ast.hpp"
 
-#include <boost/config/warning_disable.hpp>
-#include <boost/variant/recursive_variant.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/variant/recursive_variant.hpp>
+#include <boost/spirit/include/support_extended_variant.hpp>
+
+#include <ostream>
 #include <list>
 
 namespace unilang 
@@ -17,18 +20,25 @@ namespace unilang
 		//#########################################################################
 		//! structure/type/object definitions.
 		//#########################################################################
-		typedef boost::variant<
-			function_declaration,
-			function_definition
-		> meta_entity;
+		struct meta_entity :	public ast_base,
+								boost::spirit::extended_variant<	function_declaration, 
+																	function_definition
+																>
+		{
+			meta_entity();
+			meta_entity(function_declaration val);
+			meta_entity(function_definition val);
+		};
+		std::ostream& operator<<(std::ostream& out, meta_entity const& x);
 		
 		//#########################################################################
 		//! A module.
 		//#########################################################################
-		struct module
+		struct module : public ast_base
 		{
 			std::list<meta_entity> metaEntities;
 		};
+		std::ostream& operator<<(std::ostream& out, module const& x);
 	}
 }
 

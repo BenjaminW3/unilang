@@ -30,34 +30,47 @@ namespace unilang
 				}
 				else
 				{
-					if(!V->getAllocaInst())
+					llvm::AllocaInst *lhs = V->getAllocaInst();
+					if(!lhs)
 					{
 						return InternalErrorV("Variable '"+x.lhs.name+"' is not allocated!");
 					}
 					else
 					{
 						// Codegen the RHS.
-						llvm::Value *Val = (*this)(x.rhs);
-						if(!Val)
+						llvm::Value *rhs = (*this)(x.rhs);
+						if(!rhs)
 						{
 							return ErrorV("Invalid right hand side of an assignment!");
 						}
 						// ->getPointerElementType()
-						if(Val->getType()!=V->getAllocaInst()->getType()->getElementType())
+						if(rhs->getType()!=lhs->getType()->getElementType())
 						{
 							std::string type_str;
 							llvm::raw_string_ostream rso(type_str);
 							rso << "Trying to assign a value of type '";
-							Val->getType()->print(rso);
+							rhs->getType()->print(rso);
 							rso << "' to a value of type '";
-							V->getAllocaInst()->getType()->print(rso);
+							lhs->getType()->print(rso);
 							rso << "'.";
 							return ErrorV("Assignment type mismatch! "+rso.str());
 						}
 						else
 						{
-							builder.CreateStore(Val, V->getAllocaInst());
-							return Val;
+							if(x.operator_ == token_ids::assign)
+							{
+								return builder.CreateStore(rhs, lhs);
+							}
+							else // more then just an assignment
+							{
+								ast::operation op;
+								llvm::Value *CalcVal = CreateBinaryOperation(lhs, rhs, x.operator_);
+								if(!CalcVal)
+								{
+									return ErrorV("Unable to compute result of operation prior to assignment!");
+								}
+								return builder.CreateStore(CalcVal, lhs);
+							}
 						}
 					}
 				}

@@ -1,13 +1,13 @@
 #include "code_generator.hpp"
 
+#if defined(_MSC_VER)
 #pragma warning(push)
-
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
-#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
 #pragma warning(disable: 4244)		// 'argument' : conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#endif
 
-#include "llvm/Support/raw_ostream.h"
 #include "llvm/Support/TargetSelect.h"
 #include "llvm/ExecutionEngine/ExecutionEngine.h"
 #include "llvm/ExecutionEngine/JIT.h"
@@ -17,7 +17,9 @@
 #include "llvm/Target/TargetData.h"
 #include "llvm/Transforms/Scalar.h"
 
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
 
 #include "../log/log.hpp"
 
@@ -28,40 +30,95 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value *code_generator::ErrorV(std::string Str) 
+		llvm::Value *code_generator::ErrorV(std::string Str)
 		{
 			m_bErrorOccured = true;
 			LOG("ERROR: "+Str); 
 			return nullptr; 
 		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		llvm::Value *code_generator::FatalErrorV(std::string Str)
 		{
 			m_bErrorOccured = true;
 			LOG("FATAL ERROR: "+Str);
 			return nullptr; 
 		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
 		llvm::Value *code_generator::InternalErrorV(std::string Str)
 		{
 			m_bErrorOccured = true;
 			LOG("INTERNAL ERROR: "+Str); 
 			return nullptr; 
 		}
-
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Type *code_generator::ErrorType(std::string Str)
+		{
+			m_bErrorOccured = true;
+			LOG("ERROR: "+Str);
+			return nullptr; 
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Type* code_generator::getTypeByName(std::string sTypeName)
+		{
+			// FIXME: hard coded types
+			if(sTypeName=="float")
+			{
+				return llvm::Type::getDoubleTy(context);
+			}
+			else if(sTypeName=="int")
+			{
+				return llvm::Type::getInt64Ty(context);
+			}
+			else
+			{
+				return ErrorType("Use of unknown Type: '"+sTypeName+"'.");
+			}
+		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		code_generator::VarData * code_generator::getVarFromName( std::string const & name )
 		{
-			// FIXME: acces to variables defined in previous methods
-			const auto it = std::find_if(symbolTable.begin(), symbolTable.end(), 
+			// local search first!
+			const auto itlocal = std::find_if(vLocalSymbolTable.begin(), vLocalSymbolTable.end(), 
 				[&name](VarData const & var){ return (var.getIdentifier() == name); }
 				);
-			if(it!=symbolTable.end())
+			if(itlocal!=vLocalSymbolTable.end())
 			{
-				return &(*it);
+				return &(*itlocal);
+			}
+
+			// then global search
+			const auto itglobal = std::find_if(vGlobalSymbolTable.begin(), vGlobalSymbolTable.end(), 
+				[&name](VarData const & var){ return (var.getIdentifier() == name); }
+				);
+			if(itglobal!=vGlobalSymbolTable.end())
+			{
+				return &(*itglobal);
 			}
 			return nullptr;
 		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		/*llvm::Function * code_generator::getFunctionFromName( std::string const & name )
+		{
+			llvm::Function* callee = module->getFunction(name);
+            if (!callee)
+            {
+				return ErrorV("Use of unknown function '"+name+"'.");
+			}
+
+			return callee;
+		}*/
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
@@ -90,34 +147,6 @@ namespace unilang
 			current->op(op_return);
 			return true;
 		}*/
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Type *code_generator::ErrorType(std::string Str) 
-		{
-			m_bErrorOccured = true;
-			LOG("ERROR: "+Str);
-			return nullptr; 
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Type* code_generator::getTypeByName(std::string sTypeName)
-		{
-			// FIXME: hard coded types
-			if(sTypeName=="float")
-			{
-				return llvm::Type::getDoubleTy(context);
-			}
-			else if(sTypeName=="int")
-			{
-				return llvm::Type::getInt64Ty(context);
-			}
-			else
-			{
-				return ErrorType("Use of unknown Type: '"+sTypeName+"'.");
-			}
-		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------

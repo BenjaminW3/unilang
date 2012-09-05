@@ -1,8 +1,10 @@
 #pragma once
 
-#include <boost/config/warning_disable.hpp>
+#include "ast_base.hpp"
+
 #include <boost/fusion/include/adapt_struct.hpp>
 
+#include <ostream>
 #include <string>
 
 namespace unilang 
@@ -12,14 +14,13 @@ namespace unilang
 		//#########################################################################
 		//! An Identifier.
 		//#########################################################################
-		struct identifier
+		struct identifier :	public ast_base
 		{
 			std::string name;
+
+			bool isPure() const override;
 		};
-		inline std::ostream& operator<<(std::ostream& out, identifier const& x)
-		{
-			out << x.name; return out;
-		}
+		std::ostream& operator<<(std::ostream& out, identifier const& x);
 	}
 }
 

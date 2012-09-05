@@ -40,14 +40,8 @@
     <Filter Include="Header Files\ast">
       <UniqueIdentifier>{dc0ee6fa-4300-41b5-b0f1-b8c72c27ed89}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files\ast\semantic_validator">
-      <UniqueIdentifier>{6971b358-7af3-4882-8044-c31e101b099a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Source Files\ast">
       <UniqueIdentifier>{586ed543-07ff-499a-8f63-d32b83276ac5}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Source Files\ast\semantic_validator">
-      <UniqueIdentifier>{69905acb-521e-4823-a542-fbef70062895}</UniqueIdentifier>
     </Filter>
     <Filter Include="Source Files\code_generator\statements">
       <UniqueIdentifier>{0f74d492-21c9-4c90-8c21-4e8f6b887cae}</UniqueIdentifier>
@@ -57,6 +51,12 @@
     </Filter>
     <Filter Include="Source Files\code_generator\functions">
       <UniqueIdentifier>{eb57754a-34e2-407a-944e-267230a7b812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lexer">
+      <UniqueIdentifier>{18430320-9369-47c0-ab09-580b7b68a97a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lexer">
+      <UniqueIdentifier>{cc3bb155-a44f-4662-a8bf-05542b6e24b5}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -71,9 +71,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>Source Files\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\ast\semantic_validator\purity_validator.cpp">
-      <Filter>Source Files\ast\semantic_validator</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\statments\assignment.cpp">
       <Filter>Source Files\code_generator\statements</Filter>
@@ -111,6 +108,39 @@
     <ClCompile Include="..\..\src\code_generator\functions\function_definition.cpp">
       <Filter>Source Files\code_generator\functions</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\ast\statement_ast .cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\identifier_ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\function_ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\epression_ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\parser\grammar\expression_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\parser\grammar\function_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\parser\grammar\grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\parser\grammar\identifier_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\parser\grammar\statement_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\lexer\lexer.cpp">
+      <Filter>Source Files\lexer</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\parser\parser.hpp">
@@ -120,9 +150,6 @@
       <Filter>Header Files\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\parser\error_handler.hpp">
-      <Filter>Header Files\parser</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\src\parser\skipper.hpp">
       <Filter>Header Files\parser</Filter>
     </ClInclude>
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp">
@@ -167,11 +194,29 @@
     <ClInclude Include="..\..\src\ast\ast_base.hpp">
       <Filter>Header Files\ast</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\ast\semantic_validator\purity_validator.hpp">
-      <Filter>Header Files\ast\semantic_validator</Filter>
+    <ClInclude Include="..\..\src\lexer\lexer.hpp">
+      <Filter>Header Files\lexer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\ast\semantic_validator\semantic_validator.hpp">
-      <Filter>Header Files\ast\semantic_validator</Filter>
+    <ClInclude Include="..\..\src\lexer\ids.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\expression_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\function_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\identifier_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\parser\grammar\statement_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lexer\lexer_def.hpp">
+      <Filter>Header Files\lexer</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

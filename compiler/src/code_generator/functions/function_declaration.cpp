@@ -70,7 +70,7 @@ namespace unilang
 				}
 			}
 
-			// declared types do not have names!
+			// FIXME: declared types do not have names! But function_definition has names
 			/*// Set names for all parameters.
 			unsigned int Idx = 0;
 			for (llvm::Function::arg_iterator AI = F->arg_begin(); Idx != x.parameter_types.size();	++AI, ++Idx) 

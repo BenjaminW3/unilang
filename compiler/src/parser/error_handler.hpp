@@ -9,7 +9,7 @@ namespace unilang
     ///////////////////////////////////////////////////////////////////////////////
     //  The error handler
     ///////////////////////////////////////////////////////////////////////////////
-    template <typename Iterator>
+    template <typename BaseIterator, typename Iterator>
     struct error_handler
     {
         template <typename, typename, typename>
@@ -18,7 +18,7 @@ namespace unilang
 			typedef void type;
 		};
 
-        error_handler(Iterator first, Iterator last)
+        error_handler(BaseIterator first, BaseIterator last)
           : first(first), last(last) 
 		{
 		}
@@ -29,13 +29,16 @@ namespace unilang
             What const& what,
             Iterator err_pos) const
         {
+            // retrieve underlying iterator from current token, err_pos points to the last validly matched token, so we use its end iterator as the error position
+			BaseIterator err_pos_base = err_pos->matched().end();
+
             unsigned int uiLine;
-            Iterator line_start = get_pos(err_pos, uiLine);
-            if (err_pos != last)
+            BaseIterator line_start = get_pos(err_pos_base, uiLine);
+            if (err_pos_base != last)
             {
                 std::cout << message << what << " line " << uiLine << ':' << std::endl;
                 std::cout << get_line(line_start) << std::endl;
-                for (; line_start != err_pos; ++line_start)
+                for (; line_start != err_pos_base; ++line_start)
 				{
                     std::cout << ' ';
 				}
@@ -48,11 +51,11 @@ namespace unilang
             }
         }
 
-        Iterator get_pos(Iterator err_pos, unsigned int & uiLine) const
+        BaseIterator get_pos(BaseIterator err_pos, unsigned int & uiLine) const
         {
             uiLine = 1;
-            Iterator i = first;
-            Iterator line_start = first;
+            BaseIterator i = first;
+            BaseIterator line_start = first;
             while (i != err_pos)
             {
                 bool eol = false;
@@ -74,17 +77,17 @@ namespace unilang
             return line_start;
         }
 
-        std::string get_line(Iterator err_pos) const
+        std::string get_line(BaseIterator err_pos) const
         {
-            Iterator i = err_pos;
+            BaseIterator i = err_pos;
             // position i to the next EOL
             while (i != last && (*i != '\r' && *i != '\n'))
                 ++i;
             return std::string(err_pos, i);
         }
 
-        Iterator first;
-        Iterator last;
+        BaseIterator first;
+        BaseIterator last;
         std::vector<Iterator> iters;
     };
 }

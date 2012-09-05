@@ -8,7 +8,8 @@
 #include "parser.hpp"
 
 #include "grammar/grammar.hpp"
-#include "skipper.hpp"
+#include "../lexer/lexer.hpp"
+#include "error_handler.hpp"
 
 #include "spirit.hpp"
 
@@ -22,7 +23,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		ast::module parse_code( std::string const & sSourceCode, error_handler<std::string::const_iterator> & error_handler )
+		ast::module parse_code( std::string const & sSourceCode )
 		{
 			std::cout << std::endl << "###########Parsing##########" << std::endl;
 
@@ -30,19 +31,31 @@ namespace unilang
 			ast::module ast;
 
 			// Take the time
-			auto timePointBefore = std::chrono::system_clock::now();
+			const auto timePointBefore = std::chrono::system_clock::now();
 
-			// initialise parsing
-			std::string::const_iterator cIterBegin = sSourceCode.cbegin();
-			std::string::const_iterator cIterEnd = sSourceCode.cend();
-			global_grammar<std::string::const_iterator> parser(error_handler);
-			skipper<std::string::const_iterator> skipper;
+			// get the std::string iterators
+			typedef std::string::const_iterator base_iterator_type;
+			base_iterator_type cIterStringBegin = sSourceCode.cbegin();
+			base_iterator_type cIterStringEnd = sSourceCode.cend();
+
+			// calculate the lexer iterators used for parsing
+			typedef unilang::lexer::token_lexer<base_iterator_type> lexer_type;
+			lexer_type lexer;
+			typedef lexer_type::iterator_type lexer_iterator_type;
+			lexer_iterator_type cIterBegin = lexer.begin(cIterStringBegin, cIterStringEnd);
+			lexer_iterator_type cIterEnd = lexer.end();
+
+			// create error handler
+			error_handler<base_iterator_type, lexer_iterator_type> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
+
+			// create parser
+			global_grammar<base_iterator_type, lexer_iterator_type> parser(error_handler, lexer);
 			
 			// actually parse it now
-			bool success = phrase_parse(cIterBegin, cIterEnd, parser, skipper, ast);
+			const bool success = boost::spirit::qi::parse(cIterBegin, cIterEnd, parser, ast);
 
-			auto timePointAfter = std::chrono::system_clock::now();
-			long long diff = std::chrono::duration_cast<std::chrono::duration<long, std::ratio<1, 1000>>>(timePointAfter - timePointBefore).count();
+			const auto timePointAfter = std::chrono::system_clock::now();
+			const long long diff = std::chrono::duration_cast<std::chrono::duration<long, std::ratio<1, 1000>>>(timePointAfter - timePointBefore).count();
 			std::cout << "Parsing duration: " << diff << " ms" << std::endl;
 
 			// return the ast only if it was successfull

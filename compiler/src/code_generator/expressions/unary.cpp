@@ -11,7 +11,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::unaryOp const & x)
+		llvm::Value * code_generator::operator()(ast::unary_expr const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
@@ -26,19 +26,28 @@ namespace unilang
 
 			switch (x.operator_)
 			{
-			case ast::op_negative:
+			case token_ids::minus:
 				{
-					return builder.CreateNeg(L, "negtmp");
+					return builder.CreateNeg(L, "neg");
 				}
-			case ast::op_not:
+			case token_ids::not_:
 				{
-					return builder.CreateNot(L, "nottmp");
+					return builder.CreateNot(L, "not");
 				}
-			case ast::op_positive:
+			/*case token_ids::compl_:
+				{
+					llvm::Value* Minus1 = (*this)(int(-1));
+					if(!Minus1)
+					{
+						return ErrorV("Unable to create -1.");
+					}
+					return builder.CreateXor(L, Minus1, "compl.xor");
+				}*/
+			case token_ids::plus:
 				{
 					return L; // + does not change anything
 				}
-			case ast::op_stringify:
+			case token_ids::stringify:
 				{
 					//throw std::runtime_error("Not implemented!");
 

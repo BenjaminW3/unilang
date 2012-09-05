@@ -1,14 +1,14 @@
 #pragma once
 
+#include "ast_base.hpp"
 #include "identifier_ast.hpp"
 #include "expression_ast.hpp"
 
-#include <boost/config/warning_disable.hpp>
-#include <boost/variant/recursive_variant.hpp>
-#include <boost/variant/get.hpp>
 #include <boost/fusion/include/adapt_struct.hpp>
+#include <boost/variant/recursive_variant.hpp>
 #include <boost/optional.hpp>
-#include <list>
+
+#include <ostream>
 
 namespace unilang 
 {
@@ -17,15 +17,15 @@ namespace unilang
 		//#########################################################################
 		//! Assignment consists of a identifier and an expression.
 		//#########################################################################
-		struct assignment
+		struct assignment :	public ast_base
 		{
 			identifier lhs;
+			token_ids::type operator_;
 			expression rhs;
+
+			bool isPure() const override;
 		};
-		inline std::ostream& operator<<(std::ostream& out, assignment const& x)
-		{
-			out << x.lhs << "=" << x.rhs << std::endl; return out;
-		}
+		std::ostream& operator<<(std::ostream& out, assignment const& x);
 
 		// predefinitions for variant
 		struct if_statement;
@@ -34,64 +34,56 @@ namespace unilang
 		struct statement_list;
 
 		//#########################################################################
-		//! A statement could be different things.
+		//! A statement
 		//#########################################################################
-		typedef boost::variant<
-				assignment
-			  , expression
-			  , boost::recursive_wrapper<if_statement>
-		//	  , boost::recursive_wrapper<while_statement>
-		//	  , boost::recursive_wrapper<return_statement>
-			  , boost::recursive_wrapper<statement_list>
-			>
-		statement;
-		// predefinition
-		std::ostream& operator<<(std::ostream& out, statement const& x);
+		struct statement :	public ast_base,
+							boost::spirit::extended_variant<	assignment,
+																expression,
+																boost::recursive_wrapper<if_statement>,
+																//boost::recursive_wrapper<while_statement>,
+																//boost::recursive_wrapper<return_statement>,
+																boost::recursive_wrapper<statement_list>
+								>
+		{
+			statement();
+			statement(assignment val);
+			statement(expression val);
+			statement(if_statement val);
+			//statement(while_statement val);
+			//statement(return_statement const& val);
+			statement(statement_list const& val);
 
+			inline bool isPure() const override;
+		};
+		std::ostream& operator<<(std::ostream& out, statement const& x);
+		
 		//#########################################################################
 		//! A statement list of multiple statements.
 		//#########################################################################
-		struct statement_list : std::list<statement>
+		struct statement_list :	std::list<statement>,
+								public ast_base
 		{
+			bool isPure() const override;
 		};
-		inline std::ostream& operator<<(std::ostream& out, statement_list const& x)
-		{
-			for(statement const & st : x)
-			{
-				out << st << std::endl;
-			}
-			return out;
-		}
+		std::ostream& operator<<(std::ostream& out, statement_list const& x);
 
 		//#########################################################################
 		//! If-statement
 		//#########################################################################
-		struct if_statement
+		struct if_statement :	public ast_base
 		{
 			expression condition;
 			statement_list then;
 			boost::optional<statement_list> else_;
+
+			bool isPure() const override;
 		};
-		inline std::ostream& operator<<(std::ostream& out, if_statement const& x)
-		{
-			out << "if(" << x.condition << ")" << std::endl
-				<< "{" << std::endl 
-				<< x.then
-				<< "}";
-			if(x.else_.is_initialized())
-			{
-				out << "else"
-					<< "{"
-					<< x.else_.get()
-					<< "}";
-			}
-			return out;
-		}
+		std::ostream& operator<<(std::ostream& out, if_statement const& x);
 
 		//#########################################################################
 		//! While statement
 		//#########################################################################
-		/*struct while_statement
+		/*struct while_statement :	public ast_base
 		{
 			expression condition;
 			statement body;
@@ -100,29 +92,15 @@ namespace unilang
 		//#########################################################################
 		//! Return statement
 		//#########################################################################
-		/*struct return_statement
+		/*struct return_statement :	public ast_base
 		{
 		};*/
-
-		inline std::ostream& operator<<(std::ostream& out, statement const& x)
-		{
-			switch(x.which())
-			{
-				case 0: out << boost::get<assignment>(x); break;
-				case 1: out << boost::get<expression>(x); break;
-				case 2: out << boost::get<if_statement>(x); break;
-				//case 3: out << boost::get<while_statement>(x); break;
-				//case 4: out << boost::get<return_statement>(x); break;
-				case 3: out << boost::get<statement_list>(x); break;
-				default: out << "undefine-statement"; break;
-			}
-			return out;
-		}
 	}
 }
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::assignment,
     (unilang::ast::identifier, lhs)
+	(unilang::token_ids::type, operator_)
     (unilang::ast::expression, rhs)
 )
 

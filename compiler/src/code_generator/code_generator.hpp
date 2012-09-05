@@ -4,12 +4,7 @@
 
 #include <boost/variant/apply_visitor.hpp>
 
-#include <vector>
-#include <map>
-#include <memory>
-
-#pragma warning(disable: 4996)		// unsafe usage of std::copy
-
+#if defined(_MSC_VER)
 #pragma warning(push)
 //#pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
@@ -20,20 +15,27 @@
 #pragma warning(disable: 4245)		// 'return' : conversion from 'int' to 'unsigned int', signed/unsigned mismatch
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
 #pragma warning(disable: 4800)		// 'unsigned int' : forcing value to bool 'true' or 'false' (performance warning)
+#endif
 
 #include "llvm/LLVMContext.h"
 #include "llvm/Module.h"
 #include "llvm/IRBuilder.h"
 #include "llvm/DerivedTypes.h"
 
+#if defined(_MSC_VER)
 #pragma warning(pop)
+#endif
+
+#include <vector>
+#include <map>
+#include <memory>
 
 namespace unilang 
 { 
 	namespace code_generator
 	{
 		//#########################################################################
-		//! Generates the code.
+		//! Generates the code from an AST.
 		//#########################################################################
 		class code_generator : public boost::static_visitor<llvm::Value *>
 		{
@@ -59,22 +61,32 @@ namespace unilang
 			//! \return The type corresponding to the given Typename
 			//-----------------------------------------------------------------------------
 			llvm::Type* getTypeByName(std::string sTypeName);
+
+			//llvm::Function * code_generator::getFunctionFromName( std::string const & name );
 			
+			//-----------------------------------------------------------------------------
+			//! \return The expression created with the shunting yard algorithm.
+			//-----------------------------------------------------------------------------
+			llvm::Value * code_generator::CreateExpression(	int min_precedence,
+															llvm::Value * lhs,
+															std::list<ast::operation>::const_iterator& rest_begin,
+															std::list<ast::operation>::const_iterator rest_end);
 			//-----------------------------------------------------------------------------
 			//! \return The value returned from the execution of 'L op R'.
 			//-----------------------------------------------------------------------------
-			llvm::Value * code_generator::CreateOperation(llvm::Value * L, llvm::Value * R, ast::optoken const & op);
+			llvm::Value * code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op);
 
 		public:
 			llvm::Value * operator()(long double const & x);
 			llvm::Value * operator()(unsigned int const & x);
 			llvm::Value * operator()(int const & x);
 			llvm::Value * operator()(bool const & x);
+			llvm::Value * operator()(ast::primary_expr const& x);
 			llvm::Value * operator()(ast::identifier const & x);
-			llvm::Value * operator()(ast::unaryOp const & x);
+			llvm::Value * operator()(ast::unary_expr const & x);
 			llvm::Value * operator()(ast::function_call const & x);
 			llvm::Value * operator()(ast::expression const & x);
-			llvm::Value * operator()(ast::operand const & x);
+			//llvm::Value * operator()(ast::operand const & x);
 			llvm::Value * operator()(ast::assignment const & x);
 			llvm::Value * operator()(ast::variable_declaration const & x);
 			llvm::Value * operator()(ast::variable_definition const & x);
@@ -87,8 +99,6 @@ namespace unilang
 			llvm::Function * operator()(ast::function_definition const & x);
 
 			void print_assembler() const;
-
-			//std::shared_ptr<function> find_function(std::string const& name) const;
 
 		private:
 			llvm::LLVMContext & context;
@@ -120,7 +130,8 @@ namespace unilang
 			};
 
 			std::vector<llvm::Value*> retValues;
-			std::vector<VarData> symbolTable;
+			std::vector<VarData> vLocalSymbolTable;
+			std::vector<VarData> vGlobalSymbolTable;
 
 			VarData * getVarFromName( std::string const & name );
 		};

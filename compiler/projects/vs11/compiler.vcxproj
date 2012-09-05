@@ -82,6 +82,7 @@
     <ClCompile>
       <WarningLevel>Level4</WarningLevel>
       <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -97,6 +98,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -112,6 +114,9 @@
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
+      <DisableSpecificWarnings>
+      </DisableSpecificWarnings>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -127,6 +132,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <InlineFunctionExpansion>AnySuitable</InlineFunctionExpansion>
       <FavorSizeOrSpeed>Speed</FavorSizeOrSpeed>
+      <PreprocessorDefinitions>_SCL_SECURE_NO_WARNINGS;_CRT_SECURE_NO_WARNINGS;NDEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -137,7 +143,11 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\src\ast\semantic_validator\purity_validator.cpp" />
+    <ClCompile Include="..\..\src\ast\ast.cpp" />
+    <ClCompile Include="..\..\src\ast\epression_ast.cpp" />
+    <ClCompile Include="..\..\src\ast\function_ast.cpp" />
+    <ClCompile Include="..\..\src\ast\identifier_ast.cpp" />
+    <ClCompile Include="..\..\src\ast\statement_ast .cpp" />
     <ClCompile Include="..\..\src\code_generator\code_generator.cpp" />
     <ClCompile Include="..\..\src\code_generator\expressions\basic_types.cpp" />
     <ClCompile Include="..\..\src\code_generator\expressions\expression.cpp" />
@@ -151,8 +161,14 @@
     <ClCompile Include="..\..\src\code_generator\statments\statement.cpp" />
     <ClCompile Include="..\..\src\code_generator\statments\while.cpp" />
     <ClCompile Include="..\..\src\code_generator\variable_definition.cpp" />
+    <ClCompile Include="..\..\src\lexer\lexer.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
+    <ClCompile Include="..\..\src\parser\grammar\expression_grammar.cpp" />
+    <ClCompile Include="..\..\src\parser\grammar\function_grammar.cpp" />
+    <ClCompile Include="..\..\src\parser\grammar\grammar.cpp" />
+    <ClCompile Include="..\..\src\parser\grammar\identifier_grammar.cpp" />
+    <ClCompile Include="..\..\src\parser\grammar\statement_grammar.cpp" />
     <ClCompile Include="..\..\src\parser\parser.cpp" />
   </ItemGroup>
   <ItemGroup>
@@ -161,20 +177,25 @@
     <ClInclude Include="..\..\src\ast\expression_ast.hpp" />
     <ClInclude Include="..\..\src\ast\function_ast.hpp" />
     <ClInclude Include="..\..\src\ast\identifier_ast.hpp" />
-    <ClInclude Include="..\..\src\ast\semantic_validator\purity_validator.hpp" />
-    <ClInclude Include="..\..\src\ast\semantic_validator\semantic_validator.hpp" />
     <ClInclude Include="..\..\src\ast\statement_ast.hpp" />
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp" />
+    <ClInclude Include="..\..\src\lexer\ids.hpp" />
+    <ClInclude Include="..\..\src\lexer\lexer.hpp" />
+    <ClInclude Include="..\..\src\lexer\lexer_def.hpp" />
     <ClInclude Include="..\..\src\log\log.hpp" />
     <ClInclude Include="..\..\src\parser\annotation.hpp" />
     <ClInclude Include="..\..\src\parser\error_handler.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\expression_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\expression_grammar_def.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\function_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\function_grammar_def.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\grammar_def.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\identifier_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\identifier_grammar_def.hpp" />
     <ClInclude Include="..\..\src\parser\grammar\statement_grammar.hpp" />
+    <ClInclude Include="..\..\src\parser\grammar\statement_grammar_def.hpp" />
     <ClInclude Include="..\..\src\parser\parser.hpp" />
-    <ClInclude Include="..\..\src\parser\skipper.hpp" />
     <ClInclude Include="..\..\src\parser\spirit.hpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
