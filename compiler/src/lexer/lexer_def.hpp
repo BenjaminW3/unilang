@@ -14,13 +14,11 @@ namespace unilang
 													//tok_string("[^\"]+", token_ids::string),
 													lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", token_ids::lit_float),
 													lit_uint("[1-9][0-9]*", token_ids::lit_uint),
-													lit_int("[-\\+]?[1-9][0-9]*", token_ids::lit_int),
+													lit_int("[-\\+][1-9][0-9]*", token_ids::lit_int),
 													lit_boolean("true|false", token_ids::lit_boolean)
 													/*
 													this->self.add_pattern
                ("EXP",     "(e|E)(\\+|-)?\\d+")
-               ("SUFFIX",  "[yzafpnumkKMGTPEZY]")
-               ("INTEGER", "-?\\d+")
                ("FLOAT",    "-?(((\\d+)|(\\d*\\.\\d+)|(\\d+\\.\\d*))({EXP}|{SUFFIX})?)")
                ("SYMBOL",  "[a-zA-Z_?@](\\w|\\?|@)*")
 													*/
