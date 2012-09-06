@@ -6,7 +6,6 @@
 
 #include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/variant/recursive_variant.hpp>
-#include <boost/variant/get.hpp>
 #include <boost/spirit/include/support_extended_variant.hpp>
 #include <boost/optional.hpp>
 

@@ -159,7 +159,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\ast\ast.cpp" />
-    <ClCompile Include="..\..\src\ast\epression_ast.cpp" />
+    <ClCompile Include="..\..\src\ast\expression_ast.cpp" />
     <ClCompile Include="..\..\src\ast\function_ast.cpp" />
     <ClCompile Include="..\..\src\ast\identifier_ast.cpp" />
     <ClCompile Include="..\..\src\ast\statement_ast .cpp" />

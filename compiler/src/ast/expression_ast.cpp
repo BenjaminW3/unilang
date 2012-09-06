@@ -1,5 +1,7 @@
 #include "expression_ast.hpp"
 
+#include <boost/variant/get.hpp>
+
 namespace unilang 
 {
 	namespace ast

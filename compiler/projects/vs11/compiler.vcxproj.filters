@@ -117,9 +117,6 @@
     <ClCompile Include="..\..\src\ast\function_ast.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\ast\epression_ast.cpp">
-      <Filter>Source Files\ast</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\ast\ast.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
@@ -140,6 +137,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\lexer\lexer.cpp">
       <Filter>Source Files\lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\expression_ast.cpp">
+      <Filter>Source Files\ast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
