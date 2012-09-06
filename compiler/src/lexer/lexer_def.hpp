@@ -93,5 +93,31 @@ namespace unilang
 
 			return p.second;
 		}
+		//-------------------------------------------------------------------------
+		// 
+		//-------------------------------------------------------------------------
+		template <typename BaseIterator>
+		typename token_lexer<BaseIterator>::raw_token_spec token_lexer<BaseIterator>::operator()(std::string const& kwd) const
+		{
+			namespace qi = boost::spirit::qi;
+			qi::raw_token_type raw_token;
+
+			typename keyword_map_type::const_iterator it = keywords_.find(kwd);
+			assert(it != keywords_.end());
+			return raw_token((it != keywords_.end()) ? (*it).second : token_ids::invalid);
+		}
+		//-------------------------------------------------------------------------
+		// 
+		//-------------------------------------------------------------------------
+		template <typename BaseIterator>
+		typename token_lexer<BaseIterator>::token_spec token_lexer<BaseIterator>::token(std::string const& kwd) const
+		{
+			namespace qi = boost::spirit::qi;
+			qi::token_type token;
+
+			typename keyword_map_type::const_iterator it = keywords_.find(kwd);
+			assert(it != keywords_.end());
+			return token((it != keywords_.end()) ? (*it).second : token_ids::invalid);
+		}
 	}
 }

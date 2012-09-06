@@ -11,30 +11,30 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Use the lexer based on runtime generated DFA tables
-// #define CONJURE_LEXER_DYNAMIC_TABLES 1
+// #define LEXER_DYNAMIC_TABLES 1
 
 ///////////////////////////////////////////////////////////////////////////////
 // Use the lexer based on pre-generated static DFA tables
-// #define CONJURE_LEXER_STATIC_TABLES 1
+// #define LEXER_STATIC_TABLES 1
 
 ///////////////////////////////////////////////////////////////////////////////
 // Use the lexer based on runtime generated DFA tables
-// #define CONJURE_LEXER_STATIC_SWITCH 1
+// #define LEXER_STATIC_SWITCH 1
 
 ///////////////////////////////////////////////////////////////////////////////
 // The default is to use the dynamic table driven lexer
-#if CONJURE_LEXER_DYNAMIC_TABLES == 0 && \
-    CONJURE_LEXER_STATIC_TABLES == 0 && \
-    CONJURE_LEXER_STATIC_SWITCH == 0
+#if LEXER_DYNAMIC_TABLES == 0 && \
+    LEXER_STATIC_TABLES == 0 && \
+    LEXER_STATIC_SWITCH == 0
 
-#define CONJURE_LEXER_DYNAMIC_TABLES 1
+#define LEXER_DYNAMIC_TABLES 1
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Make sure we have only one lexer type selected
-#if (CONJURE_LEXER_DYNAMIC_TABLES != 0 && CONJURE_LEXER_STATIC_TABLES != 0) || \
-    (CONJURE_LEXER_DYNAMIC_TABLES != 0 && CONJURE_LEXER_STATIC_SWITCH != 0) || \
-    (CONJURE_LEXER_STATIC_TABLES != 0 && CONJURE_LEXER_STATIC_SWITCH != 0)
+#if (LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_TABLES != 0) || \
+    (LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0) || \
+    (LEXER_STATIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0)
 
 #error "Configuration problem: please select exactly one type of lexer to build"
 #endif
@@ -53,10 +53,10 @@
 
 #include "ids.hpp"
 
-#if CONJURE_LEXER_STATIC_TABLES != 0
+#if LEXER_STATIC_TABLES != 0
 #include <boost/spirit/include/lex_static_lexertl.hpp>
 #include "static_lexer.hpp"
-#elif CONJURE_LEXER_STATIC_SWITCH != 0
+#elif LEXER_STATIC_SWITCH != 0
 #include <boost/spirit/include/lex_static_lexertl.hpp>
 #include "static_switch_lexer.hpp"
 #endif
@@ -85,24 +85,24 @@ namespace unilang
 				// as every token instance stores an iterator pair pointing to the matched input sequence.
 				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::false_ > token_type;
 
-	#if CONJURE_LEXER_DYNAMIC_TABLES != 0
+#if LEXER_DYNAMIC_TABLES != 0
 				// use the lexer based on runtime generated DFA tables
 				typedef lex::lexertl::actor_lexer<token_type> type;
-	#elif CONJURE_LEXER_STATIC_TABLES != 0
+#elif LEXER_STATIC_TABLES != 0
 				// use the lexer based on pre-generated static DFA tables
 				typedef lex::lexertl::static_actor_lexer<
 					token_type
 				  , boost::spirit::lex::lexertl::static_::lexer_conjure_static
 				> type;
-	#elif CONJURE_LEXER_STATIC_SWITCH != 0
+#elif LEXER_STATIC_SWITCH != 0
 				// use the lexer based on pre-generated static code
 				typedef lex::lexertl::static_actor_lexer<
 					token_type
 				  , boost::spirit::lex::lexertl::static_::lexer_conjure_static_switch
 				> type;
-	#else
+#else
 	#error "Configuration problem: please select exactly one type of lexer to build"
-	#endif
+#endif
 			};
 		}
 		
@@ -138,28 +138,12 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Extract a raw_token(id) for the given registered keyword
 			//-------------------------------------------------------------------------
-			raw_token_spec operator()(std::string const& kwd) const
-			{
-				namespace qi = boost::spirit::qi;
-				qi::raw_token_type raw_token;
-
-				typename keyword_map_type::const_iterator it = keywords_.find(kwd);
-				assert(it != keywords_.end());
-				return raw_token((it != keywords_.end()) ? (*it).second : token_ids::invalid);
-			}
+			raw_token_spec operator()(std::string const& kwd) const;
 			
 			//-------------------------------------------------------------------------
 			//! Extract a token(id) for the given registered keyword
 			//-------------------------------------------------------------------------
-			token_spec token(std::string const& kwd) const
-			{
-				namespace qi = boost::spirit::qi;
-				qi::token_type token;
-
-				typename keyword_map_type::const_iterator it = keywords_.find(kwd);
-				assert(it != keywords_.end());
-				return token((it != keywords_.end()) ? (*it).second : token_ids::invalid);
-			}
+			token_spec token(std::string const& kwd) const;
 
 			lex::token_def<lex::omit> tok_whitespace;
 			lex::token_def<lex::omit> tok_comment;
