@@ -166,9 +166,18 @@ namespace unilang
 
 			///////////////////////////////////////////////////////////////////////
 			// Annotation: on success, call annotation.
-			//on_success(	unary_expr, annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	postfix_expr, annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	primary_expr, annotation_function(error_handler.iters)(_val, _1));
+			on_success(	expression,				annotation_function(error_handler.iters)(_val, _1));
+			on_success(	unary_expr,				annotation_function(error_handler.iters)(_val, _1));
+			on_success(	postfix_expr,			annotation_function(error_handler.iters)(_val, _1));
+			on_success(	primary_expr,			annotation_function(error_handler.iters)(_val, _1));
+			on_success(	functionCall,			annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	argumentList,			annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	mutableQualifier,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(	typeDeclaration,		annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	variableIdentifier,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(	variableDeclaration,	annotation_function(error_handler.iters)(_val, _1));
+			on_success(	parameterList,			annotation_function(error_handler.iters)(_val, _1));
+			on_success(	variableDefinition,		annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

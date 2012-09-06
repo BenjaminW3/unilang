@@ -23,6 +23,7 @@ namespace unilang
 			qi::_1_type _1;
 			qi::_3_type _3;
 			qi::_4_type _4;
+			qi::_val_type _val;
 
 			qi::tokenid_mask_type tokenid_mask;
 
@@ -30,10 +31,9 @@ namespace unilang
 			using qi::on_success;
 			using qi::fail;
 			using boost::phoenix::function;
-			//using boost::phoenix::val;
 
 			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
-			//typedef function<unilang::annotation<Iterator> > annotation_function;
+			typedef function<unilang::annotation<Iterator> > annotation_function;
 
 			assignmentStatement =
 					identifierGrammar
@@ -122,18 +122,19 @@ namespace unilang
 			on_error<fail>(ifStatement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			//on_error<fail>(whileStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			//on_error<fail>(returnStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			on_error<fail>(compoundStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			on_error<fail>(statement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			on_error<fail>(statementList,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			/*on_success(assignmentStatement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(expressionStatement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(ifStatement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(whileStatement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(returnStatement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(compoundStatement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(statement, annotation_function(error_handler.iters)(_val, _1));
-			on_success(statementList, annotation_function(error_handler.iters)(_val, _1));*/
+			on_success(assignmentStatement,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(expressionStatement,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(ifStatement,				annotation_function(error_handler.iters)(_val, _1));
+			/*on_success(whileStatement,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(returnStatement,			annotation_function(error_handler.iters)(_val, _1));*/
+			on_success(compoundStatement,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(statement,				annotation_function(error_handler.iters)(_val, _1));
+			on_success(statementList,			annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

@@ -25,6 +25,7 @@ namespace unilang
 			qi::_1_type _1;
 			qi::_3_type _3;
 			qi::_4_type _4;
+			qi::_val_type _val;
 
 			using qi::on_error;
 			using qi::on_success;
@@ -32,7 +33,7 @@ namespace unilang
 			using boost::phoenix::function;
 
 			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
-			//typedef function<unilang::annotation<Iterator> > annotation_function;
+			typedef function<unilang::annotation<Iterator> > annotation_function;
 
 			metaEntityList	=	*( functionGrammar | functionGrammar.functionDeclaration );
 
@@ -49,8 +50,8 @@ namespace unilang
 			on_error<fail>(module,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			//on_success(metaEntityList, annotation_function(error_handler.iters)(_val, _1));
-			//on_success(module, annotation_function(error_handler.iters)(_val, _1));
+			//on_success(metaEntityList,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(module,				annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

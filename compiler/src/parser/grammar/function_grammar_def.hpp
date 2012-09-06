@@ -26,6 +26,7 @@ namespace unilang
 			qi::_1_type _1;
 			qi::_3_type _3;
 			qi::_4_type _4;
+			qi::_val_type _val;
 
 			using qi::on_error;
 			using qi::on_success;
@@ -33,7 +34,7 @@ namespace unilang
 			using boost::phoenix::function;
 
 			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
-			//typedef function<unilang::annotation<Iterator> > annotation_function;
+			typedef function<unilang::annotation<Iterator> > annotation_function;
 
 			parameterDeclarationList =
 					'('
@@ -104,7 +105,12 @@ namespace unilang
 			on_error<fail>(functionDefinition,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			/*on_success(identifier, annotation_function(error_handler.iters)(_val, _1));*/
+			//on_success(parameterDeclarationList,	annotation_function(error_handler.iters)(_val, _1));
+			//on_success(returnDeclarationList,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(functionDeclaration,			annotation_function(error_handler.iters)(_val, _1));
+			//on_success(parameterDefinitionList,		annotation_function(error_handler.iters)(_val, _1));
+			//on_success(returnDefinitionList,		annotation_function(error_handler.iters)(_val, _1));
+			on_success(functionDefinition,			annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

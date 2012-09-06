@@ -45,7 +45,7 @@ namespace unilang
 			on_error<fail>(identifier, error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			//on_success(identifier, annotation_function(error_handler.iters)( _val, _1));
+			on_success(identifier, annotation_function(error_handler.iters)( _val, _1));
 		}
 	}
 }
