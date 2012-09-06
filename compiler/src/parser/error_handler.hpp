@@ -6,23 +6,26 @@
 
 namespace unilang
 {
-    ///////////////////////////////////////////////////////////////////////////////
-    //  The error handler
-    ///////////////////////////////////////////////////////////////////////////////
+    //#########################################################################
+    // ! The error handler
+    //#########################################################################
     template <typename BaseIterator, typename Iterator>
     struct error_handler
     {
         template <typename, typename, typename>
-        struct result 
-		{ 
-			typedef void type;
-		};
-
+        struct result {typedef void type;};
+		
+		//-----------------------------------------------------------------------------
+		//! Constructor
+		//-----------------------------------------------------------------------------
         error_handler(BaseIterator first, BaseIterator last)
           : first(first), last(last) 
 		{
 		}
-
+		
+		//-----------------------------------------------------------------------------
+		//! Prints out the error Message, the error reason and the position the error occured
+		//-----------------------------------------------------------------------------
         template <typename Message, typename What>
         void operator()(
             Message const& message,
@@ -50,7 +53,10 @@ namespace unilang
                 std::cout << message << what << " line " << uiLine << std::endl;
             }
         }
-
+		
+		//-----------------------------------------------------------------------------
+		//! 
+		//-----------------------------------------------------------------------------
         BaseIterator get_pos(BaseIterator err_pos, unsigned int & uiLine) const
         {
             uiLine = 1;
@@ -76,7 +82,10 @@ namespace unilang
             }
             return line_start;
         }
-
+		
+		//-----------------------------------------------------------------------------
+		//! Gets the line the error occured
+		//-----------------------------------------------------------------------------
         std::string get_line(BaseIterator err_pos) const
         {
             BaseIterator i = err_pos;

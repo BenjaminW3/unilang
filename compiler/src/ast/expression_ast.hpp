@@ -69,7 +69,6 @@ namespace unilang
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, operand const& x);
-		
 		//#########################################################################
 		//! A unary operation
 		//#########################################################################
@@ -81,7 +80,6 @@ namespace unilang
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, unary_expr const& x);
-		
 		//#########################################################################
 		//! ??? unary_expr
 		//#########################################################################
@@ -104,7 +102,6 @@ namespace unilang
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, expression const& x);
-
 		//#########################################################################
 		//! A function call.
 		//#########################################################################
@@ -138,7 +135,6 @@ namespace unilang
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, variable_declaration const& x);
-
 		//#########################################################################
 		//! A variable definition.
 		//#########################################################################

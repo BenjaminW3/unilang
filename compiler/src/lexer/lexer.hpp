@@ -107,7 +107,7 @@ namespace unilang
 		}
 		
 		//#########################################################################
-		//! 
+		//! The Lexer tokenizing the input stream for use by the parser
 		//#########################################################################
 		template <typename BaseIterator>
 		struct token_lexer	:	lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>,

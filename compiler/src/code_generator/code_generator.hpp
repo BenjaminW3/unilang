@@ -40,6 +40,9 @@ namespace unilang
 		class code_generator : public boost::static_visitor<llvm::Value *>
 		{
 		public:
+			//-------------------------------------------------------------------------
+			//! Constructor
+			//-------------------------------------------------------------------------
 			code_generator(ast::module const & AST);
 			
 		private:
@@ -50,12 +53,27 @@ namespace unilang
 			//! This is used for mutable variables etc.
 			//-----------------------------------------------------------------------------
 			static llvm::AllocaInst * CreateEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName);
-
+			
+			//-----------------------------------------------------------------------------
+			//! \return Is Set each of the (Fatal|Internal)Error(V|Type) methods when called.
+			//-----------------------------------------------------------------------------
 			bool m_bErrorOccured;
+			//-----------------------------------------------------------------------------
+			//! \return An invalid value for use in standard error situations.
+			//-----------------------------------------------------------------------------
 			llvm::Value *ErrorV(std::string Str);
+			//-----------------------------------------------------------------------------
+			//! \return An invalid value for use in fatal error situations.
+			//-----------------------------------------------------------------------------
 			llvm::Value *FatalErrorV(std::string Str);
+			//-----------------------------------------------------------------------------
+			//! \return An invalid value for use in internal error situations of the compiler independant of the validity of the compilation.
+			//-----------------------------------------------------------------------------
 			llvm::Value *InternalErrorV(std::string Str);
 			
+			//-----------------------------------------------------------------------------
+			//! \return An invalid type for type errors.
+			//-----------------------------------------------------------------------------
 			llvm::Type *ErrorType(std::string Str);
 			//-----------------------------------------------------------------------------
 			//! \return The type corresponding to the given Typename
@@ -106,9 +124,15 @@ namespace unilang
 
 			std::unique_ptr<llvm::Module> module;
 			
+			//#########################################################################
+			//! 
+			//#########################################################################
 			class VarData
 			{
 			public:
+				//-------------------------------------------------------------------------
+				//! Constructor
+				//-------------------------------------------------------------------------
 				VarData(std::string identifier, llvm::AllocaInst* pMem, bool bMutableQualifier)
 					: m_identifier(identifier),
 					m_pMem(pMem),
