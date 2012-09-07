@@ -58,6 +58,12 @@
     <Filter Include="Source Files\lexer">
       <UniqueIdentifier>{cc3bb155-a44f-4662-a8bf-05542b6e24b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\execution_engine">
+      <UniqueIdentifier>{8cf21717-3315-49b3-b032-eac911afca14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\execution_engine">
+      <UniqueIdentifier>{c8dcf504-d55d-469a-bd00-189bee9534e3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\main.cpp">
@@ -141,6 +147,12 @@
     <ClCompile Include="..\..\src\ast\expression_ast.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\compiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\execution_engine\execution_engine.cpp">
+      <Filter>Source Files\execution_engine</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\parser\parser.hpp">
@@ -217,6 +229,12 @@
     </ClInclude>
     <ClInclude Include="..\..\src\lexer\lexer_def.hpp">
       <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\compiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\execution_engine\execution_engine.hpp">
+      <Filter>Header Files\execution_engine</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

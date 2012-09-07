@@ -2,6 +2,17 @@
 
 #include "../../log/log.hpp"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
+#endif
+
+#include "llvm/Function.h"
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#endif
+
 namespace unilang 
 { 
 	namespace code_generator

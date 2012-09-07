@@ -4,18 +4,25 @@
 #pragma warning(push)
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
-#pragma warning(disable: 4244)		// 'argument' : conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
 #include "llvm/Support/TargetSelect.h"
-#include "llvm/ExecutionEngine/ExecutionEngine.h"
-#include "llvm/ExecutionEngine/JIT.h"
+//#include "llvm/ExecutionEngine/ExecutionEngine.h"
+//#include "llvm/ExecutionEngine/JIT.h"
 #include "llvm/PassManager.h"
 #include "llvm/Analysis/Verifier.h"
 #include "llvm/Analysis/Passes.h"
 #include "llvm/Target/TargetData.h"
 #include "llvm/Transforms/Scalar.h"
+#include "llvm/Module.h"
+
+#include "llvm/Support/TargetRegistry.h"
+#include "llvm/Target/TargetMachine.h"
+#include "llvm/Support/Host.h"		//getHostCPUName
+#include "llvm/MC/SubtargetFeature.h"
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -27,6 +34,14 @@ namespace unilang
 { 
 	namespace code_generator
 	{
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		std::shared_ptr<llvm::Module> code_generator::GetModule() const
+		{
+			return module;
+		}
+
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
@@ -60,7 +75,16 @@ namespace unilang
 		llvm::Type *code_generator::ErrorType(std::string Str)
 		{
 			m_bErrorOccured = true;
-			LOG("ERROR: "+Str);
+			LOG("ERROR TYPE: "+Str);
+			return nullptr; 
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Function *code_generator::ErrorFunction(std::string Str)
+		{
+			m_bErrorOccured = true;
+			LOG("ERROR FUNCTION: "+Str);
 			return nullptr; 
 		}
 		//-----------------------------------------------------------------------------
@@ -109,16 +133,16 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		/*llvm::Function * code_generator::getFunctionFromName( std::string const & name )
+		llvm::Function * code_generator::getFunctionFromName( std::string const & name )
 		{
 			llvm::Function* callee = module->getFunction(name);
             if (!callee)
             {
-				return ErrorV("Use of unknown function '"+name+"'.");
+				return ErrorFunction("Use of unknown function '"+name+"'.");
 			}
 
 			return callee;
-		}*/
+		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
@@ -158,8 +182,8 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 
-			llvm::InitializeNativeTarget();
-			llvm::llvm_start_multithreaded();
+			//llvm::InitializeNativeTarget();
+			//llvm::llvm_start_multithreaded();	// only needed if concurrent threads are used
 			
 			std::cout << std::endl << "##########CodeGen###########" << std::endl;
 			for(ast::meta_entity const & meta : AST.metaEntities)
@@ -178,20 +202,70 @@ namespace unilang
 			{
 				throw std::runtime_error("verifyModule failure! "+ErrStr);
 			}
-			std::cout << std::endl << "########unoptimized#########" << std::endl;
-			module->dump();
-			std::cout << "############################" << std::endl << std::endl;
+		}
+		//-----------------------------------------------------------------------------
+		// http://llvm.1065342.n5.nabble.com/how-to-get-TargetData-td21590.html
+		//-----------------------------------------------------------------------------
+		void code_generator::optimize() const
+		{
+			LOG_SCOPE_DEBUG;
 
-			ErrStr = "";
-			std::unique_ptr<llvm::ExecutionEngine> ee(llvm::EngineBuilder(module.get()).setErrorStr(&ErrStr).create());
-			if(!ee)
+			std::string const sTripleStr = "i686-unknown-win32";//llvm::sys::getDefaultTargetTriple();
+			std::cout << "Using target triple: '" << sTripleStr << "'" << std::endl;
+
+			// Or just call llvm::InitializeAllTargetInfos() and llvm::InitializeAllTargets() for all targets enabled by your LLVM build.
+			//llvm::LLVMInitializeX86TargetInfo();
+			//llvm::LLVMInitializeX86Target();
+
+			llvm::InitializeAllTargetInfos();
+			llvm::InitializeAllTargets();
+			llvm::InitializeAllTargetMCs();
+
+			std::string sErr;
+			llvm::Target const * const target = llvm::TargetRegistry::lookupTarget(sTripleStr, sErr);
+			if(!sErr.empty())
 			{
-				throw std::runtime_error(ErrStr);
+				throw std::runtime_error(sErr);
 			}
+
+			llvm::StringMap<bool> featureMap;
+            llvm::SubtargetFeatures subtargetFeatures;
+
+            subtargetFeatures.getDefaultSubtargetFeatures(llvm::Triple(sTripleStr));
+            if (llvm::sys::getHostCPUFeatures(featureMap)) 
+			{
+				for (llvm::StringMapIterator<bool> it = featureMap.begin(); it != featureMap.end();) 
+				{
+					subtargetFeatures.AddFeature(it->getKey(), it->getValue());
+				}
+            }
+            std::string sFeatures = subtargetFeatures.getString();
+			std::cout << "Using features: '" << sFeatures << "'" << std::endl;
+			
+			std::cout << "Using HostCPUName: '" << llvm::sys::getHostCPUName() << "'" << std::endl;
+
+			// Create TargetMachine
+			llvm::TargetOptions targetOptions;
+			// for debugging symbols targetOptions.NoFramePointerElim = true;
+
+
+			std::unique_ptr<llvm::TargetMachine> targetMachine(target->createTargetMachine(	sTripleStr,
+																							llvm::sys::getHostCPUName(),
+																							sFeatures,
+																							targetOptions,
+																							llvm::Reloc::Default,
+																							llvm::CodeModel::Default,
+																							llvm::CodeGenOpt::None));
+			if(!targetMachine)
+			{
+				throw std::runtime_error("target->createTargetMachine failed!");
+			}
+
+			llvm::TargetData const * const targetData = targetMachine->getTargetData();
 
 			llvm::PassManager OurPM;
 			// Set up the optimizer pipeline.  Start with registering info about how the target lays out data structures.
-			OurPM.add(new llvm::TargetData(*ee->getTargetData()));
+			OurPM.add(new llvm::TargetData(*targetData));
 			//
 			OurPM.add(llvm::createVerifierPass());
 			// Provide basic AliasAnalysis support for GVN.
@@ -216,33 +290,11 @@ namespace unilang
 			OurPM.add(llvm::createCFGSimplificationPass());
 
 			OurPM.run(*module.get());
-
-			std::cout << std::endl << "#########optimized##########" << std::endl;
-			module->dump();
-			std::cout << "############################" << std::endl << std::endl;
-
-			llvm::Function* func = ee->FindFunctionNamed("entrypoint");
-			if(!func)
-			{
-				throw std::runtime_error("'entrypoint' not found!");
-			}
-
-			typedef unsigned int (*FuncPtr)();
-			FuncPtr fptr = reinterpret_cast<FuncPtr>(ee->getPointerToFunction(func));
-
-			std::cout << fptr() << std::endl;
-
-			//ee->freeMachineCodeForFunction(vm_get_current_closure);
-            ee->runStaticConstructorsDestructors(true);
-            if(!ee->removeModule(module.get()))
-			{
-				throw std::runtime_error("Unable to remove module from ExecutionEngine!");
-            }
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		void code_generator::print_assembler() const
+		void code_generator::print_bytecode() const
 		{
 			LOG_SCOPE_DEBUG;
 

@@ -176,6 +176,8 @@
     <ClCompile Include="..\..\src\code_generator\statments\statement.cpp" />
     <ClCompile Include="..\..\src\code_generator\statments\while.cpp" />
     <ClCompile Include="..\..\src\code_generator\variable_definition.cpp" />
+    <ClCompile Include="..\..\src\compiler.cpp" />
+    <ClCompile Include="..\..\src\execution_engine\execution_engine.cpp" />
     <ClCompile Include="..\..\src\lexer\lexer.cpp" />
     <ClCompile Include="..\..\src\log\log.cpp" />
     <ClCompile Include="..\..\src\main.cpp" />
@@ -194,6 +196,8 @@
     <ClInclude Include="..\..\src\ast\identifier_ast.hpp" />
     <ClInclude Include="..\..\src\ast\statement_ast.hpp" />
     <ClInclude Include="..\..\src\code_generator\code_generator.hpp" />
+    <ClInclude Include="..\..\src\compiler.hpp" />
+    <ClInclude Include="..\..\src\execution_engine\execution_engine.hpp" />
     <ClInclude Include="..\..\src\lexer\ids.hpp" />
     <ClInclude Include="..\..\src\lexer\lexer.hpp" />
     <ClInclude Include="..\..\src\lexer\lexer_def.hpp" />

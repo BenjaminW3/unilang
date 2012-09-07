@@ -4,6 +4,17 @@
 
 #include "llvm/Support/raw_ostream.h"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
+#endif
+
+#include "llvm/Function.h"
+
+#if defined(_MSC_VER)
+#pragma warning(push)
+#endif
+
 namespace unilang 
 { 
 	namespace code_generator
@@ -37,7 +48,7 @@ namespace unilang
 			{
 				// Delete the one we just made and get the existing one.
 				F->eraseFromParent();
-				F = module->getFunction(x.idf.name);
+				F = getFunctionFromName(x.idf.name);
 				//std::cout << "Function name conflict! "	<<	x.idf.name	<<	" already existed inside the module. Taking the existing one instead!" << std::endl;
 				// If F already has a body, reject this.
 				if (!F->empty())
