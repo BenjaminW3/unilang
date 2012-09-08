@@ -15,7 +15,6 @@ namespace unilang
 		primary_expr::primary_expr(int val) : base_type(val) {}
 		primary_expr::primary_expr(bool val) : base_type(val) {}
 		primary_expr::primary_expr(identifier const& val) : base_type(val) {}
-		primary_expr::primary_expr(variable_definition const& val) : base_type(val) {}
 		primary_expr::primary_expr(expression const& val) : base_type(val) {}
 		primary_expr::primary_expr(primary_expr const& rhs) : base_type(rhs.get()) {}
 
@@ -27,9 +26,8 @@ namespace unilang
 				case 1: return true; break;
 				case 2: return true; break;
 				case 3: return true; break;
-				case 4: return boost::get<ast::identifier>(*this).isPure(); break;
-				case 5: return boost::get<ast::variable_definition>(*this).isPure(); break;
-				case 6: return boost::get<ast::expression>(*this).isPure(); break;
+				case 4: return boost::get<identifier>(*this).isPure(); break;
+				case 5: return boost::get<expression>(*this).isPure(); break;
 				default: throw std::runtime_error("undefined-primary_expr"); break;
 			}
 		}
@@ -42,8 +40,7 @@ namespace unilang
 				case 2: out << boost::get<int>(x); break;
 				case 3: out << boost::get<bool>(x); break;
 				case 4: out << boost::get<identifier>(x); break;
-				case 5: out << boost::get<variable_definition>(x); break;
-				case 6: out << boost::get<expression>(x); break;
+				case 5: out << boost::get<expression>(x); break;
 				default: out << "undefined-primary_expr"; break;
 			}
 			return out;
@@ -55,6 +52,7 @@ namespace unilang
 		operand::operand(primary_expr const& val) : base_type(val) {}
 		operand::operand(unary_expr const& val) : base_type(val) {}
 		operand::operand(function_call const& val) : base_type(val) {}
+		operand::operand(variable_definition const& val) : base_type(val) {}
 		operand::operand(operand const& rhs): base_type(rhs.get()) {}
 
 		bool operand::isPure() const
@@ -64,6 +62,7 @@ namespace unilang
 				case 0: return boost::get<primary_expr>(*this).isPure(); break;
 				case 1: return boost::get<unary_expr>(*this).isPure(); break;
 				case 2: return boost::get<function_call>(*this).isPure(); break;
+				case 3: return boost::get<variable_definition>(*this).isPure(); break;
 				default: throw std::runtime_error("undefined-operand"); break;
 			}
 		}
@@ -74,6 +73,7 @@ namespace unilang
 				case 0: out << boost::get<primary_expr>(x); break;
 				case 1: out << boost::get<unary_expr>(x); break;
 				case 2: out << boost::get<function_call>(x); break;
+				case 3: out << boost::get<variable_definition>(x); break;
 				default: out << "undefined-operand"; break;
 			}
 			return out;

@@ -17,9 +17,7 @@ namespace unilang
 	namespace ast
 	{
 		// predefinitions
-		struct variable_definition;
 		struct expression;
-
 		//#########################################################################
 		//! A primary expression
 		//#########################################################################
@@ -29,7 +27,6 @@ namespace unilang
 																	int,
 																	bool,
 								  									identifier,
-																	boost::recursive_wrapper<variable_definition>,
 																	boost::recursive_wrapper<expression>
 								>
 		{
@@ -39,7 +36,6 @@ namespace unilang
 			primary_expr(int val);
 			primary_expr(bool val);
 			primary_expr(identifier const& val);
-			primary_expr(variable_definition const& val);
 			primary_expr(expression const& val);
 			primary_expr(primary_expr const& rhs);
 
@@ -50,19 +46,22 @@ namespace unilang
 		// predefinitions
 		struct unary_expr;
 		struct function_call;
+		struct variable_definition;
 		//#########################################################################
 		//! A operand
 		//#########################################################################
 		struct operand :	public ast_base,
 							boost::spirit::extended_variant<	primary_expr,
 																boost::recursive_wrapper<unary_expr>,
-																boost::recursive_wrapper<function_call>
+																boost::recursive_wrapper<function_call>,
+																boost::recursive_wrapper<variable_definition>
 							>
 		{
 			operand();
 			operand(primary_expr const& val);
 			operand(unary_expr const& val);
 			operand(function_call const& val);
+			operand(variable_definition const& val);
 			operand(operand const& rhs);
 
 			bool isPure() const override;

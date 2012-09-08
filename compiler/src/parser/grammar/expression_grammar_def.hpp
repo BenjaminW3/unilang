@@ -53,6 +53,7 @@ namespace unilang
 
 			postfix_expr =
 					functionCall
+				|	variableDefinition
 				|   primary_expr
 				;
 			postfix_expr.name("postfix_expr");
@@ -63,7 +64,6 @@ namespace unilang
 				|	lexer.lit_int
 				|   lexer.lit_boolean
 				|   identifierGrammar
-				|	variableDefinition
 				|   '(' > expression > ')'
 				;
 			primary_expr.name("primary_expr");
