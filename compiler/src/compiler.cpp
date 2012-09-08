@@ -1,3 +1,5 @@
+#include "compiler.hpp"
+
 #include <iostream>
 #include <vector>
 #include <string>
@@ -14,7 +16,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> compile_file( std::string const & sSourceCodeFilePath )
+		std::shared_ptr<llvm::Module> compile_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output )
 		{
 			std::tr2::sys::path const pInPath(sSourceCodeFilePath);
 			if(!std::tr2::sys::is_regular_file(pInPath))
@@ -41,25 +43,33 @@ namespace unilang
 						std::back_inserter(sSourceCode));
 			ifs.close();
 
-//#ifdef _DEBUG
-			std::cout << std::endl << "#########SourceCode#########" << std::endl;
-			std::cout << sSourceCode << std::endl;
-			std::cout << "############################" << std::endl << std::endl;
-//#endif	
+			if((EDebugOutputOptions::SourceCode & output) == EDebugOutputOptions::SourceCode)
+			{
+				std::cout << std::endl << "#########SourceCode#########" << std::endl;
+				std::cout << sSourceCode << std::endl;
+				std::cout << "############################" << std::endl << std::endl;
+			}
+
 			unilang::ast::module AST = unilang::parser::parse_code( sSourceCode );
 			
 			unilang::code_generator::code_generator gen( AST );
-#ifdef _DEBUG
-			std::cout << std::endl << "########unoptimized#########" << std::endl;
-			gen.print_bytecode();
-			std::cout << "############################" << std::endl << std::endl;
-#endif
+
+			if((EDebugOutputOptions::Unoptimized & output) == EDebugOutputOptions::Unoptimized)
+			{
+				std::cout << std::endl << "########unoptimized#########" << std::endl;
+				gen.print_bytecode();
+				std::cout << "############################" << std::endl << std::endl;
+			}
+
 			gen.optimize();
-//#ifdef _DEBUG
-			std::cout << std::endl << "#########optimized##########" << std::endl;
-			gen.print_bytecode();
-			std::cout << "############################" << std::endl << std::endl;
-//#endif
+
+			if((EDebugOutputOptions::Optimized & output) == EDebugOutputOptions::Optimized)
+			{
+				std::cout << std::endl << "#########optimized##########" << std::endl;
+				gen.print_bytecode();
+				std::cout << "############################" << std::endl << std::endl;
+			}
+
 			return gen.GetModule();
 		}
 	}
