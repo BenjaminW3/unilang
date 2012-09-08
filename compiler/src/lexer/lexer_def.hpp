@@ -67,14 +67,14 @@ namespace unilang
 			//add_("~",       token_ids::compl_);
 			add_("!",       token_ids::not_);
 			add_("\\$",       token_ids::stringify);
-			//add_(":");
+			add_(":");
 			add_("->");
 			add_("if");
 			add_("else");
 			//add_("while");
 			//add_("return");
 
-			this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' | ':' | '~' | '?';
+			this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' /*| ':'*/ | '~' | '?';
 		}
 		//-------------------------------------------------------------------------
 		// 

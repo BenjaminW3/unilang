@@ -5,4 +5,4 @@
 	iErrorCode = add(-1, 5+-4/*+2*/);		// assign the result of -1+5-4/*+2*/ to iErrorCode
 }
 
-(int:i1, int:i2)->(int:(i1+i2)): add		// definition of predeclared pure function
+(int:i1, int:i2)->(int(i1+i2)): add		// definition of predeclared pure function

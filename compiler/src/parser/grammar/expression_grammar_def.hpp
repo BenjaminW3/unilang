@@ -89,12 +89,10 @@ namespace unilang
 				;
 			typeDeclaration.name("typeDeclaration");
 
-			//boost::spirit::eps_type eps;
-			variableIdentifier =
+			variableIdentifier = 
 				-(
-					/*	':'
-					>>*/	identifierGrammar
-					//>>	eps
+						lexer(":")
+					>	lexer.tok_identifier
 				)
 				;
 			variableIdentifier.name("variableIdentifier");
@@ -106,7 +104,6 @@ namespace unilang
 			//						-a user defined identifier
 			variableDeclaration =
 					typeDeclaration
-				>>	':'
 				>>	variableIdentifier
 				;
 			variableDeclaration.name("variableDeclaration");

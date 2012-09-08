@@ -56,7 +56,7 @@ namespace unilang
 				>	parameterDeclarationList
 				>	lexer("->")
 				>	returnDeclarationList
-				>	':'
+				>	lexer(":")
 				>	identifierGrammar
 				;
 			functionDeclaration.name("functionDeclaration");
@@ -80,7 +80,7 @@ namespace unilang
 				>>	parameterDefinitionList
 				>>	lexer("->")
 				>>	returnDefinitionList
-				>>	':'
+				>>	lexer(":")
 				>>	identifierGrammar
 				>>	-statementGrammar.compoundStatement
 				;
