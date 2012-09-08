@@ -1,0 +1,6 @@
+(int:x)->(int(--x)):decrement
+
+~()->(~int:iErrorCode(1)):entrypoint
+{
+	iErrorCode = decrement(42);
+}

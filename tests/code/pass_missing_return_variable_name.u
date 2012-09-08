@@ -1,0 +1,6 @@
+(int:v)->(int(v)):func
+
+~()->(~int:iErrorCode(1)):entrypoint
+{
+	iErrorCode = func(77);
+}
