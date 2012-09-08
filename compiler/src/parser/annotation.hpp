@@ -24,7 +24,7 @@ namespace unilang
         annotation(std::vector<Iterator>& iters) : m_iters(iters) {}
 		
 		//-----------------------------------------------------------------------------
-		//! Copy-Constructor
+		//! Copy-constructor
 		//-----------------------------------------------------------------------------
         annotation( annotation const & an) : m_iters(an.m_iters){}
 		//-----------------------------------------------------------------------------

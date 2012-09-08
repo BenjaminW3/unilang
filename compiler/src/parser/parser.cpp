@@ -1,3 +1,6 @@
+#include <iostream>
+#include <chrono>
+
 #if defined(_MSC_VER)
 #pragma warning(disable: 4127)		// warning C4127: conditional expression is constant
 #pragma warning(disable: 4512)		// warning C4512: assignment operator could not be generated
@@ -12,9 +15,6 @@
 #include "error_handler.hpp"
 
 #include "spirit.hpp"
-
-#include <iostream>
-#include <chrono>
 
 namespace unilang
 {

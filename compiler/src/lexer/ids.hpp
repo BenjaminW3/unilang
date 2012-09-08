@@ -180,7 +180,7 @@ namespace unilang
                 |   op_type::postfix_unary, op::type::minus_minus>::value,
 
             // unary operators
-			stringify			=  unary_op<op::type::stringify>::value,
+			stringify			= unary_op<op::type::stringify>::value,
             //compl_              = unary_op<op::type::compl_>::value,
             not_                = unary_op<op::type::not_>::value,
 
