@@ -204,7 +204,7 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, variable_definition const& x)
 		{
-			out << x.decl;
+			out << x.decl << "(";
 			for(expression const & ex : x.parameters)
 			{
 				out << ex;
