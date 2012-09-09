@@ -41,20 +41,30 @@ namespace unilang
 			// has name?
 			const bool bHasName = x.name.is_initialized();
 
-			// redefinition?
+			// redeclaration?
 			if(bHasName && getVarFromName(x.name.get().name))
 			{
-				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_identifier.name+"' !");
+				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_identifier.name+"' .");
+			}
+			// TODO: really needed? We already can have typenames equal to variable names
+			// shadowing keyword?
+			if(bHasName && (x.name.get().name == "if" || x.name.get().name == "else" || x.name.get().name == "while" || x.name.get().name == "return"))
+			{
+				return ErrorV("Variable with the name '"+x.name.get().name+"' is shadowing the keyword with same identifier.");
 			}
 
 			llvm::Function * TheFunction = builder.GetInsertBlock()->getParent();
-
-			// Emit the initializer before adding the variable to scope, this prevents the initializer from referencing the variable itself
-		//llvm::Value * InitVal = nullptr;
+			if(!TheFunction)
+			{
+				return ErrorV("Unable to get the allocation insert point function for variable '"+x.name.get().name+"'.");
+			}
 
 			// allocate in function head
 			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, getTypeByName(x.type.type_identifier.name), bHasName ? x.name.get().name : "");
-		//builder.CreateStore(InitVal, Alloca);
+			if(!Alloca)
+			{
+				return ErrorV("Unable to allocate variable '"+x.name.get().name+"'.");
+			}
 
 			// remember this variable in symbol table
 			if(bHasName)
@@ -71,22 +81,13 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
-
-			// has name?
+			
 			const bool bHasName = x.decl.name.is_initialized();
-
-			// redefinition?
-			if(bHasName && getVarFromName(x.decl.name.get().name))
-			{
-				return ErrorV("Variable with the name '"+x.decl.name.get().name+"' has already been definied with type '"+x.decl.type.type_identifier.name+"' !");
-			}
-
-			llvm::Function * TheFunction = builder.GetInsertBlock()->getParent();
 
 			// Emit the initializer before adding the variable to scope, this prevents the initializer from referencing the variable itself
 			llvm::Value * InitVal = nullptr;
 			
-			// FIXME: hard coded types
+			// TODO: hard coded types
 			if(x.decl.type.type_identifier.name == "int")
 			{
 				if(x.parameters.size()==0)
@@ -95,7 +96,6 @@ namespace unilang
 				}
 				else if(x.parameters.size()==1)
 				{
-					// TODO: if expression not int, convert initialisation parameter expression
 					InitVal = (*this)(*x.parameters.begin());
 					if (!InitVal)
 					{
@@ -107,16 +107,25 @@ namespace unilang
 					}
 					else if(!InitVal->getType()->isIntegerTy())
 					{
-						std::string type_str;
-						llvm::raw_string_ostream rso(type_str);
-						InitVal->getType()->print(rso);
+						// convert if it is float
+						if(!InitVal->getType()->isFloatingPointTy())
+						{	
+							InitVal = builder.CreateFPToSI(InitVal, llvm::Type::getInt64Ty(context),"FPtoSI");
+						}
+						// else error
+						else
+						{
+							std::string type_str;
+							llvm::raw_string_ostream rso(type_str);
+							InitVal->getType()->print(rso);
 
-						std::stringstream sstr;
-						sstr << *x.parameters.begin();
+							std::stringstream sstr;
+							sstr << *x.parameters.begin();
 
-						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+							const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
 
-						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
+							return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
+						}
 					}
 				}
 				else
@@ -135,7 +144,6 @@ namespace unilang
 				}
 				else if(x.parameters.size()==1)
 				{
-					// TODO: if expression not float, convert initialisation parameter expression
 					InitVal = (*this)(*x.parameters.begin());
 					if (!InitVal)
 					{
@@ -146,19 +154,25 @@ namespace unilang
 					}
 					else if(!InitVal->getType()->isFloatingPointTy())
 					{
-						// FIXME: Type upcast possible?
-						//L = builder.CreateUIToFP(L, llvm::Type::getDoubleTy(context),"UItoFP");
-						
-						std::string type_str;
-						llvm::raw_string_ostream rso(type_str);
-						InitVal->getType()->print(rso);
+						// convert if it is int
+						if(!InitVal->getType()->isIntegerTy())
+						{	
+							InitVal = builder.CreateSIToFP(InitVal, llvm::Type::getDoubleTy(context),"SItoFP");
+						}
+						// else error
+						else
+						{
+							std::string type_str;
+							llvm::raw_string_ostream rso(type_str);
+							InitVal->getType()->print(rso);
 
-						std::stringstream sstr;
-						sstr << *x.parameters.begin();
+							std::stringstream sstr;
+							sstr << *x.parameters.begin();
 
-						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+							const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
 
-						return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
+							return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
+						}
 					}
 				}
 				else
@@ -169,17 +183,16 @@ namespace unilang
 				}
 			}
 
-			// allocate in function head
-			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, getTypeByName(x.decl.type.type_identifier.name), bHasName ? x.decl.name.get().name : "");
-			builder.CreateStore(InitVal, Alloca);
-
-			// remember this variable in symbol table
-			if(bHasName)
+			// build declaration (allocation, etc.)
+			llvm::Value * pDecl = (*this)(x.decl);
+			if(!pDecl)
 			{
-				vLocalSymbolTable.push_back(code_generator::VarData(x.decl.name.get().name, Alloca, x.decl.type.mutableQualifier));
+				return ErrorV("Unable to declare variable '"+x.decl.name.get().name+"' of type '"+x.decl.type.type_identifier.name+"'.");
 			}
 
-			return Alloca;
+			builder.CreateStore(InitVal, pDecl);
+
+			return pDecl;	// maybe InitVal would be more appropriate
 		}
 	}
 }

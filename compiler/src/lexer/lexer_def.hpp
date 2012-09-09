@@ -29,8 +29,6 @@ namespace unilang
 			this->self += tok_whitespace [lex::_pass = lex::pass_flags::pass_ignore];
 			this->self += tok_comment [lex::_pass = lex::pass_flags::pass_ignore];
 
-			this->self += tok_identifier;
-
 			this->self += lit_float | lit_uint | lit_int | lit_boolean;
 
 			add_("=",       token_ids::assign);
@@ -73,6 +71,8 @@ namespace unilang
 			add_("else");
 			//add_("while");
 			//add_("return");
+
+			this->self += tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
 
 			this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' /*| ':'*/ | '~' | '?';
 		}
