@@ -43,6 +43,14 @@ namespace unilang
 					}
 					return builder.CreateXor(L, Minus1, "compl.xor");
 				}*/
+			case token_ids::plus_plus:
+				{
+					return FatalErrorV("plus_plus not implemented!");
+				}
+			case token_ids::minus_minus:
+				{
+					return FatalErrorV("minus_minus not implemented!");
+				}
 			case token_ids::plus:
 				{
 					return L; // + does not change anything

@@ -32,7 +32,7 @@ namespace unilang
 			}
   
 			// Convert condition to a bool by comparing equal to 0.0.
-			CondV = builder.CreateFCmpONE(CondV, llvm::ConstantFP::get(context, llvm::APFloat(0.0)), "ifcond");
+			CondV = builder.CreateFCmpONE(CondV, llvm::ConstantFP::get(context, llvm::APFloat(0.0)), "if.cond");
 
 			llvm::Function *TheFunction = builder.GetInsertBlock()->getParent();
   
@@ -44,7 +44,7 @@ namespace unilang
 			{
 				ElseBB = llvm::BasicBlock::Create(context, "else");
 			}
-			llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(context, "ifcont");
+			llvm::BasicBlock *MergeBB = llvm::BasicBlock::Create(context, "if.cont");
 
 			builder.CreateCondBr(CondV, ThenBB, ElseBB);
 			builder.SetInsertPoint(ThenBB);		// Emit then value.
@@ -81,7 +81,7 @@ namespace unilang
 			TheFunction->getBasicBlockList().push_back(MergeBB);
 			builder.SetInsertPoint(MergeBB);
 
-			llvm::PHINode *PN = builder.CreatePHI(llvm::Type::getDoubleTy(context), 2, "iftmp");
+			llvm::PHINode *PN = builder.CreatePHI(llvm::Type::getDoubleTy(context), 2, "if.tmp");
 			PN->addIncoming(ThenV, ThenBB);
 			if(x.else_.is_initialized())
 			{

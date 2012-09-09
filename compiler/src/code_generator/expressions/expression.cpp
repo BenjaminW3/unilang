@@ -270,6 +270,10 @@ namespace unilang
 						{
 							return builder.CreateAnd(L, R, "and");
 						}
+					/*case token_ids::bit_nand:
+						{
+							return builder.CreateNot(builder.CreateAnd(L, R, "nand.and"), "nand.not");
+						}*/
 					case token_ids::bit_or:
 						{
 							return builder.CreateOr(L, R, "or");
@@ -284,7 +288,8 @@ namespace unilang
 						}*/
 					case token_ids::not_:
 						{
-							return builder.CreateOr(L, R, "not");
+							return FatalErrorV("not_ not implemented!");
+							//return builder.CreateOr(L, R, "not");
 						}
 					case token_ids::shift_left:
 						{
@@ -294,6 +299,22 @@ namespace unilang
 						{
 							return builder.CreateOr(L, R, "shr");
 						}
+					/*case token_ids::max:
+						{
+							return builder.CreateSelect(builder.CreateICmpSLT(L, R, "min.slt"), L, R, "max.sel");
+						}
+					case token_ids::min:
+						{
+							return builder.CreateSelect(builder.CreateICmpSLT(L, R, "min.slt"), R, L, "min.sel");
+						}*/
+					/*case token_ids::umax:
+						{
+							return builder.CreateSelect(builder.CreateICmpULT(L, R, "min.ult"), L, R, "max.sel");
+						}
+					case token_ids::umin:
+						{
+							return builder.CreateSelect(builder.CreateICmpULT(L, R, "min.ult"), R, L, "min.sel");
+						}*/
 					default: 
 						{
 							return FatalErrorV("Unknown operation!");
@@ -316,29 +337,6 @@ namespace unilang
 				rso << "' in operation.";
 				return ErrorV("Operation type mismatch! "+rso.str());
 			}
-			
-			/*case AtomicRMWInst::Nand:
-				Res = Builder.CreateNot(Builder.CreateAnd(Orig, Val));
-				break;
-			case AtomicRMWInst::Xor:
-				Res = Builder.CreateXor(Orig, Val);
-				break;
-			case AtomicRMWInst::Max:
-				Res = Builder.CreateSelect(Builder.CreateICmpSLT(Orig, Val),
-	00072                                Val, Orig);
-	00073     break;
-	00074   case AtomicRMWInst::Min:
-	00075     Res = Builder.CreateSelect(Builder.CreateICmpSLT(Orig, Val),
-	00076                                Orig, Val);
-	00077     break;
-	00078   case AtomicRMWInst::UMax:
-	00079     Res = Builder.CreateSelect(Builder.CreateICmpULT(Orig, Val),
-	00080                                Val, Orig);
-	00081     break;
-	00082   case AtomicRMWInst::UMin:
-	00083     Res = Builder.CreateSelect(Builder.CreateICmpULT(Orig, Val),
-	00084                                Orig, Val);
-	00085     break;*/
 		}
 	}
 }

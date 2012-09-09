@@ -29,7 +29,7 @@ namespace unilang
 			}
 
 			std::cout << "Compiling: '" << pInPath.file_string() << "'\n";
-					 
+			
 			std::ifstream ifs ( pInPath.file_string() , std::ifstream::in );
 			if(!ifs)
 			{
