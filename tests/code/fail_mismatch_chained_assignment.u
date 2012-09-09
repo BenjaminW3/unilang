@@ -1,0 +1,8 @@
+~()->(int:iErrorCode(1)):entrypoint
+{
+	int:foo(42);
+	float:bar(1);
+	int:baz(2);
+	
+	foo = bar = baz = 0;
+}

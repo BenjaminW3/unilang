@@ -1,0 +1,4 @@
+~()->(int:iErrorCode(1)):entrypoint
+{
+	int:foo(bogus);
+}

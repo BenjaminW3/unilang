@@ -1,0 +1,9 @@
+((int)->(int):func, int:v)->(int(func(v))):apply
+
+(float:x)->(int:y(int(x))):broken
+
+~()->(int:iErrorCode(1)):entrypoint
+{
+	apply(broken, 42);
+}
+

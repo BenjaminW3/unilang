@@ -1,0 +1,5 @@
+~()->(int:iErrorCode(1)):entrypoint
+{
+	int:foo(1);
+	int:foo(2);
+}

@@ -36,6 +36,43 @@ int main( int /*argc*/, char * /*argv*/[] )
 	vTestFiles.push_back(test_pass_int_empty_initialization_list_nonconst);
 	Test test_pass_missing_return_variable_name = {"tests/code/pass_missing_return_variable_name.u", true, 77};
 	vTestFiles.push_back(test_pass_missing_return_variable_name);
+
+	Test test_fail_accessing_non_existant_function = {"tests/code/fail_accessing_non_existant_function.u", false, 0};
+	vTestFiles.push_back(test_fail_accessing_non_existant_function);
+	Test test_fail_accessing_non_existant_local_variable = {"tests/code/fail_accessing_non_existant_local_variable.u", false, 0};
+	vTestFiles.push_back(test_fail_accessing_non_existant_local_variable);
+	Test test_fail_compound_statement_variable_shadowing = {"tests/code/fail_compound_statement_variable_shadowing.u", false, 0};
+	vTestFiles.push_back(test_fail_compound_statement_variable_shadowing);
+	Test test_fail_duplicate_function_name = {"tests/code/fail_duplicate_function_name.u", false, 0};
+	vTestFiles.push_back(test_fail_duplicate_function_name);
+	Test test_fail_duplicate_parameter_name = {"tests/code/fail_duplicate_parameter_name.u", false, 0};
+	vTestFiles.push_back(test_fail_duplicate_parameter_name);
+	Test test_fail_duplicate_variable_name = {"tests/code/fail_duplicate_variable_name.u", false, 0};
+	vTestFiles.push_back(test_fail_duplicate_variable_name);
+	Test test_fail_higherorder_function_type_mismatch = {"tests/code/fail_higherorder_function_type_mismatch.u", false, 0};
+	vTestFiles.push_back(test_fail_higherorder_function_type_mismatch);
+	Test test_fail_int_initialization_list_too_long = {"tests/code/fail_int_initialization_list_too_long.u", false, 0};
+	vTestFiles.push_back(test_fail_int_initialization_list_too_long);
+	Test test_fail_literal_float_parameter_type_mismatch = {"tests/code/fail_literal_float_parameter_type_mismatch.u", false, 0};
+	vTestFiles.push_back(test_fail_literal_float_parameter_type_mismatch);
+	Test test_fail_literal_int_parameter_type_mismatch = {"tests/code/fail_literal_int_parameter_type_mismatch.u", false, 0};
+	vTestFiles.push_back(test_fail_literal_int_parameter_type_mismatch);
+	Test test_fail_literal_uint_parameter_type_mismatch = {"tests/code/fail_literal_uint_parameter_type_mismatch.u", false, 0};
+	vTestFiles.push_back(test_fail_literal_uint_parameter_type_mismatch);
+	Test test_fail_mismatch_chained_assignment = {"tests/code/fail_mismatch_chained_assignment.u", false, 0};
+	vTestFiles.push_back(test_fail_mismatch_chained_assignment);
+	Test test_fail_missing_function_identifier = {"tests/code/fail_missing_function_identifier.u", false, 0};
+	vTestFiles.push_back(test_fail_missing_function_identifier);
+	Test test_fail_missing_variable_definition_type = {"tests/code/fail_missing_variable_definition_type.u", false, 0};
+	vTestFiles.push_back(test_fail_missing_variable_definition_type);
+	Test test_fail_use_of_variable_before_its_definition = {"tests/code/fail_use_of_variable_before_its_definition.u", false, 0};
+	vTestFiles.push_back(test_fail_use_of_variable_before_its_definition);
+	Test test_fail_variable_shadowing_function = {"tests/code/fail_variable_shadowing_function.u", false, 0};
+	vTestFiles.push_back(test_fail_variable_shadowing_function);
+	Test test_fail_variable_shadowing_keyword = {"tests/code/fail_variable_shadowing_keyword.u", false, 0};
+	vTestFiles.push_back(test_fail_variable_shadowing_keyword);
+	Test test_fail_write_to_non_mutable_variable = {"tests/code/fail_write_to_non_mutable_variable.u", false, 0};
+	vTestFiles.push_back(test_fail_write_to_non_mutable_variable);
 	
 	std::vector<std::string> vFailedTests;
 
@@ -78,11 +115,8 @@ int main( int /*argc*/, char * /*argv*/[] )
 		{
 			std::cout << "Unknown error!" << std::endl;
 
-			if(test.bSucceeds)
-			{
-				std::cout << "Test: '" << test.sTestFile << "' has thrown but was designed to succeed." << std::endl;
-				vFailedTests.push_back(test.sTestFile);
-			}
+			std::cout << "Test: '" << test.sTestFile << "' has thrown unknown exception." << std::endl;
+			vFailedTests.push_back(test.sTestFile);
 		}
 	}
 	
