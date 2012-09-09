@@ -15,7 +15,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		template <typename BaseIterator, typename Iterator>
 		statement_grammar<BaseIterator,Iterator>::statement_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-																		identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
+																		//identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
 																		expression_grammar<BaseIterator, Iterator> const & expressionGrammar, 
 																		lexer::token_lexer<BaseIterator>& lexer)
 			: statement_grammar::base_type(statementList, "statement_grammar")
@@ -35,14 +35,6 @@ namespace unilang
 			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
 			typedef function<unilang::annotation<Iterator> > annotation_function;
 
-			assignmentStatement =
-					identifierGrammar
-				>   tokenid_mask(token_ids::op_assign)
-				>	expressionGrammar
-				>   ';'
-				;
-			assignmentStatement.name("assignmentStatement");
-				
 			expressionStatement =
 					expressionGrammar
 				>	';'
@@ -89,11 +81,10 @@ namespace unilang
 			compoundStatement.name("compoundStatement");
 
 			statement =
-					assignmentStatement
-				|	expressionStatement
-				|   ifStatement
+					ifStatement
 			//	|   whileStatement
 			//	|   returnStatement
+				|  	expressionStatement
 				|	compoundStatement
 				;
 			statement.name("statement");
@@ -106,7 +97,6 @@ namespace unilang
 #ifdef _DEBUG
 			// Debugging and error handling and reporting support.
 			BOOST_SPIRIT_DEBUG_NODES(
-				(assignmentStatement)
 				(expressionStatement)
 				(ifStatement)
 				//(whileStatement)
@@ -117,7 +107,6 @@ namespace unilang
 			);
 #endif
 			// Error handling: on error in statement_list, call error_handler.
-			on_error<fail>(assignmentStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			on_error<fail>(expressionStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			on_error<fail>(ifStatement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 			//on_error<fail>(whileStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
@@ -127,7 +116,6 @@ namespace unilang
 			on_error<fail>(statementList,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			on_success(assignmentStatement,		annotation_function(error_handler.iters)(_val, _1));
 			on_success(expressionStatement,		annotation_function(error_handler.iters)(_val, _1));
 			on_success(ifStatement,				annotation_function(error_handler.iters)(_val, _1));
 			/*on_success(whileStatement,		annotation_function(error_handler.iters)(_val, _1));

@@ -34,11 +34,10 @@ namespace unilang
 			//! Constructor
 			//-------------------------------------------------------------------------
 			statement_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-								identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
+								//identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
 								expression_grammar<BaseIterator, Iterator> const & expressionGrammar, 
 								lexer::token_lexer<BaseIterator>& lexer);
 
-			qi::rule<Iterator, ast::assignment()> assignmentStatement;
 			qi::rule<Iterator, ast::expression()> expressionStatement;
 			qi::rule<Iterator, ast::if_statement()> ifStatement;
 			/*qi::rule<Iterator, ast::while_statement(), skipper<Iterator> > whileStatement;

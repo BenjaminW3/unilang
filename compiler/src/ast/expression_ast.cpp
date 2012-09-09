@@ -53,6 +53,7 @@ namespace unilang
 		operand::operand(unary_expr const& val) : base_type(val) {}
 		operand::operand(function_call const& val) : base_type(val) {}
 		operand::operand(variable_definition const& val) : base_type(val) {}
+		operand::operand(assignment const& val) : base_type(val) {}
 		operand::operand(operand const& rhs): base_type(rhs.get()) {}
 
 		bool operand::isPure() const
@@ -63,6 +64,7 @@ namespace unilang
 				case 1: return boost::get<unary_expr>(*this).isPure(); break;
 				case 2: return boost::get<function_call>(*this).isPure(); break;
 				case 3: return boost::get<variable_definition>(*this).isPure(); break;
+				case 4: return boost::get<assignment>(*this).isPure(); break;
 				default: throw std::runtime_error("undefined-operand"); break;
 			}
 		}
@@ -74,6 +76,7 @@ namespace unilang
 				case 1: out << boost::get<unary_expr>(x); break;
 				case 2: out << boost::get<function_call>(x); break;
 				case 3: out << boost::get<variable_definition>(x); break;
+				case 4: out << boost::get<assignment>(x); break;
 				default: out << "undefined-operand"; break;
 			}
 			return out;
@@ -211,6 +214,17 @@ namespace unilang
 			}
 			out << ")";
 			return out;
+		}
+		//-------------------------------------------------------------------------
+		//! 
+		//-------------------------------------------------------------------------
+		bool assignment::isPure() const
+		{
+			return false;
+		}
+		std::ostream& operator<<(std::ostream& out, assignment const& x)
+		{
+			out << x.lhs << x.operator_ << x.rhs; return out;
 		}
 	}
 }

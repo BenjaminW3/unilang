@@ -52,6 +52,8 @@ namespace unilang
 			qi::rule<Iterator, ast::variable_declaration()> variableDeclaration;
 			qi::rule<Iterator, std::list<ast::expression>()> parameterList;
 			qi::rule<Iterator, ast::variable_definition()> variableDefinition;
+
+			qi::rule<Iterator, ast::assignment()> assignment_expr;
 		};
 	}
 }

@@ -54,6 +54,7 @@ namespace unilang
 			postfix_expr =
 					functionCall
 				|	variableDefinition
+				|	assignment_expr
 				|   primary_expr
 				;
 			postfix_expr.name("postfix_expr");
@@ -92,7 +93,7 @@ namespace unilang
 			variableIdentifier = 
 				-(
 						lexer(":")
-					>	lexer.tok_identifier
+					>	lexer.tok_identifier	// HACK: does not work with identifierGrammar!
 				)
 				;
 			variableIdentifier.name("variableIdentifier");
@@ -128,6 +129,13 @@ namespace unilang
 				;
 			variableDefinition.name("variableDefinition");
 
+			assignment_expr =
+					identifierGrammar
+				>>	tokenid_mask(token_ids::op_assign)
+				>>	expression
+				;
+			assignment_expr.name("assignment_expr");
+
 			///////////////////////////////////////////////////////////////////////
 			// Debugging and error handling and reporting support.
 #ifdef _DEBUG
@@ -144,6 +152,7 @@ namespace unilang
 				(variableDeclaration)
 				(parameterList)
 				(variableDefinition)
+				(assignment_expr)
 			);
 #endif
 			///////////////////////////////////////////////////////////////////////
@@ -160,6 +169,7 @@ namespace unilang
 			on_error<fail>(	variableDeclaration,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	parameterList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	variableDefinition,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>( assignment_expr,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			///////////////////////////////////////////////////////////////////////
 			// Annotation: on success, call annotation.
@@ -175,6 +185,7 @@ namespace unilang
 			on_success(	variableDeclaration,	annotation_function(error_handler.iters)(_val, _1));
 			on_success(	parameterList,			annotation_function(error_handler.iters)(_val, _1));
 			on_success(	variableDefinition,		annotation_function(error_handler.iters)(_val, _1));
+			on_success( assignment_expr,		annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

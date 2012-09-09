@@ -43,7 +43,6 @@ namespace unilang
 						{
 							return ErrorV("Invalid right hand side of an assignment!");
 						}
-						// ->getPointerElementType()
 						if(rhs->getType()!=lhs->getType()->getElementType())
 						{
 							std::string type_str;
@@ -59,7 +58,8 @@ namespace unilang
 						{
 							if(x.operator_ == token_ids::assign)
 							{
-								return builder.CreateStore(rhs, lhs);
+								/*return */builder.CreateStore(rhs, lhs);
+								return rhs;
 							}
 							else // more then just an assignment
 							{
@@ -69,7 +69,8 @@ namespace unilang
 								{
 									return ErrorV("Unable to compute result of operation prior to assignment!");
 								}
-								return builder.CreateStore(CalcVal, lhs);
+								/*return */builder.CreateStore(CalcVal, lhs);
+								return CalcVal;
 							}
 						}
 					}

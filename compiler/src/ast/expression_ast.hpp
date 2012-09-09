@@ -47,6 +47,7 @@ namespace unilang
 		struct unary_expr;
 		struct function_call;
 		struct variable_definition;
+		struct assignment;
 		//#########################################################################
 		//! A operand
 		//#########################################################################
@@ -54,7 +55,8 @@ namespace unilang
 							boost::spirit::extended_variant<	primary_expr,
 																boost::recursive_wrapper<unary_expr>,
 																boost::recursive_wrapper<function_call>,
-																boost::recursive_wrapper<variable_definition>
+																boost::recursive_wrapper<variable_definition>,
+																boost::recursive_wrapper<assignment>
 							>
 		{
 			operand();
@@ -62,6 +64,7 @@ namespace unilang
 			operand(unary_expr const& val);
 			operand(function_call const& val);
 			operand(variable_definition const& val);
+			operand(assignment const& val);
 			operand(operand const& rhs);
 
 			bool isPure() const override;
@@ -144,6 +147,18 @@ namespace unilang
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, variable_definition const& x);
+		//#########################################################################
+		//! Assignment consists of a identifier, the operator and an expression.
+		//#########################################################################
+		struct assignment :	public ast_base
+		{
+			identifier lhs;
+			token_ids::type operator_;
+			expression rhs;
+
+			bool isPure() const override;
+		};
+		std::ostream& operator<<(std::ostream& out, assignment const& x);
 	}
 }
 
@@ -187,4 +202,11 @@ BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::variable_definition,
     (unilang::ast::variable_declaration, decl)
     (std::list<unilang::ast::expression>, parameters)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+    unilang::ast::assignment,
+    (unilang::ast::identifier, lhs)
+	(unilang::token_ids::type, operator_)
+    (unilang::ast::expression, rhs)
 )

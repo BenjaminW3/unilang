@@ -5,40 +5,26 @@
 namespace unilang 
 {
 	namespace ast
-	{
-		//-------------------------------------------------------------------------
-		//! 
-		//-------------------------------------------------------------------------
-		bool assignment::isPure() const
-		{
-			return false;
-		}
-		std::ostream& operator<<(std::ostream& out, assignment const& x)
-		{
-			out << x.lhs << x.operator_ << x.rhs << std::endl; return out;
-		}
-		
+	{	
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
 		statement::statement() : base_type() {}
-		statement::statement(assignment val) : base_type(val) {}
-		statement::statement(expression val) : base_type(val) {}
-		statement::statement(if_statement val) : base_type(val) {}
-		//statement::statement(while_statement val) : base_type(val) {}
-		//statement::statement(return_statement const& val) : base_type(val) {}
+		statement::statement(if_statement const& val) : base_type(val) {}
+		//statement::statement(while_statement const& val) : base_type(val) {}
+		//statement::statement(return_statement const& const& val) : base_type(val) {}
+		statement::statement(expression const& val) : base_type(val) {}
 		statement::statement(statement_list const& val) : base_type(val) {}
 		
 		bool statement::isPure() const
 		{
 			switch(get().which())
 			{
-				case 0: return boost::get<ast::assignment>(*this).isPure(); break;
-				case 1: return boost::get<ast::expression>(*this).isPure(); break;
-				case 2: return boost::get<ast::if_statement>(*this).isPure(); break;
+				case 0: return boost::get<ast::if_statement>(*this).isPure(); break;
 				//case 3: return boost::get<ast::while_statement>(*this).isPure(); break;
 				//case 4: return boost::get<ast::return_statement>(*this).isPure(); break;
-				case 3: return boost::get<ast::statement_list>(*this).isPure(); break;
+				case 1: return boost::get<ast::expression>(*this).isPure(); break;
+				case 2: return boost::get<ast::statement_list>(*this).isPure(); break;
 				default: throw std::runtime_error("undefine-statement"); break;
 			}
 		}
@@ -46,12 +32,11 @@ namespace unilang
 		{
 			switch(x.get().which())
 			{
-				case 0: out << boost::get<assignment>(x); break;
-				case 1: out << boost::get<expression>(x); break;
-				case 2: out << boost::get<if_statement>(x); break;
+				case 0: out << boost::get<if_statement>(x); break;
 				//case 3: out << boost::get<while_statement>(x); break;
 				//case 4: out << boost::get<return_statement>(x); break;
-				case 3: out << boost::get<statement_list>(x); break;
+				case 1: out << boost::get<expression>(x); break;
+				case 2: out << boost::get<statement_list>(x); break;
 				default: out << "undefine-statement"; break;
 			}
 			return out;

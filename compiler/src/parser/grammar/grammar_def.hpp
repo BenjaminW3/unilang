@@ -19,7 +19,7 @@ namespace unilang
 			: global_grammar::base_type(module, "global_grammar"),
 			identifierGrammar(error_handler, lexer),
 			expressionGrammar(error_handler, identifierGrammar, lexer),
-			statementGrammar(error_handler, identifierGrammar, expressionGrammar, lexer),
+			statementGrammar(error_handler, /*identifierGrammar,*/ expressionGrammar, lexer),
 			functionGrammar(error_handler, identifierGrammar, expressionGrammar, statementGrammar, lexer)
 		{
 			qi::_1_type _1;

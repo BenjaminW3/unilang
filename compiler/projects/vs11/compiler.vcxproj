@@ -182,6 +182,7 @@
     <ClCompile Include="..\..\src\ast\identifier_ast.cpp" />
     <ClCompile Include="..\..\src\ast\statement_ast .cpp" />
     <ClCompile Include="..\..\src\code_generator\code_generator.cpp" />
+    <ClCompile Include="..\..\src\code_generator\expressions\assignment.cpp" />
     <ClCompile Include="..\..\src\code_generator\expressions\basic_types.cpp" />
     <ClCompile Include="..\..\src\code_generator\expressions\expression.cpp" />
     <ClCompile Include="..\..\src\code_generator\expressions\function_call.cpp" />
@@ -189,7 +190,6 @@
     <ClCompile Include="..\..\src\code_generator\expressions\unary.cpp" />
     <ClCompile Include="..\..\src\code_generator\functions\function_declaration.cpp" />
     <ClCompile Include="..\..\src\code_generator\functions\function_definition.cpp" />
-    <ClCompile Include="..\..\src\code_generator\statments\assignment.cpp" />
     <ClCompile Include="..\..\src\code_generator\statments\if.cpp" />
     <ClCompile Include="..\..\src\code_generator\statments\statement.cpp" />
     <ClCompile Include="..\..\src\code_generator\statments\while.cpp">

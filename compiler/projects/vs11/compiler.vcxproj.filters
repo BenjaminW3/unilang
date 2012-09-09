@@ -75,9 +75,6 @@
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>Source Files\log</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\statments\assignment.cpp">
-      <Filter>Source Files\code_generator\statements</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\src\code_generator\statments\if.cpp">
       <Filter>Source Files\code_generator\statements</Filter>
     </ClCompile>
@@ -149,6 +146,9 @@
     </ClCompile>
     <ClCompile Include="..\..\src\execution_engine\execution_engine.cpp">
       <Filter>Source Files\execution_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\assignment.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -14,19 +14,6 @@ namespace unilang
 {
 	namespace ast
 	{
-		//#########################################################################
-		//! Assignment consists of a identifier and an expression.
-		//#########################################################################
-		struct assignment :	public ast_base
-		{
-			identifier lhs;
-			token_ids::type operator_;
-			expression rhs;
-
-			bool isPure() const override;
-		};
-		std::ostream& operator<<(std::ostream& out, assignment const& x);
-
 		// predefinitions for variant
 		struct if_statement;
 		//struct while_statement;
@@ -37,20 +24,18 @@ namespace unilang
 		//! A statement
 		//#########################################################################
 		struct statement :	public ast_base,
-							boost::spirit::extended_variant<	assignment,
-																expression,
-																boost::recursive_wrapper<if_statement>,
+							boost::spirit::extended_variant<	boost::recursive_wrapper<if_statement>,
 																//boost::recursive_wrapper<while_statement>,
 																//boost::recursive_wrapper<return_statement>,
+																expression,
 																boost::recursive_wrapper<statement_list>
 								>
 		{
 			statement();
-			statement(assignment val);
-			statement(expression val);
-			statement(if_statement val);
-			//statement(while_statement val);
+			statement(if_statement const& val);
+			//statement(while_statement const& val);
 			//statement(return_statement const& val);
+			statement(expression const& val);
 			statement(statement_list const& val);
 
 			inline bool isPure() const override;
@@ -97,12 +82,6 @@ namespace unilang
 		};*/
 	}
 }
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::assignment,
-    (unilang::ast::identifier, lhs)
-	(unilang::token_ids::type, operator_)
-    (unilang::ast::expression, rhs)
-)
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::if_statement,
