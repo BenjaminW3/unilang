@@ -70,7 +70,7 @@ namespace unilang
 				std::cout << "############################" << std::endl << std::endl;
 			}
 
-			return gen.GetModule();
+			return gen.getModule();
 		}
 	}
 }

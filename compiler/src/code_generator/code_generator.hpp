@@ -74,7 +74,15 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! \return The generated module.
 			//-------------------------------------------------------------------------
-			std::shared_ptr<llvm::Module> GetModule() const;
+			std::shared_ptr<llvm::Module> getModule() const;
+			//-------------------------------------------------------------------------
+			//! \return The LLVMContext used to build the module.
+			//-------------------------------------------------------------------------
+			llvm::LLVMContext& getContext() const;
+			//-------------------------------------------------------------------------
+			//! \return The IRBuilder used to build the module.
+			//-------------------------------------------------------------------------
+			llvm::IRBuilder<>& getBuilder();
 			
 			//-------------------------------------------------------------------------
 			//! Prints out the bytecode.
