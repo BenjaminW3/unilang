@@ -15,8 +15,8 @@ namespace unilang
 													tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", token_ids::identifier),
 													//tok_string("[^\"]+", token_ids::string),
 													lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", token_ids::lit_float),
-													lit_uint("[1-9][0-9]*", token_ids::lit_uint),
-													lit_int("[-\\+][1-9][0-9]*", token_ids::lit_int),
+													lit_uint("[1-9][0-9]*|0", token_ids::lit_uint),
+													lit_int("[-\\+][1-9][0-9]*|\\+0|-0", token_ids::lit_int),
 													lit_boolean("true|false", token_ids::lit_boolean)
 													/*
 													this->self.add_pattern
@@ -64,17 +64,17 @@ namespace unilang
 			add_("\\-\\-",  token_ids::minus_minus);
 			//add_("~",       token_ids::compl_);
 			add_("!",       token_ids::not_);
-			add_("\\$",       token_ids::stringify);
-			add_(":");
-			add_("->");
-			add_("if");
-			add_("else");
-			//add_("while");
-			//add_("return");
+			add_("\\$",     token_ids::stringify);
+			add_(":",		token_ids::colon);
+			add_("->",		token_ids::arrow);
+			add_("if",		token_ids::if_);
+			add_("else",	token_ids::else_);
+			//add_("while",		token_ids::while_);
+			//add_("return",	token_ids::return_);
 
 			this->self += tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
 
-			this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' /*| ':'*/ | '~' | '?';
+			this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' | '~' | '?';
 		}
 		//-------------------------------------------------------------------------
 		// 

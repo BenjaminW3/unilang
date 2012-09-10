@@ -188,6 +188,12 @@ namespace unilang
             identifier          = op::type::not_ + 1,
             comment,
             whitespace,
+            colon,
+            arrow,
+            if_,
+			else_,
+            //while_,
+			//return_,
             lit_float,
             lit_uint,
             lit_int,
@@ -240,11 +246,17 @@ namespace unilang
 			case token_ids::type::identifier: out << "identifier"; break;
 			case token_ids::type::comment: out << "comment"; break;
 			case token_ids::type::whitespace: out << "whitespace"; break;
+			case token_ids::type::colon: out << "colon"; break;
+			case token_ids::type::arrow: out << "arrow"; break;
+			case token_ids::type::if_: out << "if"; break;
+			case token_ids::type::else_: out << "else"; break;
+			//case token_ids::type::while_: out << "while"; break;
+			//case token_ids::type::return_: out << "return"; break;
 			case token_ids::type::lit_float: out << "lit_float"; break;
 			case token_ids::type::lit_uint: out << "lit_uint"; break;
 			case token_ids::type::lit_int: out << "lit_int"; break;
 			case token_ids::type::lit_boolean: out << "lit_boolean"; break;
-			default: out << "unknown-operation"; break;
+			default: out << "unknown-token-type"; break;
 		}
 		return out;
 	}
