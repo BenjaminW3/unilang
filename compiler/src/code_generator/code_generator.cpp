@@ -99,7 +99,7 @@ namespace unilang
 			}
 			else if(sTypeName=="int")
 			{
-				return llvm::Type::getInt64Ty(context);
+				return llvm::Type::getIntNTy(context,uiIntSize);
 			}
 			else
 			{

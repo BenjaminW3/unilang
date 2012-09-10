@@ -32,7 +32,7 @@ namespace unilang
 			}
   
 			// Convert condition to a bool by comparing equal to 0.0.
-			CondV = builder.CreateFCmpONE(CondV, llvm::ConstantFP::get(context, llvm::APFloat(0.0)), "if.cond");
+			CondV = builder.CreateFCmpONE(CondV, (*this)(long double(0.0)), "if.cond");
 
 			llvm::Function *TheFunction = builder.GetInsertBlock()->getParent();
   
@@ -81,7 +81,7 @@ namespace unilang
 			TheFunction->getBasicBlockList().push_back(MergeBB);
 			builder.SetInsertPoint(MergeBB);
 
-			llvm::PHINode *PN = builder.CreatePHI(llvm::Type::getDoubleTy(context), 2, "if.tmp");
+			llvm::PHINode *PN = builder.CreatePHI(getTypeByName("float"), 2, "if.tmp");
 			PN->addIncoming(ThenV, ThenBB);
 			if(x.else_.is_initialized())
 			{

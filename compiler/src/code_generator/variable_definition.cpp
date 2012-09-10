@@ -92,7 +92,14 @@ namespace unilang
 			{
 				if(x.parameters.size()==0)
 				{
-					InitVal = llvm::ConstantInt::get(context, llvm::APInt(64, 0, true)); // 64bit, initial 0, signed
+					InitVal = (*this)(int(0)); // 64bit, initial 0, signed
+					if (!InitVal)
+					{
+						std::stringstream sstr;
+						sstr << *x.parameters.begin();
+						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+						return ErrorV("InitVal for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' could not be generated.");
+					}
 				}
 				else if(x.parameters.size()==1)
 				{
@@ -110,7 +117,7 @@ namespace unilang
 						// convert if it is float
 						if(!InitVal->getType()->isFloatingPointTy())
 						{	
-							InitVal = builder.CreateFPToSI(InitVal, llvm::Type::getInt64Ty(context),"FPtoSI");
+							InitVal = builder.CreateFPToSI(InitVal, getTypeByName(x.decl.type.type_identifier.name), "FPtoSI");
 						}
 						// else error
 						else
@@ -140,7 +147,14 @@ namespace unilang
 				if(x.parameters.size()==0)
 				{
 					// If not specified, use 0.0.
-					InitVal = llvm::ConstantFP::get(context, llvm::APFloat(0.0));
+					InitVal = (*this)(long double(0.0));
+					if (!InitVal)
+					{
+						std::stringstream sstr;
+						sstr << *x.parameters.begin();
+						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
+						return ErrorV("InitVal for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' could not be generated.");
+					}
 				}
 				else if(x.parameters.size()==1)
 				{
@@ -157,7 +171,7 @@ namespace unilang
 						// convert if it is int
 						if(!InitVal->getType()->isIntegerTy())
 						{	
-							InitVal = builder.CreateSIToFP(InitVal, llvm::Type::getDoubleTy(context),"SItoFP");
+							InitVal = builder.CreateSIToFP(InitVal, getTypeByName(x.decl.type.type_identifier.name), "SItoFP");
 						}
 						// else error
 						else

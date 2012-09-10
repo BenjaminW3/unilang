@@ -18,7 +18,6 @@
 
 #include "llvm/LLVMContext.h"
 #include "llvm/IRBuilder.h"
-//#include "llvm/DerivedTypes.h"
 
 // predefinitions
 namespace llvm
@@ -37,10 +36,17 @@ namespace llvm
 
 namespace unilang 
 { 
+	//-----------------------------------------------------------------------------
+	//! The namespace defining the code_generator.
+	//-----------------------------------------------------------------------------
 	namespace code_generator
 	{
+		unsigned int const uiIntSize = 64;
+
 		//#########################################################################
 		//! Generates the code from an AST.
+		//!
+		//! Given a ast::module it recursively creates the corresponding llvm::Module.
 		//#########################################################################
 		class code_generator : public boost::static_visitor<llvm::Value *>
 		{
@@ -63,7 +69,7 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Optimizes the bytecode.
 			//-------------------------------------------------------------------------
-			void code_generator::optimize() const;
+			void optimize() const;
 
 			//-------------------------------------------------------------------------
 			//! \return The generated module.
@@ -117,19 +123,19 @@ namespace unilang
 			//-----------------------------------------------------------------------------
 			//! \return The Function with the given name.
 			//-----------------------------------------------------------------------------
-			llvm::Function * code_generator::getFunctionFromName( std::string const & name );
+			llvm::Function * getFunctionFromName( std::string const & name );
 			
 			//-----------------------------------------------------------------------------
 			//! \return The expression created with the shunting yard algorithm.
 			//-----------------------------------------------------------------------------
-			llvm::Value * code_generator::CreateExpression(	int min_precedence,
-															llvm::Value * lhs,
-															std::list<ast::operation>::const_iterator& rest_begin,
-															std::list<ast::operation>::const_iterator rest_end);
+			llvm::Value * CreateExpression(	int min_precedence,
+											llvm::Value * lhs,
+											std::list<ast::operation>::const_iterator& rest_begin,
+											std::list<ast::operation>::const_iterator rest_end);
 			//-----------------------------------------------------------------------------
 			//! \return The value returned from the execution of 'L op R'.
 			//-----------------------------------------------------------------------------
-			llvm::Value * code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op);
+			llvm::Value * CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op);
 
 		public:
 			llvm::Value * operator()(long double const & x);
@@ -160,7 +166,7 @@ namespace unilang
 			std::shared_ptr<llvm::Module> module;
 			
 			//#########################################################################
-			//! 
+			//! The code_generator internal class holding data about variables.
 			//#########################################################################
 			class VarData
 			{
