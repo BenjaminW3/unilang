@@ -293,11 +293,11 @@ namespace unilang
 						}
 					case token_ids::shift_left:
 						{
-							return builder.CreateOr(L, R, "shl");
+							return builder.CreateShl(L, R, "shl");
 						}
 					case token_ids::shift_right:
 						{
-							return builder.CreateOr(L, R, "shr");
+							return builder.CreateLShr(L, R, "shr");
 						}
 					/*case token_ids::max:
 						{
