@@ -154,6 +154,34 @@
       <UseLibraryDependencyInputs>true</UseLibraryDependencyInputs>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\code\fail_accessing_non_existant_function.u" />
+    <None Include="..\..\code\fail_accessing_non_existant_local_variable.u" />
+    <None Include="..\..\code\fail_compound_statement_variable_shadowing.u" />
+    <None Include="..\..\code\fail_duplicate_function_name.u" />
+    <None Include="..\..\code\fail_duplicate_parameter_name.u" />
+    <None Include="..\..\code\fail_duplicate_variable_name.u" />
+    <None Include="..\..\code\fail_higherorder_function_type_mismatch.u" />
+    <None Include="..\..\code\fail_int_initialization_list_too_long.u" />
+    <None Include="..\..\code\fail_literal_float_parameter_type_mismatch.u" />
+    <None Include="..\..\code\fail_literal_int_parameter_type_mismatch.u" />
+    <None Include="..\..\code\fail_literal_uint_parameter_type_mismatch.u" />
+    <None Include="..\..\code\fail_mismatch_chained_assignment.u" />
+    <None Include="..\..\code\fail_missing_function_identifier.u" />
+    <None Include="..\..\code\fail_missing_variable_definition_type.u" />
+    <None Include="..\..\code\fail_use_of_variable_before_its_definition.u" />
+    <None Include="..\..\code\fail_variable_shadowing_function.u" />
+    <None Include="..\..\code\fail_variable_shadowing_keyword.u" />
+    <None Include="..\..\code\fail_write_to_non_mutable_variable.u" />
+    <None Include="..\..\code\pass_chained_assignment.u" />
+    <None Include="..\..\code\pass_decrement.u" />
+    <None Include="..\..\code\pass_increment.u" />
+    <None Include="..\..\code\pass_int_empty_initialization_list_const.u" />
+    <None Include="..\..\code\pass_int_empty_initialization_list_nonconst.u" />
+    <None Include="..\..\code\pass_int_initialization_list_const.u" />
+    <None Include="..\..\code\pass_int_initialization_list_nonconst.u" />
+    <None Include="..\..\code\pass_missing_return_variable_name.u" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>

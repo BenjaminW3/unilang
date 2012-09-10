@@ -14,6 +14,7 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, function_declaration const& x)
 		{
 			out << "?";
+			out << x.idf << ":";
 			if(x.unpureQualifier)
 			{
 				out << " ~";
@@ -39,7 +40,6 @@ namespace unilang
 				out << decl;
 			}
 			out << ")";
-			out << ":" << x.idf;
 			return out;
 		}
 		
@@ -61,6 +61,7 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, function_definition const& x)
 		{
+			out << x.idf << ":";
 			if(x.unpureQualifier)
 			{
 				out << "~";
@@ -86,7 +87,6 @@ namespace unilang
 				out << def;
 			}
 			out << ")";
-			out << ":" << x.idf;
 			out << '{' << std::endl;
 			out << x.body << std::endl;
 			out << '}' << std::endl;

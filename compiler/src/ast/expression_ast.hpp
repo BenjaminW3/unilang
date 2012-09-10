@@ -19,7 +19,7 @@ namespace unilang
 		// predefinitions
 		struct expression;
 		//#########################################################################
-		//! A primary expression
+		//! A primary expression.
 		//#########################################################################
 		struct primary_expr :	public ast_base,
 								boost::spirit::extended_variant<	long double,
@@ -49,7 +49,7 @@ namespace unilang
 		struct variable_definition;
 		struct assignment;
 		//#########################################################################
-		//! A operand
+		//! A operand.
 		//#########################################################################
 		struct operand :	public ast_base,
 							boost::spirit::extended_variant<	primary_expr,
@@ -71,7 +71,7 @@ namespace unilang
 		};
 		std::ostream& operator<<(std::ostream& out, operand const& x);
 		//#########################################################################
-		//! A unary operation
+		//! A unary expression.
 		//#########################################################################
 		struct unary_expr :	public ast_base
 		{
@@ -82,7 +82,7 @@ namespace unilang
 		};
 		std::ostream& operator<<(std::ostream& out, unary_expr const& x);
 		//#########################################################################
-		//! ??? unary_expr
+		//! A operation.
 		//#########################################################################
 		struct operation :	public ast_base
 		{
@@ -93,7 +93,7 @@ namespace unilang
 		};
 		std::ostream& operator<<(std::ostream& out, operation const& x);
 		//#########################################################################
-		//! An expression
+		//! An expression.
 		//#########################################################################
 		struct expression :	public ast_base
 		{
@@ -130,8 +130,8 @@ namespace unilang
 		//#########################################################################
 		struct variable_declaration :	public ast_base
 		{
-			type_declaration type;
 			boost::optional<identifier> name;
+			type_declaration type;
 
 			bool isPure() const override;
 		};
@@ -194,8 +194,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::variable_declaration,
-    (unilang::ast::type_declaration, type)
     (boost::optional<unilang::ast::identifier>, name)
+    (unilang::ast::type_declaration, type)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

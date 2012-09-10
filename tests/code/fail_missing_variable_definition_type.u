@@ -1,1 +1,1 @@
-(:v)->(int:ret(1)):bogus
+bogus: (v:)->(ret:int(1))

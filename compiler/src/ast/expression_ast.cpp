@@ -183,11 +183,11 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, variable_declaration const& x)
 		{
-			out << x.type;
 			if(x.name.is_initialized())
 			{
-				out << ":" << x.name.get().name;
+				out << x.name.get().name << ":";
 			}
+			out << x.type;
 			return out;
 		}
 		//-------------------------------------------------------------------------

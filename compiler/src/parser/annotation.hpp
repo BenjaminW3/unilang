@@ -19,16 +19,16 @@ namespace unilang
         std::vector<Iterator>& m_iters;
 		
 		//-----------------------------------------------------------------------------
-		//! Constructor
+		//! Constructor.
 		//-----------------------------------------------------------------------------
         annotation(std::vector<Iterator>& iters) : m_iters(iters) {}
 		
 		//-----------------------------------------------------------------------------
-		//! Copy-constructor
+		//! Copy-constructor.
 		//-----------------------------------------------------------------------------
         annotation( annotation const & an) : m_iters(an.m_iters){}
 		//-----------------------------------------------------------------------------
-		//! Assignment-operator
+		//! Assignment-operator.
 		//-----------------------------------------------------------------------------
 		annotation & operator=( const annotation & an ) { m_iters = an.m_iters; }
 
@@ -57,7 +57,7 @@ namespace unilang
         }*/
 		
 		//-----------------------------------------------------------------------------
-		//! Sets ID if it is a base of ast::ast_base
+		//! Sets ID if it is a base of ast::ast_base.
 		//-----------------------------------------------------------------------------
 		template <typename T>
 		typename std::enable_if<std::is_base_of<ast::ast_base, T>::value, void>::type  operator()(T& ast, Iterator pos) const
@@ -67,7 +67,7 @@ namespace unilang
             ast.id = id;
         }
 		//-----------------------------------------------------------------------------
-		//! Does nothing if it is not a base of ast::ast_base
+		//! Does nothing if it is not a base of ast::ast_base.
 		//-----------------------------------------------------------------------------
 		template <typename T>
 		typename std::enable_if<!std::is_base_of<ast::ast_base, T>::value, void>::type  operator()(T& /*ast*/, Iterator /*pos*/) const

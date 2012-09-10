@@ -27,13 +27,13 @@ namespace unilang
 		namespace qi = boost::spirit::qi;
 
 		//#########################################################################
-		//  The function grammar
+		//!  The function grammar.
 		//#########################################################################
 		template <typename BaseIterator, typename Iterator>
 		struct global_grammar : qi::grammar<Iterator, ast::module()>
 		{
 			//-------------------------------------------------------------------------
-			//! Constructor
+			//! Constructor.
 			//-------------------------------------------------------------------------
 			global_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
 							lexer::token_lexer<BaseIterator>& lexer);

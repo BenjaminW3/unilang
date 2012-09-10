@@ -1,7 +1,7 @@
-~()->(int:iErrorCode(1)):entrypoint
+entrypoint: ~()->(iErrorCode:int(1))
 {
-	int:if(42);
-	int:else(42);
-	//int:while(42);
-	//int:return(42);
+	if:int(42);
+	else:int(42);
+	//while:int(42);
+	//return:int(42);
 }

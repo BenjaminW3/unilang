@@ -31,7 +31,7 @@ namespace unilang
 			llvm::Function *CalleeF = module->getFunction(x.idf.name);
 			if (!CalleeF)
 			{
-				return ErrorV("Unknown function '"+x.idf.name+"' referenced!");
+				return ErrorV("Unknown function '"+x.idf.name+"' referenced.");
 			}
   
 			// If argument number mismatch error.
@@ -52,7 +52,7 @@ namespace unilang
 				{
 					std::stringstream sstr;
 					sstr << ex;
-					return ErrorV("Invalid argument returned from '" +sstr.str()+ "' !");
+					return ErrorV("Invalid argument returned from '" +sstr.str()+ "'.");
 				}
 
 				if(ArgsV.back()->getType()!=(*itArg).getType())
@@ -69,7 +69,7 @@ namespace unilang
 				++itArg;
 			}
   
-			return builder.CreateCall(CalleeF, ArgsV, "calltmp");
+			return builder.CreateCall(CalleeF, ArgsV, "call");
 		}
 		/*
 		if (printf == null) {

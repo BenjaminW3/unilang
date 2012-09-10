@@ -7,7 +7,7 @@
 namespace unilang
 {
     //#########################################################################
-    // ! The error handler
+    // ! The error handler.
     //#########################################################################
     template <typename BaseIterator, typename Iterator>
     struct error_handler
@@ -16,7 +16,7 @@ namespace unilang
         struct result {typedef void type;};
 		
 		//-----------------------------------------------------------------------------
-		//! Constructor
+		//! Constructor.
 		//-----------------------------------------------------------------------------
         error_handler(BaseIterator first, BaseIterator last)
           : first(first), last(last) 
@@ -24,7 +24,7 @@ namespace unilang
 		}
 		
 		//-----------------------------------------------------------------------------
-		//! Prints out the error Message, the error reason and the position the error occured
+		//! Prints out the error Message, the error reason and the position the error occured.
 		//-----------------------------------------------------------------------------
         template <typename Message, typename What>
         void operator()(

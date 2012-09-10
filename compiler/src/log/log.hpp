@@ -62,7 +62,7 @@
 namespace unilang
 {
 	//-----------------------------------------------------------------------------
-	//! functions for logging usage
+	//! The logging infrastructure.
 	//! 
 	//! The no_output policy is stricly optional it can be used to disable logging.
 	//-----------------------------------------------------------------------------
@@ -92,7 +92,7 @@ namespace unilang
 		};
 
 		//-----------------------------------------------------------------------------
-		//! functions for detail implementations of logging
+		//! Functions for detail implementations of logging.
 		//-----------------------------------------------------------------------------
 		namespace detail
 		{

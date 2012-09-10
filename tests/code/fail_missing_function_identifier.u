@@ -1,1 +1,1 @@
-(int:v)->(int:ret(1)):
+:(v:int)->(ret:int(1))

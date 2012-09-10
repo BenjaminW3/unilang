@@ -13,7 +13,7 @@ namespace unilang
 		namespace qi = boost::spirit::qi;
 
 		//-----------------------------------------------------------------------------
-		//! Constructor
+		//! Constructor.
 		//-----------------------------------------------------------------------------
 		template <typename BaseIterator, typename Iterator>
 		function_grammar<BaseIterator,Iterator>::function_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
@@ -52,12 +52,12 @@ namespace unilang
 
 			functionDeclaration =
 					'?'
+				>	identifierGrammar
+				>	lexer(":")
 				>	expressionGrammar.mutableQualifier
 				>	parameterDeclarationList
 				>	lexer("->")
 				>	returnDeclarationList
-				>	lexer(":")
-				>	identifierGrammar
 				;
 			functionDeclaration.name("functionDeclaration");
 
@@ -76,13 +76,13 @@ namespace unilang
 			returnDefinitionList.name("returnDefinitionList");
 
 			functionDefinition =
-					expressionGrammar.mutableQualifier
-				>>	parameterDefinitionList
-				>>	lexer("->")
-				>>	returnDefinitionList
-				>>	lexer(":")
-				>>	identifierGrammar
-				>>	-statementGrammar.compoundStatement
+					identifierGrammar
+				>	lexer(":")
+				>	expressionGrammar.mutableQualifier
+				>	parameterDefinitionList
+				>	lexer("->")
+				>	returnDefinitionList
+				>	-statementGrammar.compoundStatement
 				;
 			functionDefinition.name("functionDefinition");
 #ifdef _DEBUG

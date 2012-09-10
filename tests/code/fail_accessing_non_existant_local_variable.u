@@ -1,4 +1,4 @@
-~()->(int:iErrorCode(1)):entrypoint
+entrypoint: ~()->(iErrorCode:int(1))
 {
-	int:foo(bogus);
+	foo:int(bogus);
 }

@@ -1,6 +1,6 @@
-(float:x)->(float(x+1)):increment
+increment:(x:float)->(float(x+1))
 
-~()->(~int:iErrorCode(1)):entrypoint
+entrypoint: ~()->(iErrorCode:~int(1))
 {
 	iErrorCode = int(increment(+0));
 }

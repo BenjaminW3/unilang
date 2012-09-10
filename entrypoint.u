@@ -1,8 +1,8 @@
-?(int,int)->(int):add						// predeclaration of pure function
+?add : (int,int)->(int)						// predeclaration of pure function
 
-~()->(~int:iErrorCode(1)):entrypoint		// define entry-point, initialize iErrorCode with 1
+entrypoint : ~()->(iErrorCode:~int(1))		// define entry-point, initialize iErrorCode with 1
 {
 	iErrorCode = add(-1, 5+-4/*+2*/);		// assign the result of -1+5-4/*+2*/ to iErrorCode
 }
 
-(int:i1, int:i2)->(int(i1+i2)): add		// definition of predeclared pure function
+add : (i1:int, i2:int)->(:int(i1+i2)) 		// definition of predeclared pure function

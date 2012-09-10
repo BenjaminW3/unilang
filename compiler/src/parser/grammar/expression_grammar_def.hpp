@@ -13,7 +13,7 @@ namespace unilang
 		namespace qi = boost::spirit::qi;
 
 		//-----------------------------------------------------------------------------
-		//! Constructor
+		//! Constructor.
 		//-----------------------------------------------------------------------------
 		template <typename BaseIterator, typename Iterator>
 		expression_grammar<BaseIterator,Iterator>::expression_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
@@ -52,20 +52,29 @@ namespace unilang
 			unary_expr.name("unary_expr");
 
 			postfix_expr =
-					functionCall
-				|	variableDefinition
+					variableDefinition	// before function call for unnamed variable definitions
+				|	functionCall
 				|	assignment_expr
 				|   primary_expr
 				;
 			postfix_expr.name("postfix_expr");
 
+			float_expr = lexer.lit_float;
+			float_expr.name("float_expr");
+			uint_expr = lexer.lit_uint;
+			uint_expr.name("uint_expr");
+			int_expr = lexer.lit_int;
+			int_expr.name("int_expr");
+			bool_expr = lexer.lit_boolean;
+			bool_expr.name("bool_expr");
+
 			primary_expr =
-					lexer.lit_float
-				|	lexer.lit_uint
-				|	lexer.lit_int
-				|   lexer.lit_boolean
+					float_expr
+				|	uint_expr
+				|	int_expr
+				|   bool_expr
 				|   identifierGrammar
-				|   '(' > expression > ')'
+				|   ('(' > expression > ')')
 				;
 			primary_expr.name("primary_expr");
 
@@ -74,8 +83,8 @@ namespace unilang
 
 			functionCall =
 					(identifierGrammar	>> '(')
-					>>   argumentList		// TODO >
-					>>   ')'				// TODO >
+				>>   argumentList		// TODO >
+				>   ')'
 				;
 			functionCall.name("functionCall");
 
@@ -86,14 +95,13 @@ namespace unilang
 
 			typeDeclaration =
 					mutableQualifier
-				>>	identifierGrammar
+				>	identifierGrammar
 				;
 			typeDeclaration.name("typeDeclaration");
 
 			variableIdentifier = 
 				-(
-						lexer(":")
-					>	lexer.tok_identifier	// HACK: does not work with identifierGrammar!
+					identifierGrammar
 				)
 				;
 			variableIdentifier.name("variableIdentifier");
@@ -104,15 +112,16 @@ namespace unilang
 			// <identifier> can be: -empty
 			//						-a user defined identifier
 			variableDeclaration =
-					typeDeclaration
-				>>	variableIdentifier
+					variableIdentifier
+				>>	lexer(":")
+				>	typeDeclaration
 				;
 			variableDeclaration.name("variableDeclaration");
 
 			parameterList = 
 				'('
-				>>	-( expression % ',')
-				>>	')'
+				>	-( expression % ',')
+				>	')'
 				;
 			parameterList.name("parameterList");
 
@@ -144,6 +153,10 @@ namespace unilang
 				(unary_expr)
 				(postfix_expr)
 				(primary_expr)
+				(float_expr)
+				(uint_expr)
+				(int_expr)
+				(bool_expr)
 				(functionCall)
 				(argumentList)
 				(mutableQualifier)
@@ -160,6 +173,10 @@ namespace unilang
 			on_error<fail>(	expression,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	unary_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	postfix_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	float_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	uint_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	int_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	bool_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	primary_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	functionCall,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	argumentList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
@@ -176,6 +193,10 @@ namespace unilang
 			on_success(	expression,				annotation_function(error_handler.iters)(_val, _1));
 			on_success(	unary_expr,				annotation_function(error_handler.iters)(_val, _1));
 			on_success(	postfix_expr,			annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	float_expr,				annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	uint_expr,				annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	int_expr,				annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	bool_expr,				annotation_function(error_handler.iters)(_val, _1));
 			on_success(	primary_expr,			annotation_function(error_handler.iters)(_val, _1));
 			on_success(	functionCall,			annotation_function(error_handler.iters)(_val, _1));
 			//on_success(	argumentList,			annotation_function(error_handler.iters)(_val, _1));

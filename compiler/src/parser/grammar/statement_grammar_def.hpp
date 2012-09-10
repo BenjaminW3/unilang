@@ -11,7 +11,7 @@ namespace unilang
 		namespace qi = boost::spirit::qi;
 		
 		//-----------------------------------------------------------------------------
-		//! Constructor
+		//! Constructor.
 		//-----------------------------------------------------------------------------
 		template <typename BaseIterator, typename Iterator>
 		statement_grammar<BaseIterator,Iterator>::statement_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
@@ -76,7 +76,7 @@ namespace unilang
 			compoundStatement =
 					'{'
 				>>	statementList
-				>>	'}'
+				>	'}'
 				;
 			compoundStatement.name("compoundStatement");
 

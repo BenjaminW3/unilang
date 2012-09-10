@@ -18,10 +18,10 @@ namespace unilang
 		//#########################################################################
 		struct function_declaration :	public ast_base
 		{
+			identifier idf;
 			bool unpureQualifier;
 			std::vector<type_declaration> parameter_types;
 			std::vector<type_declaration> return_types;
-			identifier idf;
 
 			bool isPure() const override;
 		};
@@ -32,10 +32,10 @@ namespace unilang
 		//#########################################################################
 		struct function_definition :	public ast_base
 		{
+			identifier idf;
 			bool unpureQualifier;
 			std::vector<variable_declaration> parameter_declarations;
 			std::vector<variable_definition> return_value_definitions;
-			identifier idf;
 			statement_list body;
 
 			bool isPure() const override;
@@ -46,17 +46,17 @@ namespace unilang
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_declaration,
+    (unilang::ast::identifier, idf)
 	(bool, unpureQualifier)
     (std::vector<unilang::ast::type_declaration>, parameter_types)
     (std::vector<unilang::ast::type_declaration>, return_types)
-    (unilang::ast::identifier, idf)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
     unilang::ast::function_definition,
+    (unilang::ast::identifier, idf)
 	(bool, unpureQualifier)
     (std::vector<unilang::ast::variable_declaration>, parameter_declarations)
     (std::vector<unilang::ast::variable_definition>, return_value_definitions)
-    (unilang::ast::identifier, idf)
     (unilang::ast::statement_list, body)
 )

@@ -1,6 +1,6 @@
-(int:x)->(int(++x)):increment
+(x:int)->(int(++x)):increment
 
-~()->(~int:iErrorCode(1)):entrypoint
+entrypoint: ~()->(iErrorCode:~int(1))
 {
 	iErrorCode = increment(3.14);
 }

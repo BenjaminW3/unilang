@@ -50,7 +50,7 @@ namespace unilang
 			llvm::Function *TheFunction = (*this)(decl);
 			if (TheFunction == 0)
 			{
-				return static_cast<llvm::Function*>(ErrorV("Unable to build function declaration for function definition: '"+x.idf.name+"'!"));
+				return static_cast<llvm::Function*>(ErrorV("Unable to build function declaration for function definition: '"+x.idf.name+"'."));
 			}
 
 			// Create a new basic block to start insertion into.
@@ -98,7 +98,7 @@ namespace unilang
 				llvm::Value *RetVal = builder.CreateLoad(retValues[0], "loadret");
 				if(!RetVal)
 				{
-					return static_cast<llvm::Function*>(ErrorV("Unable to create load return from function '"+x.idf.name+"'"));
+					return static_cast<llvm::Function*>(ErrorV("Unable to create load return from function '"+x.idf.name+"'."));
 				}
 				if(RetVal->getType() != TheFunction->getReturnType())
 				{
@@ -131,14 +131,14 @@ namespace unilang
 				}
 				else
 				{
-					return static_cast<llvm::Function*>(ErrorV("Unable to return multiple return values from the non aggregate return type function '"+x.idf.name+"'!"));
+					return static_cast<llvm::Function*>(ErrorV("Unable to return multiple return values from the non aggregate return type function '"+x.idf.name+"'."));
 				}
 			}
 
 			// Validate the generated code, checking for consistency.
 			if(llvm::verifyFunction(*TheFunction, llvm::VerifierFailureAction::PrintMessageAction))
 			{
-				return static_cast<llvm::Function*>(InternalErrorV("verifyFunction failure '"+x.idf.name+"'!"));
+				return static_cast<llvm::Function*>(InternalErrorV("verifyFunction failure '"+x.idf.name+"'."));
 			}
 
 			return TheFunction;

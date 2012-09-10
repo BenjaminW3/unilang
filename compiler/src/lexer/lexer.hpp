@@ -67,10 +67,16 @@
 
 namespace unilang 
 { 
+	//-----------------------------------------------------------------------------
+	//! The namespace defining the lexer infrastructure.
+	//-----------------------------------------------------------------------------
 	namespace lexer
 	{
 		namespace lex = boost::spirit::lex;
-
+		
+		//-----------------------------------------------------------------------------
+		//! The namespace defining the used lexer properties.
+		//-----------------------------------------------------------------------------
 		namespace detail
 		{
 			namespace lex = boost::spirit::lex;
@@ -107,7 +113,7 @@ namespace unilang
 		}
 		
 		//#########################################################################
-		//! The Lexer tokenizing the input stream for use by the parser
+		//! The Lexer tokenizing the input stream for use by the parser.
 		//#########################################################################
 		template <typename BaseIterator>
 		struct token_lexer	:	lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>,

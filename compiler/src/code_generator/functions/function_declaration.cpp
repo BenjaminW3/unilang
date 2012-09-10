@@ -57,7 +57,7 @@ namespace unilang
 				// Delete the one we just made and get the existing one.
 				F->eraseFromParent();
 				F = getFunctionFromName(x.idf.name);
-				//std::cout << "Function name conflict! "	<<	x.idf.name	<<	" already existed inside the module. Taking the existing one instead!" << std::endl;
+
 				// If F already has a body, reject this.
 				if (!F->empty())
 				{

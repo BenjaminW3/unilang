@@ -15,10 +15,13 @@
 
 namespace unilang 
 {
+	//-----------------------------------------------------------------------------
+	//! The namespace defining all the abstract syntax tree objects.
+	//-----------------------------------------------------------------------------
 	namespace ast
 	{
 		//#########################################################################
-		//! structure/type/object definitions.
+		//! A meta_entity can be multiple things.
 		//#########################################################################
 		struct meta_entity :	public ast_base,
 								boost::spirit::extended_variant<	function_declaration, 
@@ -32,7 +35,7 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, meta_entity const& x);
 		
 		//#########################################################################
-		//! A module.
+		//! A module is the root of the abstract syntax tree.
 		//#########################################################################
 		struct module : public ast_base
 		{

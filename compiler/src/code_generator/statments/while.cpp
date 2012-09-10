@@ -27,5 +27,34 @@ namespace unilang
 			(*current)[exit] = current->size()-exit;    // now we know where to jump to (to exit the loop)
 			return true;
 		}*/
+
+		/*
+		function f = get_current_function();
+
+        basic_block cond_block = make_basic_block("while.cond", f);
+        basic_block body_block = make_basic_block("while.body");
+        basic_block exit_block = make_basic_block("while.end");
+
+        branch(cond_block);
+        set_insert_point(cond_block);
+        value condition = (*this)(x.condition);
+        if (!condition.is_valid())
+            return false;
+        conditional_branch(condition, body_block, exit_block);
+        f.add(body_block);
+        set_insert_point(body_block);
+
+        if (!(*this)(x.body))
+            return false;
+
+        if (!body_block.has_terminator())
+            branch(cond_block); // loop back
+
+        // Emit exit block
+        f.add(exit_block);
+        set_insert_point(exit_block);
+
+        return true;
+		*/
 	}
 }

@@ -21,7 +21,7 @@ namespace unilang
 		struct statement_list;
 
 		//#########################################################################
-		//! A statement
+		//! A statement.
 		//#########################################################################
 		struct statement :	public ast_base,
 							boost::spirit::extended_variant<	boost::recursive_wrapper<if_statement>,
@@ -53,7 +53,7 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, statement_list const& x);
 
 		//#########################################################################
-		//! If-statement
+		//! If-statement.
 		//#########################################################################
 		struct if_statement :	public ast_base
 		{
@@ -66,7 +66,7 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, if_statement const& x);
 
 		//#########################################################################
-		//! While statement
+		//! While statement.
 		//#########################################################################
 		/*struct while_statement :	public ast_base
 		{
@@ -75,7 +75,7 @@ namespace unilang
 		};*/
 
 		//#########################################################################
-		//! Return statement
+		//! Return statement.
 		//#########################################################################
 		/*struct return_statement :	public ast_base
 		{

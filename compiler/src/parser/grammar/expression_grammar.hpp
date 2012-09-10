@@ -26,18 +26,22 @@ namespace unilang
 		namespace qi = boost::spirit::qi;
 
 		//#########################################################################
-		//  The expression grammar
+		//!  The expression grammar.
 		//#########################################################################
 		template <typename BaseIterator, typename Iterator>
 		struct expression_grammar : qi::grammar<Iterator, ast::expression()>
 		{
 			//-------------------------------------------------------------------------
-			//! Constructor
+			//! Constructor.
 			//-------------------------------------------------------------------------
 			expression_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
 								identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
 								lexer::token_lexer<BaseIterator>& lexer);
-
+			
+			qi::rule<Iterator, long double()> float_expr;
+			qi::rule<Iterator, unsigned int()> uint_expr;
+			qi::rule<Iterator, int()> int_expr;
+			qi::rule<Iterator, bool()> bool_expr;
 			qi::rule<Iterator, ast::primary_expr()> primary_expr;
 			qi::rule<Iterator, ast::operand()>unary_expr, postfix_expr;
 			qi::rule<Iterator, ast::expression()> expression;
