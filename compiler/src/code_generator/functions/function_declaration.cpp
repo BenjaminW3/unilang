@@ -36,8 +36,16 @@ namespace unilang
 			}
 			
 			// create return type
-			// FIXME: only one return value/type
-			llvm::Type* pReturnType = getTypeByName((*x.return_types.begin()).type_identifier.name);
+			llvm::Type* pReturnType = nullptr;
+			if(x.return_types.size()==0)
+			{
+				pReturnType = llvm::Type::getVoidTy(context);
+			}
+			else
+			{
+				// FIXME: only one return value/type
+				pReturnType = getTypeByName((*x.return_types.begin()).type_identifier.name);
+			}
 
 			llvm::FunctionType *FT = llvm::FunctionType::get(pReturnType,	vpParameterTypes, false);
 
