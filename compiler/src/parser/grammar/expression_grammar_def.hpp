@@ -74,7 +74,7 @@ namespace unilang
 				|	int_expr
 				|   bool_expr
 				|   identifierGrammar
-				|   ('(' > expression > ')')
+				|   (lexer("\\(") > expression > lexer("\\)"))
 				;
 			primary_expr.name("primary_expr");
 
@@ -82,14 +82,14 @@ namespace unilang
 			argumentList.name("argumentList");
 
 			functionCall =
-					(identifierGrammar	>> '(')
+					(identifierGrammar	>> lexer("\\("))
 				>>   argumentList		// TODO >
-				>   ')'
+				>   lexer("\\)")
 				;
 			functionCall.name("functionCall");
 
 			mutableQualifier = 
-				matches['~']
+					matches[lexer("~")]
 				;
 			mutableQualifier.name("mutableQualifier");
 
@@ -119,9 +119,9 @@ namespace unilang
 			variableDeclaration.name("variableDeclaration");
 
 			parameterList = 
-				'('
-				>	-( expression % ',')
-				>	')'
+					lexer("\\(")
+				>	-( expression % lexer(","))
+				>	lexer("\\)")
 				;
 			parameterList.name("parameterList");
 

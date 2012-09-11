@@ -37,21 +37,21 @@ namespace unilang
 			typedef function<unilang::annotation<Iterator> > annotation_function;
 
 			parameterDeclarationList =
-					'('
-				>	-( expressionGrammar.typeDeclaration % ',')
-				>	')'
+					lexer("\\(")
+				>	-( expressionGrammar.typeDeclaration % lexer(","))
+				>	lexer("\\)")
 				;
 			parameterDeclarationList.name("parameterDeclarationList");
 
 			returnDeclarationList =
-					'('
-				>	-( expressionGrammar.typeDeclaration % ',')
-				>	')'
+					lexer("\\(")
+				>	-( expressionGrammar.typeDeclaration % lexer(","))
+				>	lexer("\\)")
 				;
 			returnDeclarationList.name("returnDeclarationList");
 
 			functionDeclaration =
-					'?'
+					lexer("\\?")
 				>	identifierGrammar
 				>	lexer(":")
 				>	expressionGrammar.mutableQualifier
@@ -62,16 +62,16 @@ namespace unilang
 			functionDeclaration.name("functionDeclaration");
 
 			parameterDefinitionList =
-					'('
-				>	-( expressionGrammar.variableDeclaration % ',')
-				>	')'
+					lexer("\\(")
+				>	-( expressionGrammar.variableDeclaration % lexer(","))
+				>	lexer("\\)")
 				;
 			parameterDefinitionList.name("parameterDefinitionList");
 
 			returnDefinitionList =
-					'('
-				>	-( expressionGrammar.variableDefinition % ',')
-				>	')'
+					lexer("\\(")
+				>	-( expressionGrammar.variableDefinition % lexer(","))
+				>	lexer("\\)")
 				;
 			returnDefinitionList.name("returnDefinitionList");
 

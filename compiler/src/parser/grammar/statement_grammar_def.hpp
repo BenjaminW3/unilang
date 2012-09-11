@@ -37,15 +37,15 @@ namespace unilang
 
 			expressionStatement =
 					expressionGrammar
-				>	';'
+				>	lexer(";")
 				;
 			expressionStatement.name("expressionStatement");
 
 			ifStatement =
 					lexer("if")
-				>	'('
+				>	lexer("\\(")
 				>	expressionGrammar
-				>	')'
+				>	lexer("\\)")
 				>	compoundStatement
 				>	-(
 						lexer("else")
@@ -56,12 +56,10 @@ namespace unilang
 
 			/*whileStatement =
 					lexer("while")
-				>   '('
+				>   lexer("\\(")
 				>   expressionGrammar
-				>   ')'
-				>	'{'
-				>   statementlist
-				>	'}'
+				>   lexer("\\)")
+				>	compoundStatement
 				;
 			whileStatement.name("whileStatement");*/
 
@@ -69,14 +67,14 @@ namespace unilang
 			/*returnStatement =
 					lexer("return") 
 				>	-expressionGrammar
-				>   ';'
+				>   lexer(";")
 				;
 			returnStatement.name("returnStatement");*/
 
 			compoundStatement =
-					'{'
+					lexer("\\{")
 				>>	statementList
-				>	'}'
+				>	lexer("\\}")
 				;
 			compoundStatement.name("compoundStatement");
 

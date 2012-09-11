@@ -189,6 +189,15 @@ namespace unilang
             comment,
             whitespace,
             colon,
+            semicolon,
+            tilde,
+			question_mark,
+			opening_parenthesis,
+			closing_parenthesis,
+			opening_brace,
+			closing_brace,
+			opening_bracket,
+			closing_bracket,
             arrow,
             if_,
 			else_,
@@ -209,6 +218,7 @@ namespace unilang
 			case token_ids::type::op_binary: out << "op_binary"; break;
 			case token_ids::type::op_unary: out << "op_unary"; break;
 			case token_ids::type::op_assign: out << "op_assign"; break;
+			//case token_ids::type::comma: out << ","; break;
 			case token_ids::type::assign: out << "="; break;
 			case token_ids::type::plus_assign: out << "+="; break;
 			case token_ids::type::minus_assign: out << "-="; break;
@@ -246,8 +256,11 @@ namespace unilang
 			case token_ids::type::identifier: out << "identifier"; break;
 			case token_ids::type::comment: out << "comment"; break;
 			case token_ids::type::whitespace: out << "whitespace"; break;
-			case token_ids::type::colon: out << "colon"; break;
-			case token_ids::type::arrow: out << "arrow"; break;
+			case token_ids::type::semicolon: out << ";"; break;
+			case token_ids::type::colon: out << ":"; break;
+			case token_ids::type::tilde: out << "~"; break;
+			case token_ids::type::question_mark: out << "?"; break;
+			case token_ids::type::arrow: out << "->"; break;
 			case token_ids::type::if_: out << "if"; break;
 			case token_ids::type::else_: out << "else"; break;
 			//case token_ids::type::while_: out << "while"; break;

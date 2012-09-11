@@ -71,10 +71,20 @@ namespace unilang
 			add_("else",	token_ids::else_);
 			//add_("while",		token_ids::while_);
 			//add_("return",	token_ids::return_);
+			add_("\\(",		token_ids::opening_parenthesis);
+			add_("\\)",		token_ids::closing_parenthesis);
+			add_("\\{",		token_ids::opening_brace);
+			add_("\\}",		token_ids::closing_brace);
+			//add_("\\[",		token_ids::opening_bracket);
+			//add_("\\]",		token_ids::closing_bracket);
+			add_(",",		token_ids::comma);
+			add_(";",		token_ids::semicolon);
+			add_("~",		token_ids::tilde);
+			add_("\\?",		token_ids::question_mark);
 
 			this->self += tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
 
-			this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' | '~' | '?';
+			//this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' | '~' | '?';
 		}
 		//-------------------------------------------------------------------------
 		// 
