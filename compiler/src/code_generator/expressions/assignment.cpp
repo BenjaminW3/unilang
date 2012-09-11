@@ -11,29 +11,29 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::assignment const & x)
+		llvm::Value * expression_code_generator::operator()(ast::assignment const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
 			// Look up the name.
-			code_generator::VarData * V = getVarFromName(x.lhs.name);
+			VarData * V = getVarFromName(x.lhs.name);
 			if(!V)
 			{
-				return ErrorV("Undefined variable name '"+x.lhs.name+"' !");
+				return ErrorValue("Undefined variable name '"+x.lhs.name+"' !");
 			}
 			else
 			{
 				if(!V->isMutable())
 				{
-					return ErrorV("Assignment to const (non-mutable) variable '"+x.lhs.name+"' is impossible!");
+					return ErrorValue("Assignment to const (non-mutable) variable '"+x.lhs.name+"' is impossible!");
 				}
 				else
 				{
 					llvm::AllocaInst *lhs = V->getAllocaInst();
 					if(!lhs)
 					{
-						return InternalErrorV("Variable '"+x.lhs.name+"' is not allocated!");
+						return ErrorValue("Variable '"+x.lhs.name+"' is not allocated!", EErrorLevel::Internal);
 					}
 					else
 					{
@@ -41,7 +41,7 @@ namespace unilang
 						llvm::Value *rhs = (*this)(x.rhs);
 						if(!rhs)
 						{
-							return ErrorV("Invalid right hand side of an assignment!");
+							return ErrorValue("Invalid right hand side of an assignment!");
 						}
 						if(rhs->getType()!=lhs->getType()->getElementType())
 						{
@@ -52,7 +52,7 @@ namespace unilang
 							rso << "' to a value of type '";
 							lhs->getType()->print(rso);
 							rso << "'.";
-							return ErrorV("Assignment type mismatch! "+rso.str());
+							return ErrorValue("Assignment type mismatch! "+rso.str());
 						}
 						else
 						{
@@ -67,7 +67,7 @@ namespace unilang
 								llvm::Value *CalcVal = CreateBinaryOperation(lhs, rhs, x.operator_);
 								if(!CalcVal)
 								{
-									return ErrorV("Unable to compute result of operation prior to assignment!");
+									return ErrorValue("Unable to compute result of operation prior to assignment!");
 								}
 								/*return */builder.CreateStore(CalcVal, lhs);
 								return CalcVal;

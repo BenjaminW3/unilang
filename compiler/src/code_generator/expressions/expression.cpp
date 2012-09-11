@@ -11,7 +11,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::primary_expr const& x)
+		llvm::Value * expression_code_generator::operator()(ast::primary_expr const& x)
 		{
 			LOG(x);
 			return x.apply_visitor(*this);
@@ -19,7 +19,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		/*llvm::Value * code_generator::operator()(ast::operand const & x)
+		/*llvm::Value * expression_code_generator::operator()(ast::operand const & x)
 		{
 			LOG(x);
 			return x.apply_visitor(*this);
@@ -94,7 +94,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		// The Shunting-yard algorithm
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::CreateExpression(	int min_precedence,
+		llvm::Value * expression_code_generator::CreateExpression(	int min_precedence,
 														llvm::Value * lhs,
 														std::list<ast::operation>::const_iterator & rest_begin,
 														std::list<ast::operation>::const_iterator rest_end)
@@ -108,7 +108,7 @@ namespace unilang
 				{
 					std::stringstream sstr;
 					sstr << "Operand '" << rest_begin->operand_ << "' could not be evaluated!";
-					return ErrorV( sstr.str() );
+					return ErrorValue( sstr.str() );
 				}
 				++rest_begin;
 
@@ -125,7 +125,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::expression const & x)
+		llvm::Value * expression_code_generator::operator()(ast::expression const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
@@ -135,7 +135,7 @@ namespace unilang
 			{
 				std::stringstream sstr;
 				sstr << "Operand '" << x.first << "' in expression '" << x << "' could not be evaluated!";
-				lhs = ErrorV( sstr.str() );
+				lhs = ErrorValue( sstr.str() );
 			}
 			
 			std::list<ast::operation>::const_iterator rest_begin = x.rest.begin();
@@ -144,15 +144,15 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op)
+		llvm::Value * expression_code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op)
 		{
 			if(!L)
 			{
-				return ErrorV( "Invalid L Value for operand." );
+				return ErrorValue( "Invalid L Value for operand." );
 			}
 			else if(!R)
 			{
-				return ErrorV( "Invalid R Value for operand." );
+				return ErrorValue( "Invalid R Value for operand." );
 			}
 			else if(L->getType() == R->getType())
 			{
@@ -214,7 +214,7 @@ namespace unilang
 						}
 					default: 
 						{
-							return FatalErrorV("Unknown operation!");
+							return ErrorValue("Unknown operation!", EErrorLevel::Fatal);
 						}
 					}
 				}
@@ -288,7 +288,7 @@ namespace unilang
 						}*/
 					case token_ids::not_:
 						{
-							return FatalErrorV("not_ not implemented!");
+							return ErrorValue("not_ not implemented!", EErrorLevel::Fatal);
 							//return builder.CreateOr(L, R, "not");
 						}
 					case token_ids::shift_left:
@@ -317,13 +317,13 @@ namespace unilang
 						}*/
 					default: 
 						{
-							return FatalErrorV("Unknown operation!");
+							return ErrorValue("Unknown operation!", EErrorLevel::Fatal);
 						}
 					}
 				}
 				else
 				{
-					return InternalErrorV("Unsupported type in operation!");
+					return ErrorValue("Unsupported type in operation!", EErrorLevel::Internal);
 				}
 			}
 			else
@@ -335,7 +335,7 @@ namespace unilang
 				rso << "' and '";
 				R->getType()->print(rso);
 				rso << "' in operation.";
-				return ErrorV("Operation type mismatch! "+rso.str());
+				return ErrorValue("Operation type mismatch! "+rso.str());
 			}
 		}
 	}

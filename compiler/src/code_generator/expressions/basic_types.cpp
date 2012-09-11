@@ -9,7 +9,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(long double const & x)
+		llvm::Value * expression_code_generator::operator()(long double const & x)
 		{
 			// FIXME: downcast from long double -> double
 			return llvm::ConstantFP::get(context, llvm::APFloat(double(x)));
@@ -17,21 +17,21 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(unsigned int const & x)
+		llvm::Value * expression_code_generator::operator()(unsigned int const & x)
 		{
 			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(uiIntSize), uint64_t(x), false));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(int const & x)
+		llvm::Value * expression_code_generator::operator()(int const & x)
 		{
 			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(uiIntSize), uint64_t(x), true));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(bool const & x)
+		llvm::Value * expression_code_generator::operator()(bool const & x)
 		{
 			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(1), uint64_t(x), false));
 		}

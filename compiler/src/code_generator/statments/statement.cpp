@@ -9,29 +9,37 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::statement const& x)
+		bool statement_code_generator::operator()(ast::expression const& x)
 		{
+			LOG_SCOPE_DEBUG;
+			LOG(x);
+			return (*dynamic_cast<expression_code_generator*>(this))(x);
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		bool statement_code_generator::operator()(ast::statement const& x)
+		{
+			LOG_SCOPE_DEBUG;
 			LOG(x);
 			return x.apply_visitor(*this);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::statement_list const& x)
+		bool statement_code_generator::operator()(ast::statement_list const& x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value * ret = nullptr;
 			for(ast::statement const& s : x)
 			{
-				ret=s.apply_visitor(*this);
-				if (!ret)
+				if (!s.apply_visitor(*this))
 				{
-					return ErrorV("Invalid statement!");
+					return ErrorBool("Invalid statement!");
 				}
 			}
-			return ret;
+			return true;
 		}
 	}
 }

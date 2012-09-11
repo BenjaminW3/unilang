@@ -22,7 +22,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::function_call const & x)
+		llvm::Value * expression_code_generator::operator()(ast::function_call const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
@@ -31,7 +31,7 @@ namespace unilang
 			llvm::Function *CalleeF = module->getFunction(x.idf.name);
 			if (!CalleeF)
 			{
-				return ErrorV("Unknown function '"+x.idf.name+"' referenced.");
+				return ErrorValue("Unknown function '"+x.idf.name+"' referenced.");
 			}
   
 			// If argument number mismatch error.
@@ -39,7 +39,7 @@ namespace unilang
 			{
 				std::stringstream sstr;
 				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x.arguments.size() << " are given.";
-				return ErrorV("Incorrect number of arguments passed to '"+x.idf.name+"' ! "+sstr.str());
+				return ErrorValue("Incorrect number of arguments passed to '"+x.idf.name+"' ! "+sstr.str());
 			}
 
 			// argument type match?
@@ -52,7 +52,7 @@ namespace unilang
 				{
 					std::stringstream sstr;
 					sstr << ex;
-					return ErrorV("Invalid argument returned from '" +sstr.str()+ "'.");
+					return ErrorValue("Invalid argument returned from '" +sstr.str()+ "'.");
 				}
 
 				if(ArgsV.back()->getType()!=(*itArg).getType())
@@ -64,7 +64,7 @@ namespace unilang
 					rso << "' but function expects a value of type '";
 					(*itArg).getType()->print(rso);
 					rso << "'.";
-					return ErrorV("Argument type mismatch! "+rso.str());
+					return ErrorValue("Argument type mismatch! "+rso.str());
 				}
 				++itArg;
 			}

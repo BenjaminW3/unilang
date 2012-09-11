@@ -9,21 +9,21 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::identifier const & x)
+		llvm::Value * expression_code_generator::operator()(ast::identifier const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			code_generator::VarData * V = getVarFromName(x.name);
+			VarData * V = getVarFromName(x.name);
 			if(!getVarFromName(x.name))
 			{
-				return ErrorV("Undeclared variable name: '"+x.name+"' !");
+				return ErrorValue("Undeclared variable name: '"+x.name+"' !");
 			}
 			else
 			{
 				if(!V->getAllocaInst())
 				{
-					return InternalErrorV("Variable is not allocated: '"+x.name+"' !");
+					return ErrorValue("Variable is not allocated: '"+x.name+"' !", EErrorLevel::Internal);
 				}
 				else
 				{

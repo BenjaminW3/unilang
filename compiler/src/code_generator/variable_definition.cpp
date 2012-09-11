@@ -23,7 +23,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::AllocaInst * code_generator::CreateEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName)
+		llvm::AllocaInst * expression_code_generator::CreateEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName)
 		{
 			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
 			TheFunction->getEntryBlock().begin());
@@ -33,7 +33,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::variable_declaration const & x)
+		llvm::Value * expression_code_generator::operator()(ast::variable_declaration const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
@@ -44,32 +44,32 @@ namespace unilang
 			// redeclaration?
 			if(bHasName && getVarFromName(x.name.get().name))
 			{
-				return ErrorV("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_identifier.name+"' .");
+				return ErrorValue("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_identifier.name+"' .");
 			}
 			// TODO: really needed? We already can have typenames equal to variable names
 			// shadowing keyword?
 			if(bHasName && (x.name.get().name == "if" || x.name.get().name == "else" || x.name.get().name == "while" || x.name.get().name == "return"))
 			{
-				return ErrorV("Variable with the name '"+x.name.get().name+"' is shadowing the keyword with same identifier.");
+				return ErrorValue("Variable with the name '"+x.name.get().name+"' is shadowing the keyword with same identifier.");
 			}
 
 			llvm::Function * TheFunction = builder.GetInsertBlock()->getParent();
 			if(!TheFunction)
 			{
-				return ErrorV("Unable to get the allocation insert point function for variable '"+x.name.get().name+"'.");
+				return ErrorValue("Unable to get the allocation insert point function for variable '"+x.name.get().name+"'.");
 			}
 
 			// allocate in function head
 			llvm::AllocaInst *Alloca = CreateEntryBlockAlloca(TheFunction, getTypeByName(x.type.type_identifier.name), bHasName ? x.name.get().name : "");
 			if(!Alloca)
 			{
-				return ErrorV("Unable to allocate variable '"+x.name.get().name+"'.");
+				return ErrorValue("Unable to allocate variable '"+x.name.get().name+"'.");
 			}
 
 			// remember this variable in symbol table
 			if(bHasName)
 			{
-				vLocalSymbolTable.push_back(code_generator::VarData(x.name.get().name, Alloca, x.type.mutableQualifier));
+				vLocalSymbolTable.push_back(VarData(x.name.get().name, Alloca, x.type.mutableQualifier));
 			}
 
 			return Alloca;
@@ -77,7 +77,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::variable_definition const & x)
+		llvm::Value * expression_code_generator::operator()(ast::variable_definition const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
@@ -98,7 +98,7 @@ namespace unilang
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
 						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("InitVal for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' could not be generated.");
+						return ErrorValue("InitVal for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' could not be generated.");
 					}
 				}
 				else if(x.parameters.size()==1)
@@ -110,7 +110,7 @@ namespace unilang
 						sstr << *x.parameters.begin();
 						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
 						// TODO: output real parameter number
-						return ErrorV("Invalid 1. initialisation parameter '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"'");
+						return ErrorValue("Invalid 1. initialisation parameter '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"'");
 					}
 					else if(!InitVal->getType()->isIntegerTy())
 					{
@@ -131,7 +131,7 @@ namespace unilang
 
 							const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
 
-							return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
+							return ErrorValue("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
 						}
 					}
 				}
@@ -139,7 +139,7 @@ namespace unilang
 				{
 					std::stringstream sstr;
 					sstr << x.parameters.size();
-					return ErrorV("Variable of type '"+x.decl.type.type_identifier.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
+					return ErrorValue("Variable of type '"+x.decl.type.type_identifier.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
 				}
 			}
 			if(x.decl.type.type_identifier.name == "float")
@@ -153,7 +153,7 @@ namespace unilang
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
 						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("InitVal for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' could not be generated.");
+						return ErrorValue("InitVal for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' could not be generated.");
 					}
 				}
 				else if(x.parameters.size()==1)
@@ -164,7 +164,7 @@ namespace unilang
 						std::stringstream sstr;
 						sstr << *x.parameters.begin();
 						const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
-						return ErrorV("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"'");
+						return ErrorValue("Invalid 1. initialisation parameter'"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"'");
 					}
 					else if(!InitVal->getType()->isFloatingPointTy())
 					{
@@ -185,7 +185,7 @@ namespace unilang
 
 							const auto sVarName = bHasName ? " '"+x.decl.name.get().name+"'" : "";
 
-							return ErrorV("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
+							return ErrorValue("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+x.decl.type.type_identifier.name+"' is of type '"+ type_str +"'.");
 						}
 					}
 				}
@@ -193,7 +193,7 @@ namespace unilang
 				{
 					std::stringstream sstr;
 					sstr << x.parameters.size();
-					return ErrorV("Variable of type '"+x.decl.type.type_identifier.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
+					return ErrorValue("Variable of type '"+x.decl.type.type_identifier.name+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
 				}
 			}
 
@@ -201,7 +201,7 @@ namespace unilang
 			llvm::Value * pDecl = (*this)(x.decl);
 			if(!pDecl)
 			{
-				return ErrorV("Unable to declare variable '"+x.decl.name.get().name+"' of type '"+x.decl.type.type_identifier.name+"'.");
+				return ErrorValue("Unable to declare variable '"+x.decl.name.get().name+"' of type '"+x.decl.type.type_identifier.name+"'.");
 			}
 
 			builder.CreateStore(InitVal, pDecl);

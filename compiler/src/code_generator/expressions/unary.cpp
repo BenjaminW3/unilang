@@ -11,7 +11,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * code_generator::operator()(ast::unary_expr const & x)
+		llvm::Value * expression_code_generator::operator()(ast::unary_expr const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
@@ -21,7 +21,7 @@ namespace unilang
 			{
 				std::stringstream sstr;
 				sstr << x.operand_;
-				return ErrorV("Invalid value returned from '"+sstr.str()+"'");
+				return ErrorValue("Invalid value returned from '"+sstr.str()+"'");
 			}
 
 			switch (x.operator_)
@@ -39,17 +39,17 @@ namespace unilang
 					llvm::Value* Minus1 = (*this)(int(-1));
 					if(!Minus1)
 					{
-						return ErrorV("Unable to create -1.");
+						return ErrorValue("Unable to create -1.");
 					}
 					return builder.CreateXor(L, Minus1, "compl.xor");
 				}*/
 			case token_ids::plus_plus:
 				{
-					return FatalErrorV("plus_plus not implemented!");
+					return ErrorValue("plus_plus not implemented!", EErrorLevel::Fatal);
 				}
 			case token_ids::minus_minus:
 				{
-					return FatalErrorV("minus_minus not implemented!");
+					return ErrorValue("minus_minus not implemented!", EErrorLevel::Fatal);
 				}
 			case token_ids::plus:
 				{
@@ -66,13 +66,13 @@ namespace unilang
 						llvm::Value *pUi = builder.CreateFPToUI(L, llvm::IntegerType::get(context, 8), "FpToUiTmp");
 						if(!pUi)
 						{
-							return InternalErrorV("CreateFPToUI returned invalid value!");
+							return ErrorValue("CreateFPToUI returned invalid value!", EErrorLevel::Internal);
 						}
 						// get last digit through reminder
 						llvm::Value *pPosLastDigit = builder.CreateURem(pUi, (*this)(unsigned int(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
-							return InternalErrorV("CreateURem returned invalid value!");
+							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
 						return builder.CreateAdd(pPosLastDigit, (*this)(unsigned int(3*16)), "AddTmp");
@@ -83,7 +83,7 @@ namespace unilang
 						llvm::Value *pPosLastDigit = builder.CreateURem(L, (*this)(unsigned int(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
-							return InternalErrorV("CreateURem returned invalid value!");
+							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
 						return builder.CreateAdd(pPosLastDigit, (*this)(unsigned int(3*16)), "AddTmp");
@@ -95,13 +95,13 @@ namespace unilang
 						rso << "String conversion for type '";
 						L->getType()->print(rso);
 						rso << "' not implemented!";
-						return FatalErrorV(rso.str());
+						return ErrorValue(rso.str(), EErrorLevel::Fatal);
 					}
 					/*return builder.CreateGlobalString(L, "stringifytmp");*/
 				}
 			default:
 				{
-					return FatalErrorV("Unknown operation!");
+					return ErrorValue("Unknown operation!", EErrorLevel::Fatal);
 				}
 			}
 		}

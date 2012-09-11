@@ -37,21 +37,21 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> code_generator::getModule() const
+		std::shared_ptr<llvm::Module> llvm_code_generator::getModule() const
 		{
 			return module;
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::LLVMContext& code_generator::getContext() const
+		llvm::LLVMContext& llvm_code_generator::getContext() const
 		{
 			return llvm::getGlobalContext(); 
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::IRBuilder<>& code_generator::getBuilder()
+		llvm::IRBuilder<>& llvm_code_generator::getBuilder()
 		{
 			return builder;
 		}
@@ -59,61 +59,65 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value *code_generator::ErrorV(std::string Str)
+		std::string base_code_generator::getErrorLevelString( EErrorLevel err )
+		{
+			switch (err)
+			{
+			case EErrorLevel::Standard: return "ERROR";
+			case EErrorLevel::Fatal: return "FATAL ERROR";
+			case EErrorLevel::Internal: return "INTERNAL ERROR";
+			default: return "UNKNOWN ERROR";
+			}
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Value *base_code_generator::ErrorValue(std::string Str, EErrorLevel err )
 		{
 			m_bErrorOccured = true;
-			LOG("ERROR: "+Str); 
+			LOG(getErrorLevelString(err)+" VALUE: "+Str); 
 			return nullptr; 
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value *code_generator::FatalErrorV(std::string Str)
+		llvm::Type *base_code_generator::ErrorType(std::string Str, EErrorLevel err )
 		{
 			m_bErrorOccured = true;
-			LOG("FATAL ERROR: "+Str);
+			LOG(getErrorLevelString(err)+" TYPE: "+Str);
 			return nullptr; 
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value *code_generator::InternalErrorV(std::string Str)
+		llvm::Function *base_code_generator::ErrorFunction(std::string Str, EErrorLevel err )
 		{
 			m_bErrorOccured = true;
-			LOG("INTERNAL ERROR: "+Str); 
+			LOG(getErrorLevelString(err)+" FUNCTION: "+Str);
 			return nullptr; 
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Type *code_generator::ErrorType(std::string Str)
+		bool statement_code_generator::ErrorBool(std::string Str, EErrorLevel err )
 		{
 			m_bErrorOccured = true;
-			LOG("ERROR TYPE: "+Str);
-			return nullptr; 
+			LOG(getErrorLevelString(err)+": "+Str); 
+			return false; 
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Function *code_generator::ErrorFunction(std::string Str)
-		{
-			m_bErrorOccured = true;
-			LOG("ERROR FUNCTION: "+Str);
-			return nullptr; 
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Type* code_generator::getTypeByName(std::string sTypeName)
+		llvm::Type* base_code_generator::getTypeByName(std::string sTypeName)
 		{
 			// FIXME: hard coded types
 			if(sTypeName=="float")
 			{
-				return llvm::Type::getDoubleTy(context);
+				return llvm::Type::getDoubleTy(getContext());
 			}
 			else if(sTypeName=="int")
 			{
-				return llvm::Type::getIntNTy(context,uiIntSize);
+				return llvm::Type::getIntNTy(getContext(),uiIntSize);
 			}
 			else
 			{
@@ -123,7 +127,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		code_generator::VarData * code_generator::getVarFromName( std::string const & name )
+		VarData * base_code_generator::getVarFromName( std::string const & name )
 		{
 			// local search first!
 			const auto itlocal = std::find_if(vLocalSymbolTable.begin(), vLocalSymbolTable.end(), 
@@ -147,7 +151,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Function * code_generator::getFunctionFromName( std::string const & name )
+		llvm::Function * base_code_generator::getFunctionFromName( std::string const & name )
 		{
 			llvm::Function* callee = module->getFunction(name);
             if (!callee)
@@ -188,9 +192,16 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		code_generator::code_generator(ast::module const & AST)
-			:m_bErrorOccured(false),
-			context(llvm::getGlobalContext()),
+		base_code_generator::base_code_generator()
+			:m_bErrorOccured(false)
+		{
+			LOG_SCOPE_DEBUG;
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm_code_generator::llvm_code_generator()
+			:context(llvm::getGlobalContext()),
 			builder(context),
 			module(new llvm::Module("unilang-JIT", context))
 		{
@@ -198,10 +209,18 @@ namespace unilang
 
 			//llvm::InitializeNativeTarget();
 			//llvm::llvm_start_multithreaded();	// only needed if concurrent threads are used
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		code_generator::code_generator(ast::module const & AST)
+		{
+			LOG_SCOPE_DEBUG;
 			
 			std::cout << std::endl << "##########CodeGen###########" << std::endl;
 			for(ast::meta_entity const & meta : AST.metaEntities)
 			{
+				//boost::apply_visitor(*this, meta);
 				meta.apply_visitor(*this);
 			}
 
@@ -220,7 +239,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		// http://llvm.1065342.n5.nabble.com/how-to-get-TargetData-td21590.html
 		//-----------------------------------------------------------------------------
-		void code_generator::optimize() const
+		void llvm_code_generator::optimize() const
 		{
 			LOG_SCOPE_DEBUG;
 
@@ -308,7 +327,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		void code_generator::print_bytecode() const
+		void llvm_code_generator::print_bytecode() const
 		{
 			LOG_SCOPE_DEBUG;
 

@@ -61,13 +61,13 @@ namespace unilang
 				// If F already has a body, reject this.
 				if (!F->empty())
 				{
-					return static_cast<llvm::Function*>(ErrorV("Redefinition of function '"+x.idf.name+"' !"));
+					return ErrorFunction("Redefinition of function '"+x.idf.name+"' !");
 				}
     
 				// If F took a different number of args, reject it.
 				if (F->arg_size() != x.parameter_types.size())
 				{
-					return static_cast<llvm::Function*>(ErrorV("Definition of function "+x.idf.name+"' with different number of parameters then previous declaration!"));	// TODO: Log numbers
+					return ErrorFunction("Definition of function "+x.idf.name+"' with different number of parameters then previous declaration!");	// TODO: Log numbers
 				}
 
 				unsigned int uiArg=0;
@@ -84,7 +84,7 @@ namespace unilang
 						rso << "' was declared but '";
 						pDefType->print(rso);
 						rso << "' used in definition.";
-						return static_cast<llvm::Function*>(ErrorV(rso.str()));
+						return ErrorFunction(rso.str());
 					}
 				}
 			}
