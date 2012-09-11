@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../export.hpp"
+
 #include <memory>
 
 // predefinitions
@@ -21,6 +23,6 @@ namespace unilang
 		//! \param module The generated llvm::Module.
 		//! \return The ErrorCode returned from the program.
 		//-----------------------------------------------------------------------------
-		int execute_module( std::shared_ptr<llvm::Module> module );
+		U_EXPORT int execute_module( std::shared_ptr<llvm::Module> module );
 	}
 }

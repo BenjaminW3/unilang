@@ -13,7 +13,7 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
-			return (*dynamic_cast<expression_code_generator*>(this))(x);
+			return reinterpret_cast<bool>((*dynamic_cast<expression_code_generator*>(this))(x));
 		}
 		//-----------------------------------------------------------------------------
 		//

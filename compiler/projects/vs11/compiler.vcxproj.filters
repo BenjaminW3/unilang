@@ -233,5 +233,8 @@
     <ClInclude Include="..\..\src\execution_engine\execution_engine.hpp">
       <Filter>Header Files\execution_engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\..\src\export.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

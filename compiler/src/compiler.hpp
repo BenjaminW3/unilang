@@ -1,5 +1,7 @@
 #pragma once
 
+#include "export.hpp"
+
 #include <string>
 #include <memory>
 
@@ -44,6 +46,6 @@ namespace unilang
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Module being created.
 		//-----------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> compile_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
+		U_EXPORT std::shared_ptr<llvm::Module> compile_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 	}
 }
