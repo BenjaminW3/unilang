@@ -29,8 +29,8 @@ namespace unilang
 																>
 		{
 			meta_entity();
-			meta_entity(function_declaration val);
-			meta_entity(function_definition val);
+			meta_entity(function_declaration const & val);
+			meta_entity(function_definition const & val);
 		};
 		std::ostream& operator<<(std::ostream& out, meta_entity const& x);
 		
