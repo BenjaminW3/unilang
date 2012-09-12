@@ -20,8 +20,8 @@ namespace unilang
         enum type
         {
             // binary
-            comma,
-            assign,
+            //comma,
+            assign = 1,
             plus_assign,
             minus_assign,
             times_assign,
@@ -64,7 +64,7 @@ namespace unilang
 	{
 		switch(x)
 		{
-			case op::type::comma: out << ","; break;
+			//case op::type::comma: out << ","; break;
 			case op::type::assign: out << "="; break;
 			case op::type::plus_assign: out << "+="; break;
 			case op::type::minus_assign: out << "-="; break;
@@ -139,7 +139,6 @@ namespace unilang
             minus               = binary_or_unary_op<op::type::minus>::value,
 
             // binary operators
-            comma               = binary_op<op::type::comma>::value,
             assign              = assign_op<op::type::assign>::value,
             plus_assign         = assign_op<op::type::plus_assign>::value,
             minus_assign        = assign_op<op::type::minus_assign>::value,
@@ -188,6 +187,7 @@ namespace unilang
             identifier          = op::type::not_ + 1,
             comment,
             whitespace,
+            comma,//               = binary_op<op::type::comma>::value,
             colon,
             semicolon,
             tilde,
@@ -196,8 +196,8 @@ namespace unilang
 			closing_parenthesis,
 			opening_brace,
 			closing_brace,
-			opening_bracket,
-			closing_bracket,
+			//opening_bracket,
+			//closing_bracket,
             arrow,
             if_,
 			else_,
@@ -218,7 +218,7 @@ namespace unilang
 			case token_ids::type::op_binary: out << "op_binary"; break;
 			case token_ids::type::op_unary: out << "op_unary"; break;
 			case token_ids::type::op_assign: out << "op_assign"; break;
-			//case token_ids::type::comma: out << ","; break;
+			case token_ids::type::comma: out << ","; break;
 			case token_ids::type::assign: out << "="; break;
 			case token_ids::type::plus_assign: out << "+="; break;
 			case token_ids::type::minus_assign: out << "-="; break;
@@ -260,6 +260,12 @@ namespace unilang
 			case token_ids::type::colon: out << ":"; break;
 			case token_ids::type::tilde: out << "~"; break;
 			case token_ids::type::question_mark: out << "?"; break;
+			case token_ids::type::opening_parenthesis: out << "("; break;
+			case token_ids::type::closing_parenthesis: out << ")"; break;
+			case token_ids::type::opening_brace: out << "{"; break;
+			case token_ids::type::closing_brace: out << "}"; break;
+			//case token_ids::type::opening_bracket: out << "["; break;
+			//case token_ids::type::closing_bracket: out << "]"; break;
 			case token_ids::type::arrow: out << "->"; break;
 			case token_ids::type::if_: out << "if"; break;
 			case token_ids::type::else_: out << "else"; break;
