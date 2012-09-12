@@ -115,7 +115,7 @@ namespace unilang
 					else if(!InitVal->getType()->isIntegerTy())
 					{
 						// convert if it is float
-						if(!InitVal->getType()->isFloatingPointTy())
+						if(InitVal->getType()->isFloatingPointTy())
 						{	
 							InitVal = builder.CreateFPToSI(InitVal, getTypeByName(x.decl.type.type_identifier.name), "FPtoSI");
 						}
@@ -169,7 +169,7 @@ namespace unilang
 					else if(!InitVal->getType()->isFloatingPointTy())
 					{
 						// convert if it is int
-						if(!InitVal->getType()->isIntegerTy())
+						if(InitVal->getType()->isIntegerTy())
 						{	
 							InitVal = builder.CreateSIToFP(InitVal, getTypeByName(x.decl.type.type_identifier.name), "SItoFP");
 						}
