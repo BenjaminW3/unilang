@@ -1,4 +1,4 @@
-decrement:(x:int)->(int(--x))
+decrement:(x:int)->(:int(--x))
 
 entrypoint: ~()->(iErrorCode:~int(1))
 {
