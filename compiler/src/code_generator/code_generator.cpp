@@ -5,6 +5,7 @@
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
@@ -15,7 +16,7 @@
 #include "llvm/PassManager.h"
 #include "llvm/Analysis/Verifier.h"
 #include "llvm/Analysis/Passes.h"
-#include "llvm/Target/TargetData.h"
+#include "llvm/DataLayout.h"
 #include "llvm/Transforms/Scalar.h"
 #include "llvm/Module.h"
 
@@ -154,8 +155,8 @@ namespace unilang
 		llvm::Function * base_code_generator::getFunctionFromName( std::string const & name )
 		{
 			llvm::Function* callee = module->getFunction(name);
-            if (!callee)
-            {
+			if (!callee)
+			{
 				return ErrorFunction("Use of unknown function '"+name+"'.");
 			}
 
@@ -262,17 +263,17 @@ namespace unilang
 			}
 
 			llvm::StringMap<bool> featureMap;
-            llvm::SubtargetFeatures subtargetFeatures;
+			llvm::SubtargetFeatures subtargetFeatures;
 
-            subtargetFeatures.getDefaultSubtargetFeatures(llvm::Triple(sTripleStr));
-            if (llvm::sys::getHostCPUFeatures(featureMap)) 
+			subtargetFeatures.getDefaultSubtargetFeatures(llvm::Triple(sTripleStr));
+			if (llvm::sys::getHostCPUFeatures(featureMap)) 
 			{
 				for (llvm::StringMapIterator<bool> it = featureMap.begin(); it != featureMap.end();) 
 				{
 					subtargetFeatures.AddFeature(it->getKey(), it->getValue());
 				}
-            }
-            std::string sFeatures = subtargetFeatures.getString();
+			}
+			std::string sFeatures = subtargetFeatures.getString();
 			std::cout << "Using features: '" << sFeatures << "'" << std::endl;
 			
 			std::cout << "Using HostCPUName: '" << llvm::sys::getHostCPUName() << "'" << std::endl;
@@ -294,11 +295,11 @@ namespace unilang
 				throw std::runtime_error("target->createTargetMachine failed!");
 			}
 
-			llvm::TargetData const * const targetData = targetMachine->getTargetData();
+			llvm::DataLayout const * const targetData = targetMachine->getDataLayout();
 
 			llvm::PassManager OurPM;
 			// Set up the optimizer pipeline.  Start with registering info about how the target lays out data structures.
-			OurPM.add(new llvm::TargetData(*targetData));
+			OurPM.add(new llvm::DataLayout(*targetData));
 			//
 			OurPM.add(llvm::createVerifierPass());
 			// Provide basic AliasAnalysis support for GVN.
@@ -310,11 +311,11 @@ namespace unilang
 			// Do simple "peephole" optimizations and bit-twiddling optzns.
 			OurPM.add(llvm::createInstructionCombiningPass());
 			// Dead code Elimination
-            OurPM.add(llvm::createDeadCodeEliminationPass());
+			OurPM.add(llvm::createDeadCodeEliminationPass());
 			// TailDuplication
 			//OurPM.add(llvm::createTailDuplicationPass());
-            // BlockPlacement
-            OurPM.add(llvm::createBlockPlacementPass());
+			// BlockPlacement
+			OurPM.add(llvm::createBlockPlacementPass());
 			// Reassociate expressions.
 			OurPM.add(llvm::createReassociatePass());
 			// Eliminate Common SubExpressions.

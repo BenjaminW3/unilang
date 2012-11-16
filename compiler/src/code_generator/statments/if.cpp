@@ -5,6 +5,7 @@
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
+#pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
 #endif
 
 #include "llvm/Function.h"

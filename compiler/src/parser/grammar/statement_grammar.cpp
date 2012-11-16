@@ -1,3 +1,6 @@
+#pragma warning(disable: 4913)		// user defined binary operator ',' exists but no overload could convert all operands, default built-in binary operator ',' used
+#pragma warning(disable: 4503)		// 'boost::fusion::sequence_base<Sequence>' : decorated name length exceeded, name was truncated
+
 #include "statement_grammar_def.hpp"
 
 typedef std::string::const_iterator base_iterator_type;

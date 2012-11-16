@@ -5,6 +5,7 @@
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
 #pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
 #pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
 #pragma warning(disable: 4512)		// assignment operator could not be generated
@@ -57,11 +58,11 @@ namespace unilang
 			int ret_val = fptr();
 
 			//ee->freeMachineCodeForFunction(vm_get_current_closure);
-            ee->runStaticConstructorsDestructors(true);
-            if(!ee->removeModule(module.get()))
+			ee->runStaticConstructorsDestructors(true);
+			if(!ee->removeModule(module.get()))
 			{
 				throw std::runtime_error("Unable to remove module from ExecutionEngine!");
-            }
+			}
 
 			return ret_val;
 		}

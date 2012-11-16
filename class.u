@@ -1,4 +1,4 @@
-< () -> ( <int>iErrorCode(0) ) >entrypoint
+entrypoint : () -> ( int:iErrorCode(0) ) 
 {
 	
 }
