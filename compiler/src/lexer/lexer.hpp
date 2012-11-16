@@ -24,8 +24,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // The default is to use the dynamic table driven lexer
 #if LEXER_DYNAMIC_TABLES == 0 && \
-    LEXER_STATIC_TABLES == 0 && \
-    LEXER_STATIC_SWITCH == 0
+	LEXER_STATIC_TABLES == 0 && \
+	LEXER_STATIC_SWITCH == 0
 
 #define LEXER_DYNAMIC_TABLES 1
 #endif
@@ -33,8 +33,8 @@
 ///////////////////////////////////////////////////////////////////////////////
 // Make sure we have only one lexer type selected
 #if (LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_TABLES != 0) || \
-    (LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0) || \
-    (LEXER_STATIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0)
+	(LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0) || \
+	(LEXER_STATIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0)
 
 #error "Configuration problem: please select exactly one type of lexer to build"
 #endif

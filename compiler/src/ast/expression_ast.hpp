@@ -26,7 +26,7 @@ namespace unilang
 																	unsigned int,
 																	int,
 																	bool,
-								  									identifier,
+																	identifier,
 																	boost::recursive_wrapper<expression>
 								>
 		{
@@ -163,50 +163,50 @@ namespace unilang
 }
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::function_call,
-    (unilang::ast::identifier, idf)
-    (std::list<unilang::ast::expression>, arguments)
+	unilang::ast::function_call,
+	(unilang::ast::identifier, idf)
+	(std::list<unilang::ast::expression>, arguments)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::unary_expr,
-    (unilang::token_ids::type, operator_)
-    (unilang::ast::operand, operand_)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::operation,
-    (unilang::token_ids::type, operator_)
-    (unilang::ast::operand, operand_)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::expression,
-    (unilang::ast::operand, first)
-    (std::list<unilang::ast::operation>, rest)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::type_declaration,
-	(bool, mutableQualifier)
-    (unilang::ast::identifier, type_identifier)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable_declaration,
-    (boost::optional<unilang::ast::identifier>, name)
-    (unilang::ast::type_declaration, type)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::variable_definition,
-    (unilang::ast::variable_declaration, decl)
-    (std::list<unilang::ast::expression>, parameters)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::assignment,
-    (unilang::ast::identifier, lhs)
+	unilang::ast::unary_expr,
 	(unilang::token_ids::type, operator_)
-    (unilang::ast::expression, rhs)
+	(unilang::ast::operand, operand_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	unilang::ast::operation,
+	(unilang::token_ids::type, operator_)
+	(unilang::ast::operand, operand_)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	unilang::ast::expression,
+	(unilang::ast::operand, first)
+	(std::list<unilang::ast::operation>, rest)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	unilang::ast::type_declaration,
+	(bool, mutableQualifier)
+	(unilang::ast::identifier, type_identifier)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	unilang::ast::variable_declaration,
+	(boost::optional<unilang::ast::identifier>, name)
+	(unilang::ast::type_declaration, type)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	unilang::ast::variable_definition,
+	(unilang::ast::variable_declaration, decl)
+	(std::list<unilang::ast::expression>, parameters)
+)
+
+BOOST_FUSION_ADAPT_STRUCT(
+	unilang::ast::assignment,
+	(unilang::ast::identifier, lhs)
+	(unilang::token_ids::type, operator_)
+	(unilang::ast::expression, rhs)
 )

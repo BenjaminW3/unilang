@@ -25,6 +25,6 @@ namespace unilang
 }
 
 BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::identifier,
-    (std::string, name)
+	unilang::ast::identifier,
+	(std::string, name)
 )

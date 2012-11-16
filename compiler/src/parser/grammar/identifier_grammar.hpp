@@ -8,7 +8,7 @@ namespace unilang
 { 
 	// predefinition
 	template <typename BaseIterator, typename Iterator>
-    struct error_handler;
+	struct error_handler;
 
 	namespace lexer
 	{
