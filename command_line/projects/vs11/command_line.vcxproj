@@ -51,23 +51,23 @@
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\global\Boost.Cpp.Win32.user.props" />
-    <Import Project="..\..\..\..\global\LLVM.CppWin32.user.props" />
+    <Import Project="..\..\..\..\global\Boost.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\LLVM.Cpp.user.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\global\Boost.Cpp.Win32.user.props" />
-    <Import Project="..\..\..\..\global\LLVM.CppWin32.user.props" />
+    <Import Project="..\..\..\..\global\Boost.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\LLVM.Cpp.user.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\global\Boost.Cpp.x64.user.props" />
-    <Import Project="..\..\..\..\global\LLVM.Cpp.x64.user.props" />
+    <Import Project="..\..\..\..\global\Boost.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\LLVM.Cpp.user.props" />
   </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
-    <Import Project="..\..\..\..\global\Boost.Cpp.x64.user.props" />
-    <Import Project="..\..\..\..\global\LLVM.Cpp.x64.user.props" />
+    <Import Project="..\..\..\..\global\Boost.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\LLVM.Cpp.user.props" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
