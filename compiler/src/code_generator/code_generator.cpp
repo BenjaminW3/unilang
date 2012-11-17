@@ -128,7 +128,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		VarData * base_code_generator::getVarFromName( std::string const & name )
+		VarData const * const base_code_generator::getVarFromName( std::string const & name )
 		{
 			// local search first!
 			const auto itlocal = std::find_if(vLocalSymbolTable.begin(), vLocalSymbolTable.end(), 

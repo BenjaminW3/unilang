@@ -178,6 +178,8 @@
     <None Include="..\..\code\fail_use_of_variable_before_its_definition.u" />
     <None Include="..\..\code\fail_variable_shadowing_function.u" />
     <None Include="..\..\code\fail_variable_shadowing_keyword.u" />
+    <None Include="..\..\code\fail_variable_shadowing_variable_different_type.u" />
+    <None Include="..\..\code\fail_variable_shadowing_variable_same_type.u" />
     <None Include="..\..\code\fail_write_to_non_mutable_variable.u" />
     <None Include="..\..\code\pass_chained_assignment.u" />
     <None Include="..\..\code\pass_decrement.u" />

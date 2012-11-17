@@ -20,16 +20,14 @@ namespace unilang
 													lit_boolean("true|false", token_ids::lit_boolean)
 													/*
 													this->self.add_pattern
-            ("EXP",     "(e|E)(\\+|-)?\\d+")
-            ("FLOAT",    "-?(((\\d+)|(\\d*\\.\\d+)|(\\d+\\.\\d*))({EXP}|{SUFFIX})?)")
-            ("SYMBOL",  "[a-zA-Z_?@](\\w|\\?|@)*")
+			("EXP",     "(e|E)(\\+|-)?\\d+")
+			("FLOAT",    "-?(((\\d+)|(\\d*\\.\\d+)|(\\d+\\.\\d*))({EXP}|{SUFFIX})?)")
+			("SYMBOL",  "[a-zA-Z_?@](\\w|\\?|@)*")
 												*/
 		{
 			lex::_pass_type _pass;
 			this->self += tok_whitespace [lex::_pass = lex::pass_flags::pass_ignore];
 			this->self += tok_comment [lex::_pass = lex::pass_flags::pass_ignore];
-
-			this->self += lit_float | lit_uint | lit_int | lit_boolean;
 
 			add_("=",       token_ids::assign);
 			add_("\\+=",    token_ids::plus_assign);
@@ -81,10 +79,15 @@ namespace unilang
 			add_(";",		token_ids::semicolon);
 			add_("~",		token_ids::tilde);
 			add_("\\?",		token_ids::question_mark);
+			
+			this->self.add(lit_float);
+			this->self.add(lit_uint);
+			this->self.add(lit_int);
+			this->self.add(lit_boolean);
+
+			//this->self += lit_float | lit_uint | lit_int | lit_boolean;	// FIXME: does not work: + and - operators have to be matched before numbers
 
 			this->self += tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
-
-			//this->self += lex::char_('(') | ')' | '{' | '}' | ',' | ';' | '~' | '?';
 		}
 		//-------------------------------------------------------------------------
 		// 

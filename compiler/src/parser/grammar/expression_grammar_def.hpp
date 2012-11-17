@@ -78,12 +78,12 @@ namespace unilang
 				;
 			primary_expr.name("primary_expr");
 
-			argumentList = -(expression % ',');
+			argumentList = -(expression % lexer(","));
 			argumentList.name("argumentList");
 
 			functionCall =
 					(identifierGrammar	>> lexer("\\("))
-				>>   argumentList		// TODO >
+				>>   argumentList
 				>   lexer("\\)")
 				;
 			functionCall.name("functionCall");

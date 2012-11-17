@@ -43,9 +43,16 @@ namespace unilang
 			const bool bHasName = x.name.is_initialized();
 
 			// redeclaration?
-			if(bHasName && getVarFromName(x.name.get().name))
+			if(bHasName)
 			{
-				return ErrorValue("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+x.type.type_identifier.name+"' .");
+				VarData const * const existantVar = getVarFromName(x.name.get().name);
+				if(existantVar)
+				{
+					std::string type_str;
+					llvm::raw_string_ostream rso(type_str);
+					existantVar->getAllocaInst()->getType()->print(rso);
+					return ErrorValue("Variable with the name '"+x.name.get().name+"' has already been definied with type '"+type_str+"'.");
+				}
 			}
 			// TODO: really needed? We already can have typenames equal to variable names
 			// shadowing keyword?

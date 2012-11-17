@@ -98,5 +98,11 @@
     <None Include="..\..\code\pass_missing_return_variable_name.u">
       <Filter>Resource Files</Filter>
     </None>
+    <None Include="..\..\code\fail_variable_shadowing_variable_different_type.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\fail_variable_shadowing_variable_same_type.u">
+      <Filter>Resource Files</Filter>
+    </None>
   </ItemGroup>
 </Project>

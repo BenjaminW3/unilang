@@ -177,7 +177,7 @@ namespace unilang
 			//-----------------------------------------------------------------------------
 			//! \return The Variable with the given name in the current scope.
 			//-----------------------------------------------------------------------------
-			VarData * getVarFromName( std::string const & name );
+			VarData const * const getVarFromName( std::string const & name );
 
 			std::vector<VarData> vLocalSymbolTable;
 			std::vector<VarData> vGlobalSymbolTable;

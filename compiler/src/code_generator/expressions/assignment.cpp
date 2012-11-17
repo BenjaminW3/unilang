@@ -17,7 +17,7 @@ namespace unilang
 			LOG(x);
 
 			// Look up the name.
-			VarData * V = getVarFromName(x.lhs.name);
+			VarData const * const V = getVarFromName(x.lhs.name);
 			if(!V)
 			{
 				return ErrorValue("Undefined variable name '"+x.lhs.name+"' !");
