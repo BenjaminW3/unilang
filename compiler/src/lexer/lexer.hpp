@@ -121,17 +121,17 @@ namespace unilang
 		{
 		private:
 			// get the type of any qi::raw_token(...) and qi::token(...) constructs
-			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(token_ids::type) >::type raw_token_spec;
+			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(STokens::ETokenIDs) >::type raw_token_spec;
 
-			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(token_ids::type) >::type token_spec;
+			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(STokens::ETokenIDs) >::type token_spec;
 
-			typedef std::map<std::string, token_ids::type> keyword_map_type;
+			typedef std::map<std::string, STokens::ETokenIDs> keyword_map_type;
 
 		protected:
 			//-------------------------------------------------------------------------
 			//! Adds a keyword to the mapping table
 			//-------------------------------------------------------------------------
-			bool add_( std::string const& keyword, int id_ = token_ids::invalid );
+			bool add_( std::string const& keyword, int id_ = STokens::invalid );
 
 		public:
 			typedef BaseIterator base_iterator_type;

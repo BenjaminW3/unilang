@@ -10,14 +10,14 @@ namespace unilang
 		// Supported Regular Expressions http://www.boost.org/doc/libs/1_46_0/libs/spirit/doc/html/spirit/lex/quick_reference/lexer.html
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		token_lexer<BaseIterator>::token_lexer() :	tok_whitespace("\\s+", token_ids::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-													tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", token_ids::comment),
-													tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", token_ids::identifier),
-													//tok_string("[^\"]+", token_ids::string),
-													lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", token_ids::lit_float),
-													lit_uint("[1-9][0-9]*|0", token_ids::lit_uint),
-													lit_int("[-\\+][1-9][0-9]*|\\+0|-0", token_ids::lit_int),
-													lit_boolean("true|false", token_ids::lit_boolean)
+		token_lexer<BaseIterator>::token_lexer() :	tok_whitespace("\\s+", STokens::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+													tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", STokens::comment),
+													tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", STokens::identifier),
+													//tok_string("[^\"]+", STokens::string),
+													lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", STokens::lit_float),
+													lit_uint("[1-9][0-9]*|0", STokens::lit_uint),
+													lit_int("[-\\+][1-9][0-9]*|\\+0|-0", STokens::lit_int),
+													lit_boolean("true|false", STokens::lit_boolean)
 													/*
 													this->self.add_pattern
 			("EXP",     "(e|E)(\\+|-)?\\d+")
@@ -29,56 +29,56 @@ namespace unilang
 			this->self += tok_whitespace [lex::_pass = lex::pass_flags::pass_ignore];
 			this->self += tok_comment [lex::_pass = lex::pass_flags::pass_ignore];
 
-			add_("=",       token_ids::assign);
-			add_("\\+=",    token_ids::plus_assign);
-			add_("\\-=",    token_ids::minus_assign);
-			add_("\\*=",    token_ids::times_assign);
-			add_("\\/=",    token_ids::divide_assign);
-			add_("%=",      token_ids::mod_assign);
-			add_("\\&=",    token_ids::bit_and_assign);
-			add_("\\^=",    token_ids::bit_xor_assign);
-			add_("\\|=",    token_ids::bit_or_assign);
-			add_("<<=",     token_ids::shift_left_assign);
-			add_(">>=",     token_ids::shift_right_assign);
-			add_("\\|\\|",  token_ids::logical_or);
-			add_("&&",      token_ids::logical_and);
-			add_("\\|",     token_ids::bit_or);
-			add_("\\^",     token_ids::bit_xor);
-			add_("&",       token_ids::bit_and);
-			add_("<<",      token_ids::shift_left);
-			add_(">>",      token_ids::shift_right);
-			add_("==",      token_ids::equal);
-			add_("!=",      token_ids::not_equal);
-			add_("<",       token_ids::less);
-			add_("<=",      token_ids::less_equal);
-			add_(">",       token_ids::greater);
-			add_(">=",      token_ids::greater_equal);
-			add_("\\+",     token_ids::plus);
-			add_("\\-",     token_ids::minus);
-			add_("\\*",     token_ids::times);
-			add_("\\/",     token_ids::divide);
-			add_("%",       token_ids::mod);
-			add_("\\+\\+",  token_ids::plus_plus);
-			add_("\\-\\-",  token_ids::minus_minus);
-			//add_("~",       token_ids::compl_);
-			add_("!",       token_ids::not_);
-			add_("\\$",     token_ids::stringify);
-			add_(":",		token_ids::colon);
-			add_("->",		token_ids::arrow);
-			add_("if",		token_ids::if_);
-			add_("else",	token_ids::else_);
-			//add_("while",		token_ids::while_);
-			//add_("return",	token_ids::return_);
-			add_("\\(",		token_ids::opening_parenthesis);
-			add_("\\)",		token_ids::closing_parenthesis);
-			add_("\\{",		token_ids::opening_brace);
-			add_("\\}",		token_ids::closing_brace);
-			//add_("\\[",		token_ids::opening_bracket);
-			//add_("\\]",		token_ids::closing_bracket);
-			add_(",",		token_ids::comma);
-			add_(";",		token_ids::semicolon);
-			add_("~",		token_ids::tilde);
-			add_("\\?",		token_ids::question_mark);
+			add_("=",       STokens::assign);
+			add_("\\+=",    STokens::plus_assign);
+			add_("\\-=",    STokens::minus_assign);
+			add_("\\*=",    STokens::times_assign);
+			add_("\\/=",    STokens::divide_assign);
+			add_("%=",      STokens::mod_assign);
+			add_("\\&=",    STokens::bit_and_assign);
+			add_("\\^=",    STokens::bit_xor_assign);
+			add_("\\|=",    STokens::bit_or_assign);
+			add_("<<=",     STokens::shift_left_assign);
+			add_(">>=",     STokens::shift_right_assign);
+			add_("\\|\\|",  STokens::logical_or);
+			add_("&&",      STokens::logical_and);
+			add_("\\|",     STokens::bit_or);
+			add_("\\^",     STokens::bit_xor);
+			add_("&",       STokens::bit_and);
+			add_("<<",      STokens::shift_left);
+			add_(">>",      STokens::shift_right);
+			add_("==",      STokens::equal);
+			add_("!=",      STokens::not_equal);
+			add_("<",       STokens::less);
+			add_("<=",      STokens::less_equal);
+			add_(">",       STokens::greater);
+			add_(">=",      STokens::greater_equal);
+			add_("\\+",     STokens::plus);
+			add_("\\-",     STokens::minus);
+			add_("\\*",     STokens::times);
+			add_("\\/",     STokens::divide);
+			add_("%",       STokens::mod);
+			add_("\\+\\+",  STokens::plus_plus);
+			add_("\\-\\-",  STokens::minus_minus);
+			//add_("~",       STokens::compl_);
+			add_("!",       STokens::not_);
+			add_("\\$",     STokens::stringify);
+			add_(":",		STokens::colon);
+			add_("->",		STokens::arrow);
+			add_("if",		STokens::if_);
+			add_("else",	STokens::else_);
+			//add_("while",		STokens::while_);
+			//add_("return",	STokens::return_);
+			add_("\\(",		STokens::opening_parenthesis);
+			add_("\\)",		STokens::closing_parenthesis);
+			add_("\\{",		STokens::opening_brace);
+			add_("\\}",		STokens::closing_brace);
+			//add_("\\[",		STokens::opening_bracket);
+			//add_("\\]",		STokens::closing_bracket);
+			add_(",",		STokens::comma);
+			add_(";",		STokens::semicolon);
+			add_("~",		STokens::tilde);
+			add_("\\?",		STokens::question_mark);
 			
 			this->self.add(lit_float);
 			this->self.add(lit_uint);
@@ -93,12 +93,12 @@ namespace unilang
 		// 
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		bool token_lexer<BaseIterator>::add_( std::string const& keyword, int id_ = token_ids::invalid )
+		bool token_lexer<BaseIterator>::add_( std::string const& keyword, int id_ = STokens::invalid )
 		{
 			// add the token to the lexer
-			token_ids::type id;
-			if (id_ == token_ids::invalid)	{id = token_ids::type(this->get_next_id());}
-			else							{id = token_ids::type(id_);}
+			STokens::ETokenIDs id;
+			if (id_ == STokens::invalid)	{id = STokens::ETokenIDs(this->get_next_id());}
+			else							{id = STokens::ETokenIDs(id_);}
 
 			this->self.add(keyword, id);
 			// store the mapping for later retrieval
@@ -117,7 +117,7 @@ namespace unilang
 
 			typename keyword_map_type::const_iterator it = keywords_.find(kwd);
 			assert(it != keywords_.end());
-			return raw_token((it != keywords_.end()) ? (*it).second : token_ids::invalid);
+			return raw_token((it != keywords_.end()) ? (*it).second : STokens::invalid);
 		}
 		//-------------------------------------------------------------------------
 		// 
@@ -130,7 +130,7 @@ namespace unilang
 
 			typename keyword_map_type::const_iterator it = keywords_.find(kwd);
 			assert(it != keywords_.end());
-			return token((it != keywords_.end()) ? (*it).second : token_ids::invalid);
+			return token((it != keywords_.end()) ? (*it).second : STokens::invalid);
 		}
 	}
 }

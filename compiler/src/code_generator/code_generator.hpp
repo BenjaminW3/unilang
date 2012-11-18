@@ -196,14 +196,14 @@ namespace unilang
 			//-----------------------------------------------------------------------------
 			//! \return The expression created with the shunting yard algorithm.
 			//-----------------------------------------------------------------------------
-			llvm::Value * CreateExpression(	int min_precedence,
+			llvm::Value * CreateExpression(	size_t min_precedence,
 											llvm::Value * lhs,
 											std::list<ast::operation>::const_iterator& rest_begin,
 											std::list<ast::operation>::const_iterator rest_end);
 			//-----------------------------------------------------------------------------
 			//! \return The value returned from the execution of 'L op R'.
 			//-----------------------------------------------------------------------------
-			llvm::Value * CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op);
+			llvm::Value * CreateBinaryOperation(llvm::Value * L, llvm::Value * R, op::types op);
 
 			//-----------------------------------------------------------------------------
 			//! Create an alloca instruction in the entry block of the function.  

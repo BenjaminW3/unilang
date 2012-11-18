@@ -26,82 +26,16 @@ namespace unilang
 		}*/
 		
 		//-----------------------------------------------------------------------------
-		// The list of operator precedences
-		//-----------------------------------------------------------------------------
-		int operator_precedence[] = {
-            // precedence 1
-            1, // op_comma
-
-            // precedence 2
-            2, // op_assign
-            2, // op_plus_assign
-            2, // op_minus_assign
-            2, // op_times_assign
-            2, // op_divide_assign
-            2, // op_mod_assign
-            2, // op_bit_and_assign
-            2, // op_bit_xor_assign
-            2, // op_bitor_assign
-            2, // op_shift_left_assign
-            2, // op_shift_right_assign
-
-            // precedence 3
-            3, // op_logical_or
-
-            // precedence 4
-            4, // op_logical_and
-
-            // precedence 5
-            5, // op_bit_or
-
-            // precedence 6
-            6, // op_bit_xor
-
-            // precedence 7
-            7, // op_bit_and
-
-            // precedence 8
-            8, // op_equal
-            8, // op_not_equal
-
-            // precedence 9
-            9, // op_less
-            9, // op_less_equal
-            9, // op_greater
-            9, // op_greater_equal
-
-            // precedence 10
-            10, // op_shift_left
-            10, // op_shift_right
-
-            // precedence 11
-            11, // op_plus
-            11, // op_minus
-
-            // precedence 12
-            12, // op_times
-            12, // op_divide
-            12 // op_mod
-        };
-		
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		int precedence_of(token_ids::type op)
-		{
-			return operator_precedence[op & 0xFF];
-		}
-		//-----------------------------------------------------------------------------
 		// The Shunting-yard algorithm
 		//-----------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::CreateExpression(	int min_precedence,
+		llvm::Value * expression_code_generator::CreateExpression(	size_t min_precedence,
 														llvm::Value * lhs,
 														std::list<ast::operation>::const_iterator & rest_begin,
 														std::list<ast::operation>::const_iterator rest_end)
 		{
-			while ((rest_begin != rest_end) && (precedence_of(rest_begin->operator_) >= min_precedence))
+			while ((rest_begin != rest_end) && (op::getPrecedenceOfOperator(rest_begin->operator_) >= min_precedence))
 			{
-				token_ids::type op = rest_begin->operator_;
+				op::types op = rest_begin->operator_;
 
 				llvm::Value * rhs = rest_begin->operand_.apply_visitor(*this);
 				if (!rhs)
@@ -112,10 +46,10 @@ namespace unilang
 				}
 				++rest_begin;
 
-				while ((rest_begin != rest_end) && (precedence_of(rest_begin->operator_) > precedence_of(op)))
+				while ((rest_begin != rest_end) && (op::getPrecedenceOfOperator(rest_begin->operator_) > op::getPrecedenceOfOperator(op)))
 				{
-					token_ids::type next_op = rest_begin->operator_;
-					rhs = CreateExpression( precedence_of(next_op), rhs, rest_begin, rest_end);
+					op::types next_op = rest_begin->operator_;
+					rhs = CreateExpression( op::getPrecedenceOfOperator(next_op), rhs, rest_begin, rest_end);
 				}
 
 				lhs = CreateBinaryOperation(lhs, rhs, op);
@@ -144,7 +78,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, token_ids::type op)
+		llvm::Value * expression_code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, op::types op)
 		{
 			if(!L)
 			{
@@ -160,55 +94,55 @@ namespace unilang
 				{
 					switch (op)
 					{
-					case token_ids::plus:
+					case op::plus:
 						{
 							return builder.CreateFAdd(L, R, "add");
 						}
-					case token_ids::minus:
+					case op::minus:
 						{
 							return builder.CreateFSub(L, R, "sub");
 						}
-					case token_ids::times:
+					case op::times:
 						{
 							return builder.CreateFMul(L, R, "mul");
 						}
-					case token_ids::divide:
+					case op::divide:
 						{
 							return builder.CreateFDiv(L, R, "div");
 						}
-					case token_ids::mod:
+					case op::mod:
 						{
 							return builder.CreateFRem(L, R, "rem");
 						}
-					case token_ids::equal:
+					case op::equal:
 						{
 							return builder.CreateFCmpUEQ(L, R, "equ");
 						}
-					case token_ids::not_equal:
+					case op::not_equal:
 						{
 							return builder.CreateFCmpUNE(L, R, "nequ");
 						}
-					case token_ids::less:
+					case op::less:
 						{
 							return builder.CreateFCmpULT(L, R, "lt");
 						}
-					case token_ids::less_equal:
+					case op::less_equal:
 						{
 							return builder.CreateFCmpULE(L, R, "ltequ");
 						}
-					case token_ids::greater:
+					case op::greater:
 						{
 							return builder.CreateFCmpUGT(L, R, "gt");
 						}
-					case token_ids::greater_equal:
+					case op::greater_equal:
 						{
 							return builder.CreateFCmpUGE(L, R, "gtequ");
 						}
-					case token_ids::logical_and:
+					case op::logical_and:
 						{
 							return builder.CreateAnd(L, R, "and");
 						}
-					case token_ids::logical_or:
+					case op::logical_or:
 						{
 							return builder.CreateOr(L, R, "or");
 						}
@@ -222,96 +156,96 @@ namespace unilang
 				{
 					switch (op)
 					{
-					case token_ids::plus:
+					case op::plus:
 						{
 							return builder.CreateAdd(L, R, "add");
 						}
-					case token_ids::minus:
+					case op::minus:
 						{
 							return builder.CreateSub(L, R, "sub");
 						}
-					case token_ids::times:
+					case op::times:
 						{
 							return builder.CreateMul(L, R, "mul");
 						}
-					case token_ids::divide:
+					case op::divide:
 						{
 							return builder.CreateSDiv(L, R, "div");
 						}
-					case token_ids::mod:
+					case op::mod:
 						{
 							return builder.CreateSRem(L, R, "rem");
 						}
-					case token_ids::equal:
+					case op::equal:
 						{
 							return builder.CreateICmpEQ(L, R, "equ");
 						}
-					case token_ids::not_equal:
+					case op::not_equal:
 						{
 							return builder.CreateICmpNE(L, R, "nequ");
 						}
-					case token_ids::less:
+					case op::less:
 						{
 							return builder.CreateICmpSLT(L, R, "lt");
 						}
-					case token_ids::less_equal:
+					case op::less_equal:
 						{
 							return builder.CreateICmpSLE(L, R, "ltequ");
 						}
-					case token_ids::greater:
+					case op::greater:
 						{
 							return builder.CreateICmpSGT(L, R, "gt");
 						}
-					case token_ids::greater_equal:
+					case op::greater_equal:
 						{
 							return builder.CreateICmpSGE(L, R, "gtequ");
 						}
-					case token_ids::bit_and:
+					case op::bit_and:
 						{
 							return builder.CreateAnd(L, R, "and");
 						}
-					/*case token_ids::bit_nand:
+					/*case op::bit_nand:
 						{
 							return builder.CreateNot(builder.CreateAnd(L, R, "nand.and"), "nand.not");
 						}*/
-					case token_ids::bit_or:
+					case op::bit_or:
 						{
 							return builder.CreateOr(L, R, "or");
 						}
-					case token_ids::bit_xor:
+					case op::bit_xor:
 						{
 							return builder.CreateXor(L, R, "xor");
 						}
-					/*case token_ids::compl_:
+					/*case op::compl_:
 						{
 							return builder.CreateOr(L, R, "or");
 						}*/
-					case token_ids::not_:
+					case op::not_:
 						{
 							return ErrorValue("not_ not implemented!", EErrorLevel::Fatal);
 							//return builder.CreateOr(L, R, "not");
 						}
-					case token_ids::shift_left:
+					case op::shift_left:
 						{
 							return builder.CreateShl(L, R, "shl");
 						}
-					case token_ids::shift_right:
+					case op::shift_right:
 						{
 							return builder.CreateLShr(L, R, "shr");
 						}
-					/*case token_ids::max:
+					/*case op::max:
 						{
 							return builder.CreateSelect(builder.CreateICmpSLT(L, R, "min.slt"), L, R, "max.sel");
 						}
-					case token_ids::min:
+					case op::min:
 						{
 							return builder.CreateSelect(builder.CreateICmpSLT(L, R, "min.slt"), R, L, "min.sel");
 						}*/
-					/*case token_ids::umax:
+					/*case op::umax:
 						{
 							return builder.CreateSelect(builder.CreateICmpULT(L, R, "min.ult"), L, R, "max.sel");
 						}
-					case token_ids::umin:
+					case op::umin:
 						{
 							return builder.CreateSelect(builder.CreateICmpULT(L, R, "min.ult"), R, L, "min.sel");
 						}*/
@@ -330,7 +264,7 @@ namespace unilang
 			{
 				std::string type_str;
 				llvm::raw_string_ostream rso(type_str);
-				rso << "Trying to mix types '";
+				rso << "Trying to mix type '";
 				L->getType()->print(rso);
 				rso << "' and '";
 				R->getType()->print(rso);

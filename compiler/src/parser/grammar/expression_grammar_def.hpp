@@ -41,13 +41,13 @@ namespace unilang
 			// Main expression grammar
 			expression =
 					unary_expr
-				>>  *(tokenid_mask(token_ids::op_binary) > unary_expr)
+				>>  *(tokenid_mask(static_cast<op::types>(op::EOperationTypes::binaryOperation)) > unary_expr)
 				;
 			expression.name("expression");
 
 			unary_expr =
 					postfix_expr
-				|   (tokenid_mask(token_ids::op_unary) > unary_expr)
+				|   (tokenid_mask(static_cast<op::types>(op::EOperationTypes::unaryOperation)) > unary_expr)
 				;
 			unary_expr.name("unary_expr");
 
@@ -140,7 +140,7 @@ namespace unilang
 
 			assignment_expr =
 					identifierGrammar
-				>>	tokenid_mask(token_ids::op_assign)
+				>>	tokenid_mask(static_cast<op::types>(op::EOperationTypes::assignmentOperation))
 				>>	expression
 				;
 			assignment_expr.name("assignment_expr");

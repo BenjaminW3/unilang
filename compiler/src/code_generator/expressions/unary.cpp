@@ -26,15 +26,15 @@ namespace unilang
 
 			switch (x.operator_)
 			{
-			case token_ids::minus:
+			case op::types::minus:
 				{
 					return builder.CreateNeg(L, "neg");
 				}
-			case token_ids::not_:
+			case op::types::not_:
 				{
 					return builder.CreateNot(L, "not");
 				}
-			/*case token_ids::compl_:
+			/*case STokens::compl_:
 				{
 					llvm::Value* Minus1 = (*this)(int(-1));
 					if(!Minus1)
@@ -43,19 +43,19 @@ namespace unilang
 					}
 					return builder.CreateXor(L, Minus1, "compl.xor");
 				}*/
-			case token_ids::plus_plus:
+			case op::types::plus_plus:
 				{
 					return ErrorValue("plus_plus not implemented!", EErrorLevel::Fatal);
 				}
-			case token_ids::minus_minus:
+			case op::types::minus_minus:
 				{
 					return ErrorValue("minus_minus not implemented!", EErrorLevel::Fatal);
 				}
-			case token_ids::plus:
+			case op::types::plus:
 				{
 					return L; // + does not change anything
 				}
-			case token_ids::stringify:
+			case op::types::stringify:
 				{
 					//throw std::runtime_error("Not implemented!");
 

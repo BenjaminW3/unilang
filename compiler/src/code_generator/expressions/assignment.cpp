@@ -56,7 +56,7 @@ namespace unilang
 						}
 						else
 						{
-							if(x.operator_ == token_ids::assign)
+							if(x.operator_ == STokens::assign)
 							{
 								/*return */builder.CreateStore(rhs, lhs);
 								return rhs;
@@ -64,7 +64,9 @@ namespace unilang
 							else // more then just an assignment
 							{
 								ast::operation op;
-								llvm::Value *CalcVal = CreateBinaryOperation(lhs, rhs, x.operator_);
+								// remove all possible flags to get the pure operation
+								op::types opType = static_cast<op::types>(x.operator_ & ~(op::EOperationTypes::assignmentOperation & op::EOperationTypes::binaryOperation & op::EOperationTypes::unaryOperation));
+								llvm::Value *CalcVal = CreateBinaryOperation(lhs, rhs, opType);
 								if(!CalcVal)
 								{
 									return ErrorValue("Unable to compute result of operation prior to assignment!");

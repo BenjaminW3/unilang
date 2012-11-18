@@ -75,7 +75,7 @@ namespace unilang
 		//#########################################################################
 		struct unary_expr :	public ast_base
 		{
-			token_ids::type operator_;
+			op::types operator_;
 			operand operand_;
 
 			bool isPure() const override;
@@ -86,7 +86,7 @@ namespace unilang
 		//#########################################################################
 		struct operation :	public ast_base
 		{
-			token_ids::type operator_;
+			op::types operator_;
 			operand operand_;
 
 			bool isPure() const override;
@@ -153,7 +153,7 @@ namespace unilang
 		struct assignment :	public ast_base
 		{
 			identifier lhs;
-			token_ids::type operator_;
+			op::types operator_;
 			expression rhs;
 
 			bool isPure() const override;
@@ -170,13 +170,13 @@ BOOST_FUSION_ADAPT_STRUCT(
 
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::unary_expr,
-	(unilang::token_ids::type, operator_)
+	(unilang::op::types, operator_)
 	(unilang::ast::operand, operand_)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::operation,
-	(unilang::token_ids::type, operator_)
+	(unilang::op::types, operator_)
 	(unilang::ast::operand, operand_)
 )
 
@@ -207,6 +207,6 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::assignment,
 	(unilang::ast::identifier, lhs)
-	(unilang::token_ids::type, operator_)
+	(unilang::op::types, operator_)
 	(unilang::ast::expression, rhs)
 )
