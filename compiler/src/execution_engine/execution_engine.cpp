@@ -52,7 +52,7 @@ namespace unilang
 				throw std::runtime_error("'entrypoint' not found!");
 			}
 
-			typedef unsigned int (*FuncPtr)();
+			typedef int (*FuncPtr)();
 			FuncPtr fptr = reinterpret_cast<FuncPtr>(ee->getPointerToFunction(func));
 
 			int ret_val = fptr();
