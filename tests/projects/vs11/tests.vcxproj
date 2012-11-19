@@ -163,7 +163,6 @@
   <ItemGroup>
     <None Include="..\..\code\fail_accessing_non_existant_function.u" />
     <None Include="..\..\code\fail_accessing_non_existant_local_variable.u" />
-    <None Include="..\..\code\fail_compound_statement_variable_shadowing.u" />
     <None Include="..\..\code\fail_duplicate_function_name.u" />
     <None Include="..\..\code\fail_duplicate_parameter_name.u" />
     <None Include="..\..\code\fail_duplicate_variable_name.u" />

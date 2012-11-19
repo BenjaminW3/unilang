@@ -41,8 +41,6 @@ int main( int /*argc*/, char * /*argv*/[] )
 	vTestFiles.push_back(test_fail_accessing_non_existant_function);
 	Test test_fail_accessing_non_existant_local_variable = {"tests/code/fail_accessing_non_existant_local_variable.u", false, 0};
 	vTestFiles.push_back(test_fail_accessing_non_existant_local_variable);
-	Test test_fail_compound_statement_variable_shadowing = {"tests/code/fail_compound_statement_variable_shadowing.u", false, 0};
-	vTestFiles.push_back(test_fail_compound_statement_variable_shadowing);
 	Test test_fail_duplicate_function_name = {"tests/code/fail_duplicate_function_name.u", false, 0};
 	vTestFiles.push_back(test_fail_duplicate_function_name);
 	Test test_fail_duplicate_parameter_name = {"tests/code/fail_duplicate_parameter_name.u", false, 0};

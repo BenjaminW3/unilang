@@ -26,9 +26,6 @@
     <None Include="..\..\code\fail_accessing_non_existant_local_variable.u">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\code\fail_compound_statement_variable_shadowing.u">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\code\fail_duplicate_function_name.u">
       <Filter>Resource Files</Filter>
     </None>

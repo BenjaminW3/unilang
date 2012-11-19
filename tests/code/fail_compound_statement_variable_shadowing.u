@@ -1,8 +1,0 @@
-entrypoint: ~()->(iErrorCode:int(1))
-{
-	foo:int(0);
-	if(foo==0)
-	{
-		foo:int(1);
-	}
-}
