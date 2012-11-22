@@ -6,7 +6,7 @@
 
 typedef std::string::const_iterator base_iterator_type;
 template unilang::lexer::token_lexer<base_iterator_type>::token_lexer();
-template bool unilang::lexer::token_lexer<base_iterator_type>::add_(std::string const&, int);
+template bool unilang::lexer::token_lexer<base_iterator_type>::add_(std::string const&, tokens::ETokenIDs);
 template unilang::lexer::token_lexer<base_iterator_type>::raw_token_spec unilang::lexer::token_lexer<base_iterator_type>::operator()(std::string const& kwd) const;
 template unilang::lexer::token_lexer<base_iterator_type>::token_spec unilang::lexer::token_lexer<base_iterator_type>::token(std::string const& kwd) const;
 

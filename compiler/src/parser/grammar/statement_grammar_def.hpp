@@ -1,5 +1,9 @@
 ﻿#include "statement_grammar.hpp"
 
+#include "expression_grammar.hpp"
+
+#include "../../ast/fusion_adapt/statement_ast.hpp"
+
 #include "../../lexer/lexer.hpp"
 #include "../error_handler.hpp"
 #include "../annotation.hpp"
@@ -24,8 +28,6 @@ namespace unilang
 			qi::_3_type _3;
 			qi::_4_type _4;
 			qi::_val_type _val;
-
-			qi::tokenid_mask_type tokenid_mask;
 
 			using qi::on_error;
 			using qi::on_success;

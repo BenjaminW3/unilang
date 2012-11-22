@@ -6,15 +6,15 @@
 
 namespace unilang
 { 
-	// predefinition
+	// predefinitions
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
 	namespace lexer
 	{
-		// predefinition
+		// predefinitions
 		template <typename BaseIterator>
-		struct token_lexer;
+		class token_lexer;
 	}
 
 	namespace parser

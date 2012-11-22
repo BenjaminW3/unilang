@@ -1,5 +1,7 @@
 #include "../code_generator.hpp"
 
+#include "../../ast/operators_def.hpp"
+
 #include "../../log/log.hpp"
 
 #include "llvm/Support/raw_ostream.h"
@@ -24,17 +26,23 @@ namespace unilang
 				return ErrorValue("Invalid value returned from '"+sstr.str()+"'");
 			}
 
-			switch (x.operator_)
+			switch (
+#ifdef TOKEN_ID
+				x.operator_
+#else
+				static_cast<operators::EOperators>(x.operator_)
+#endif
+				)
 			{
-			case op::types::minus:
+			case operators::EOperators::minus:
 				{
 					return builder.CreateNeg(L, "neg");
 				}
-			case op::types::not_:
+			case operators::EOperators::not_:
 				{
 					return builder.CreateNot(L, "not");
 				}
-			/*case STokens::compl_:
+			/*case operators::EOperators::compl_:
 				{
 					llvm::Value* Minus1 = (*this)(int(-1));
 					if(!Minus1)
@@ -43,19 +51,83 @@ namespace unilang
 					}
 					return builder.CreateXor(L, Minus1, "compl.xor");
 				}*/
-			case op::types::plus_plus:
+			case operators::EOperators::plus_plus:
 				{
-					return ErrorValue("plus_plus not implemented!", EErrorLevel::Fatal);
+					if(	x.operand_.var.type()==typeid(ast::primary_expr) && 
+						boost::get<ast::primary_expr>(x.operand_.var).var.type()==typeid(ast::identifier))
+					{
+						ast::assignment assign;
+						assign.id = x.id;
+						assign.lhs = boost::get<ast::identifier>(boost::get<ast::primary_expr>(x.operand_.var).var);
+						assign.operator_ = static_cast<size_t>(operators::EOperators::plus_assign);
+						ast::expression rightEx;
+						rightEx.id = x.id;
+						if(L->getType()->isIntegerTy())
+						{
+							rightEx.first = ast::operand(ast::primary_expr(size_t(1)));
+						}
+						else if(L->getType()->isFloatingPointTy())
+						{
+							rightEx.first = ast::operand(ast::primary_expr(long double(1.0)));
+						}
+						else
+						{
+							std::string type_str;
+							llvm::raw_string_ostream rso(type_str);
+							rso << "Operator '++' is not available for value of type '";
+							L->getType()->print(rso);
+							rso << "' !";
+							return ErrorValue(rso.str(), EErrorLevel::Fatal);
+						}
+						assign.rhs = rightEx;
+						return (*this)(assign);
+					}
+					else
+					{
+						return ErrorValue("Operator '++' is only applicaple to identifiers.", EErrorLevel::Fatal);
+					}
 				}
-			case op::types::minus_minus:
+			case operators::EOperators::minus_minus:
 				{
-					return ErrorValue("minus_minus not implemented!", EErrorLevel::Fatal);
+					if(	x.operand_.var.type()==typeid(ast::primary_expr) && 
+						boost::get<ast::primary_expr>(x.operand_.var).var.type()==typeid(ast::identifier))
+					{
+						ast::assignment assign;
+						assign.id = x.id;
+						assign.lhs = boost::get<ast::identifier>(boost::get<ast::primary_expr>(x.operand_.var).var);
+						assign.operator_ = static_cast<size_t>(operators::EOperators::minus_assign);
+						ast::expression rightEx;
+						rightEx.id = x.id;
+						if(L->getType()->isIntegerTy())
+						{
+							rightEx.first = ast::operand(ast::primary_expr(size_t(1)));
+						}
+						else if(L->getType()->isFloatingPointTy())
+						{
+							rightEx.first = ast::operand(ast::primary_expr(long double(1.0)));
+						}
+						else
+						{
+							std::string type_str;
+							llvm::raw_string_ostream rso(type_str);
+							rso << "Operator '--' is not available for value of type '";
+							L->getType()->print(rso);
+							rso << "' !";
+							return ErrorValue(rso.str(), EErrorLevel::Fatal);
+						}
+						assign.rhs = rightEx;
+						return (*this)(assign);
+					}
+					else
+					{
+						return ErrorValue("Operator '--' is only applicaple to identifiers.", EErrorLevel::Fatal);
+					}
 				}
-			case op::types::plus:
+			case operators::EOperators::plus:
 				{
 					return L; // + does not change anything
 				}
-			case op::types::stringify:
+			case operators::EOperators::stringify:
 				{
 					//throw std::runtime_error("Not implemented!");
 
@@ -69,24 +141,24 @@ namespace unilang
 							return ErrorValue("CreateFPToUI returned invalid value!", EErrorLevel::Internal);
 						}
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = builder.CreateURem(pUi, (*this)(unsigned int(10)), "URemTmp");
+						llvm::Value *pPosLastDigit = builder.CreateURem(pUi, (*this)(uint64_t(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
 							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
-						return builder.CreateAdd(pPosLastDigit, (*this)(unsigned int(3*16)), "AddTmp");
+						return builder.CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
 					else if(L->getType()->isIntegerTy())
 					{
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = builder.CreateURem(L, (*this)(unsigned int(10)), "URemTmp");
+						llvm::Value *pPosLastDigit = builder.CreateURem(L, (*this)(uint64_t(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
 							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
-						return builder.CreateAdd(pPosLastDigit, (*this)(unsigned int(3*16)), "AddTmp");
+						return builder.CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
 					else
 					{
@@ -94,7 +166,7 @@ namespace unilang
 						llvm::raw_string_ostream rso(type_str);
 						rso << "String conversion for type '";
 						L->getType()->print(rso);
-						rso << "' not implemented!";
+						rso << "' is not implemented!";
 						return ErrorValue(rso.str(), EErrorLevel::Fatal);
 					}
 					/*return builder.CreateGlobalString(L, "stringifytmp");*/

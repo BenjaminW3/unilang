@@ -1,8 +1,8 @@
-entrypoint: ~()->(iErrorCode:~int(1))
+entrypoint: ~()->(iErrorCode:~int{1})
 {
-	foo:~int(42);
-	bar:~int(1);
-	baz:~int(2);
+	foo:~int{42};
+	bar:~int{1};
+	baz:~int{2};
 	
 	foo = bar = baz = 65;
 	

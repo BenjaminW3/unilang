@@ -2,6 +2,11 @@
 
 #include <boost/spirit/include/lex_plain_token.hpp>
 
+#include "identifier_grammar.hpp"
+
+#include "../../ast/operators_def.hpp"
+#include "../../ast/fusion_adapt/expression_ast.hpp"
+
 #include "../../lexer/lexer.hpp"
 #include "../error_handler.hpp"
 #include "../annotation.hpp"
@@ -41,37 +46,42 @@ namespace unilang
 			// Main expression grammar
 			expression =
 					unary_expr
-				>>  *(tokenid_mask(static_cast<op::types>(op::EOperationTypes::binaryOperation)) > unary_expr)
+#ifdef TOKEN_ID
+				>>  *(tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::binaryOperation)) > unary_expr)
+#else
+				>>  *(tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::binaryOperation)) > unary_expr)
+#endif
 				;
 			expression.name("expression");
 
 			unary_expr =
 					postfix_expr
-				|   (tokenid_mask(static_cast<op::types>(op::EOperationTypes::unaryOperation)) > unary_expr)
+#ifdef TOKEN_ID
+				|   (tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::unaryOperation)) > unary_expr)
+#else
+				|   (tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::unaryOperation)) > unary_expr)
+#endif
 				;
 			unary_expr.name("unary_expr");
 
 			postfix_expr =
-					variableDefinition	// before function call for unnamed variable definitions
-				|	functionCall
+					functionCall
+				|	variableDefinition
 				|	assignment_expr
 				|   primary_expr
 				;
 			postfix_expr.name("postfix_expr");
 
-			float_expr = lexer.lit_float;
-			float_expr.name("float_expr");
+			ufloat_expr = lexer.lit_ufloat;
+			ufloat_expr.name("ufloat_expr");
 			uint_expr = lexer.lit_uint;
 			uint_expr.name("uint_expr");
-			int_expr = lexer.lit_int;
-			int_expr.name("int_expr");
 			bool_expr = lexer.lit_boolean;
 			bool_expr.name("bool_expr");
 
 			primary_expr =
-					float_expr
+					ufloat_expr
 				|	uint_expr
-				|	int_expr
 				|   bool_expr
 				|   identifierGrammar
 				|   (lexer("\\(") > expression > lexer("\\)"))
@@ -82,8 +92,9 @@ namespace unilang
 			argumentList.name("argumentList");
 
 			functionCall =
-					(identifierGrammar	>> lexer("\\("))
-				>>   argumentList
+					identifierGrammar	
+				>>	lexer("\\(")
+				>	argumentList
 				>   lexer("\\)")
 				;
 			functionCall.name("functionCall");
@@ -95,52 +106,51 @@ namespace unilang
 
 			typeDeclaration =
 					mutableQualifier
-				>	identifierGrammar
+				>>	identifierGrammar
 				;
 			typeDeclaration.name("typeDeclaration");
 
-			variableIdentifier = 
-				-(
-					identifierGrammar
-				)
-				;
-			variableIdentifier.name("variableIdentifier");
-
-			// A Variable Declaration is of the form [<type-qualifier>]<type>[:<identifier>]
+			// A Variable Declaration is of the form [<identifier>:][<type-qualifier>]<type>
 			// <type-qualifier> can be '~'
 			// <type> one of the predefined or user define types
 			// <identifier> can be: -empty
 			//						-a user defined identifier
 			variableDeclaration =
-					variableIdentifier
-				>>	lexer(":")
-				>	typeDeclaration
+				-(
+					identifierGrammar
+					>>	lexer(":")
+				)
+				>>	typeDeclaration
 				;
 			variableDeclaration.name("variableDeclaration");
 
-			parameterList = 
-					lexer("\\(")
-				>	-( expression % lexer(","))
-				>	lexer("\\)")
+			definitionParameterList = 
+					lexer("\\{")
+				>	-(	expression % lexer(","))
+				>	lexer("\\}")
 				;
-			parameterList.name("parameterList");
+			definitionParameterList.name("definitionParameterList");
 
-			// A Variable Definition is of the form [<type-qualifier>]<type>[:<identifier>][<parameterList>]
+			// A Variable Definition is of the form [<identifier>:][<type-qualifier>]<type><parameterList>
 			// <type-qualifier> can be '~'
 			// <type> one of the predefined or user define types
 			// <identifier> can be: -empty
 			//						-a user defined identifier
-			// <parameterList> can be:	-'()' 
-			//							-a list of expressions seperated by ',' surrounded by '(',')'
+			// <parameterList> can be:	-'{}' 
+			//							-a list of expressions seperated by ',' surrounded by '{','}'
 			variableDefinition =
 					variableDeclaration
-				>>	parameterList
+				>>	definitionParameterList
 				;
 			variableDefinition.name("variableDefinition");
 
 			assignment_expr =
 					identifierGrammar
-				>>	tokenid_mask(static_cast<op::types>(op::EOperationTypes::assignmentOperation))
+#ifdef TOKEN_ID
+				>>	tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::assignmentOperation))
+#else
+				>>	tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::assignmentOperation))
+#endif
 				>>	expression
 				;
 			assignment_expr.name("assignment_expr");
@@ -153,17 +163,15 @@ namespace unilang
 				(unary_expr)
 				(postfix_expr)
 				(primary_expr)
-				(float_expr)
+				(ufloat_expr)
 				(uint_expr)
-				(int_expr)
 				(bool_expr)
 				(functionCall)
 				(argumentList)
 				(mutableQualifier)
 				(typeDeclaration)
-				(variableIdentifier)
 				(variableDeclaration)
-				(parameterList)
+				(definitionParameterList)
 				(variableDefinition)
 				(assignment_expr)
 			);
@@ -173,18 +181,16 @@ namespace unilang
 			on_error<fail>(	expression,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	unary_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	postfix_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	float_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	ufloat_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	uint_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	int_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	bool_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	primary_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	functionCall,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	argumentList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	mutableQualifier,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	typeDeclaration,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	variableIdentifier,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	variableDeclaration,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	parameterList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			on_error<fail>(	definitionParameterList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>(	variableDefinition,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			on_error<fail>( assignment_expr,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
@@ -193,18 +199,16 @@ namespace unilang
 			on_success(	expression,				annotation_function(error_handler.iters)(_val, _1));
 			on_success(	unary_expr,				annotation_function(error_handler.iters)(_val, _1));
 			on_success(	postfix_expr,			annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	float_expr,				annotation_function(error_handler.iters)(_val, _1));
+			//on_success(	ufloat_expr,				annotation_function(error_handler.iters)(_val, _1));
 			//on_success(	uint_expr,				annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	int_expr,				annotation_function(error_handler.iters)(_val, _1));
 			//on_success(	bool_expr,				annotation_function(error_handler.iters)(_val, _1));
 			on_success(	primary_expr,			annotation_function(error_handler.iters)(_val, _1));
 			on_success(	functionCall,			annotation_function(error_handler.iters)(_val, _1));
 			//on_success(	argumentList,			annotation_function(error_handler.iters)(_val, _1));
 			//on_success(	mutableQualifier,		annotation_function(error_handler.iters)(_val, _1));
 			on_success(	typeDeclaration,		annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	variableIdentifier,		annotation_function(error_handler.iters)(_val, _1));
 			on_success(	variableDeclaration,	annotation_function(error_handler.iters)(_val, _1));
-			on_success(	parameterList,			annotation_function(error_handler.iters)(_val, _1));
+			on_success(	definitionParameterList,	annotation_function(error_handler.iters)(_val, _1));
 			on_success(	variableDefinition,		annotation_function(error_handler.iters)(_val, _1));
 			on_success( assignment_expr,		annotation_function(error_handler.iters)(_val, _1));
 		}

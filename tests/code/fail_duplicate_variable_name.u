@@ -1,5 +1,5 @@
-entrypoint: ~()->(iErrorCode:int(1))
+entrypoint: ~()->(int{1})
 {
-	foo:int(1);
-	foo:int(2);
+	foo:int{1};
+	foo:int{2};
 }

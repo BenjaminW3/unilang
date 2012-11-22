@@ -1,2 +1,2 @@
-add: (i1:int, i2:int)->(:int(i1+i2)) 
-add: (i3:int, i4:int)->(:int(i3+i4))
+add: (i1:int, i2:int)->(int{i1+i2}) 
+add: (i3:int, i4:int)->(int{i3+i4})

@@ -11,37 +11,33 @@
 
 ///////////////////////////////////////////////////////////////////////////////
 // Use the lexer based on runtime generated DFA tables
-// #define LEXER_DYNAMIC_TABLES 1
+// #define LEXER_DYNAMIC_TABLES
 
 ///////////////////////////////////////////////////////////////////////////////
 // Use the lexer based on pre-generated static DFA tables
-// #define LEXER_STATIC_TABLES 1
+// #define LEXER_STATIC_TABLES
 
 ///////////////////////////////////////////////////////////////////////////////
 // Use the lexer based on runtime generated DFA tables
-// #define LEXER_STATIC_SWITCH 1
+// #define LEXER_STATIC_SWITCH
 
 ///////////////////////////////////////////////////////////////////////////////
 // The default is to use the dynamic table driven lexer
-#if LEXER_DYNAMIC_TABLES == 0 && \
-	LEXER_STATIC_TABLES == 0 && \
-	LEXER_STATIC_SWITCH == 0
-
-#define LEXER_DYNAMIC_TABLES 1
+#if (!defined LEXER_DYNAMIC_TABLES) && (!defined LEXER_STATIC_TABLES) && (!defined LEXER_STATIC_SWITCH)
+	#define LEXER_DYNAMIC_TABLES
 #endif
 
 ///////////////////////////////////////////////////////////////////////////////
 // Make sure we have only one lexer type selected
-#if (LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_TABLES != 0) || \
-	(LEXER_DYNAMIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0) || \
-	(LEXER_STATIC_TABLES != 0 && LEXER_STATIC_SWITCH != 0)
-
+#if ((defined LEXER_DYNAMIC_TABLES) && (defined LEXER_STATIC_TABLES)) || \
+	((defined LEXER_DYNAMIC_TABLES) && (defined LEXER_STATIC_SWITCH)) || \
+	((defined LEXER_STATIC_TABLES) && (defined LEXER_STATIC_SWITCH))
 #error "Configuration problem: please select exactly one type of lexer to build"
 #endif
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable: 4717)		// function 'boost::spirit::lex::action<Subject,Action> boost::proto::transform<PrimitiveTransform>::operator ()<Expr&,const State&,Data&>(const boost::proto::exprns_::expr<Tag,Args,Arity>,const boost::fusion::nil,boost::spirit::unused_type) const' marked as __forceinline not inlined
+//#pragma warning(disable: 4717)		// function 'boost::spirit::lex::action<Subject,Action> boost::proto::transform<PrimitiveTransform>::operator ()<Expr&,const State&,Data&>(const boost::proto::exprns_::expr<Tag,Args,Arity>,const boost::fusion::nil,boost::spirit::unused_type) const' marked as __forceinline not inlined
 #endif
 
 #ifdef _DEBUG
@@ -51,12 +47,12 @@
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/lex_lexertl_position_token.hpp>
 
-#include "ids.hpp"
+#include "token_ids.hpp"
 
-#if LEXER_STATIC_TABLES != 0
+#if defined LEXER_STATIC_TABLES
 #include <boost/spirit/include/lex_static_lexertl.hpp>
 #include "static_lexer.hpp"
-#elif LEXER_STATIC_SWITCH != 0
+#elif defined LEXER_STATIC_SWITCH
 #include <boost/spirit/include/lex_static_lexertl.hpp>
 #include "static_switch_lexer.hpp"
 #endif
@@ -64,6 +60,31 @@
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
+
+namespace boost
+{ 
+	namespace spirit 
+	{ 
+		namespace traits
+		{
+			template <typename Iterator>
+			struct assign_to_attribute_from_iterators<uint64_t, Iterator>
+			{
+				static void call(Iterator const& first, Iterator const& last, uint64_t& attr)
+				{
+					//boost::spirit::ulong_long_type uint_64_parser;
+					//uint_parser<uint64_t, 10, 1, -1> uint_64_parser;
+					//Iterator first_ = first;
+					//qi::parse(first_, last, boost::spirit::qi::ulong_long(), attr2);
+					
+					std::string s(first, last);
+					std::stringstream ss(s);
+					ss >> attr;
+				}
+			};
+		}
+	}
+}
 
 namespace unilang 
 { 
@@ -85,22 +106,26 @@ namespace unilang
 			struct get_lexer_type
 			{
 				// Our token needs to be able to carry several token values
-				typedef boost::mpl::vector<std::string, long double, unsigned int, int, bool> token_value_types;
+				typedef boost::mpl::vector<std::string, long double, uint64_t, bool> token_value_types;
 
 				// Using the position_token class as the token type to be returned from the lexer iterators allows to retain positional information
 				// as every token instance stores an iterator pair pointing to the matched input sequence.
+#ifdef TOKEN_ID
+				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::false_, tokens::ETokenIDs > token_type;
+#else
 				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::false_ > token_type;
+#endif
 
-#if LEXER_DYNAMIC_TABLES != 0
+#if defined LEXER_DYNAMIC_TABLES
 				// use the lexer based on runtime generated DFA tables
 				typedef lex::lexertl::actor_lexer<token_type> type;
-#elif LEXER_STATIC_TABLES != 0
+#elif defined LEXER_STATIC_TABLES
 				// use the lexer based on pre-generated static DFA tables
 				typedef lex::lexertl::static_actor_lexer<
 					token_type
 				  , boost::spirit::lex::lexertl::static_::lexer_conjure_static
 				> type;
-#elif LEXER_STATIC_SWITCH != 0
+#elif defined LEXER_STATIC_SWITCH
 				// use the lexer based on pre-generated static code
 				typedef lex::lexertl::static_actor_lexer<
 					token_type
@@ -111,28 +136,30 @@ namespace unilang
 #endif
 			};
 		}
-		
+
+
 		//#########################################################################
 		//! The Lexer tokenizing the input stream for use by the parser.
 		//#########################################################################
 		template <typename BaseIterator>
-		struct token_lexer	:	lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>,
-								boost::noncopyable
+		class token_lexer final :	public lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>,
+									boost::noncopyable
 		{
 		private:
+#ifdef TOKEN_ID
 			// get the type of any qi::raw_token(...) and qi::token(...) constructs
-			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(STokens::ETokenIDs) >::type raw_token_spec;
+			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(tokens::ETokenIDs) >::type raw_token_spec;
 
-			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(STokens::ETokenIDs) >::type token_spec;
+			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(tokens::ETokenIDs) >::type token_spec;
 
-			typedef std::map<std::string, STokens::ETokenIDs> keyword_map_type;
+			typedef std::map<std::string, tokens::ETokenIDs> keyword_map_type;
+#else
+			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(size_t) >::type raw_token_spec;
 
-		protected:
-			//-------------------------------------------------------------------------
-			//! Adds a keyword to the mapping table
-			//-------------------------------------------------------------------------
-			bool add_( std::string const& keyword, int id_ = STokens::invalid );
+			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(size_t) >::type token_spec;
 
+			typedef std::map<std::string, size_t> keyword_map_type;
+#endif
 		public:
 			typedef BaseIterator base_iterator_type;
 			
@@ -151,13 +178,30 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			token_spec token(std::string const& kwd) const;
 
-			lex::token_def<lex::omit> tok_whitespace;
-			lex::token_def<lex::omit> tok_comment;
-			lex::token_def<std::string> tok_identifier;
-			lex::token_def<long double> lit_float;
-			lex::token_def<unsigned int> lit_uint;
-			lex::token_def<int> lit_int;
-			lex::token_def<bool> lit_boolean;
+		private:
+			//-------------------------------------------------------------------------
+			//! Adds a keyword to the mapping table
+			//-------------------------------------------------------------------------
+			bool add_( std::string const& keyword, tokens::ETokenIDs id );
+
+		public:
+#ifdef TOKEN_ID
+			lex::token_def<lex::omit, char, tokens::ETokenIDs> const tok_whitespace;
+			lex::token_def<lex::omit, char, tokens::ETokenIDs> const tok_comment;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const tok_identifier;
+			lex::token_def<long double, char, tokens::ETokenIDs> const lit_ufloat;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const lit_uint;
+			lex::token_def<bool, char, tokens::ETokenIDs> const lit_boolean;
+#else
+			lex::token_def<lex::omit> const tok_whitespace;
+			lex::token_def<lex::omit> const tok_comment;
+			lex::token_def<std::string> const tok_identifier;
+			lex::token_def<long double> const lit_ufloat;
+			lex::token_def<uint64_t> const lit_uint;
+			lex::token_def<bool> const lit_boolean;
+#endif
+
+		private:
 			keyword_map_type keywords_;
 		};
 	}

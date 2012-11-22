@@ -1,13 +1,13 @@
-entrypoint< () -> ( <int>iErrorCode(0) ) >
+entrypoint : () -> ( iErrorCode:int{0} ) 
 {
 	/*define two lists. First one with concatenation with empty list.*/
-	<[uint]>k(1 : 2 : 3 : [uint]);
-	<[uint]>l(1 : 2 : 3);
+	k : [uint]{1 : 2 : 3 : [uint]};
+	l : [uint]{1 : 2 : 3};
 	/*Test printing of lists*/
 	usl::print(l);
 	
 	/*Test if two lists are the same*/
-	<bool>b(k==l);
+	b : bool{k==l};
 	/*Test printing of bool*/
 	usl::print(b);
 	
@@ -17,13 +17,13 @@ entrypoint< () -> ( <int>iErrorCode(0) ) >
 }
 
 /*sorting*/
-<([uint]) -> ([uint])>sort
+sort : ([uint]) -> ([uint])
 {
 	| []	->	[]
 	| x::l	->	insert(x,(sort(l))
 }
 
-<(uint, [uint]) -> ([uint])>insert
+insert : (uint, [uint]) -> ([uint])
 {
 	|(elem, [])		->	[elem]
 	|(elem, x::l)	->	(elem < x) ? (elem::x::l) : (x::insert(elem,l));

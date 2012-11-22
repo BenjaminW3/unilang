@@ -1,4 +1,4 @@
-entrypoint : () -> ( iErrorCode:int(0) ) 
+entrypoint : () -> ( iErrorCode:int{0} ) 
 {
 	
 }
@@ -8,7 +8,10 @@ class object
 	// public members
 	+ iID: ~int;
 
+	// protected
+	- bUsable: bool;
+
 	// private members
-	- iWidth: int;
-	- iHeight: int;
+	iWidth: int;
+	iHeight: int;
 }

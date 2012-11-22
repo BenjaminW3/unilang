@@ -1,5 +1,7 @@
 #include "grammar.hpp"
 
+#include "../../ast/fusion_adapt/ast.hpp"
+
 #include "../../lexer/lexer.hpp"
 #include "../error_handler.hpp"
 #include "../annotation.hpp"

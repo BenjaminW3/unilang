@@ -170,7 +170,6 @@
     <None Include="..\..\code\fail_int_initialization_list_too_long.u" />
     <None Include="..\..\code\fail_literal_float_parameter_type_mismatch.u" />
     <None Include="..\..\code\fail_literal_int_parameter_type_mismatch.u" />
-    <None Include="..\..\code\fail_literal_uint_parameter_type_mismatch.u" />
     <None Include="..\..\code\fail_mismatch_chained_assignment.u" />
     <None Include="..\..\code\fail_missing_function_identifier.u" />
     <None Include="..\..\code\fail_missing_variable_definition_type.u" />

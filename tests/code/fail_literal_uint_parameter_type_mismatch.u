@@ -2,5 +2,5 @@ increment:(x:float)->(:float(x+1))
 
 entrypoint: ~()->(iErrorCode:~int(1))
 {
-	iErrorCode = int(increment(0));
+	iErrorCode = cast<int>(increment(0));
 }

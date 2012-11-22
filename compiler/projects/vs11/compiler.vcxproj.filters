@@ -64,6 +64,9 @@
     <Filter Include="Header Files\execution_engine">
       <UniqueIdentifier>{c8dcf504-d55d-469a-bd00-189bee9534e3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\ast\fusion_adapt">
+      <UniqueIdentifier>{b633697b-0373-48cb-b638-bb4c018cb462}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\parser\parser.cpp">
@@ -150,6 +153,12 @@
     <ClCompile Include="..\..\src\code_generator\expressions\assignment.cpp">
       <Filter>Source Files\code_generator\expressions</Filter>
     </ClCompile>
+    <ClCompile Include="..\..\src\lexer\token_ids.cpp">
+      <Filter>Source Files\lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\operators.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\parser\parser.hpp">
@@ -206,9 +215,6 @@
     <ClInclude Include="..\..\src\lexer\lexer.hpp">
       <Filter>Header Files\lexer</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\lexer\ids.hpp">
-      <Filter>Header Files\lexer</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\parser\grammar\expression_grammar_def.hpp">
       <Filter>Header Files\parser\grammar</Filter>
     </ClInclude>
@@ -235,6 +241,33 @@
     </ClInclude>
     <ClInclude Include="..\..\src\export.hpp">
       <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lexer\token_ids.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\lexer\token_ids_def.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\operators.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\operators_def.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\fusion_adapt\ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\fusion_adapt\expression_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\fusion_adapt\function_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\fusion_adapt\identifier_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\ast\fusion_adapt\statement_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

@@ -2,8 +2,6 @@
 
 #include "ast_base.hpp"
 
-#include <boost/fusion/include/adapt_struct.hpp>
-
 #include <ostream>
 #include <string>
 
@@ -23,8 +21,3 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, identifier const& x);
 	}
 }
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::identifier,
-	(std::string, name)
-)

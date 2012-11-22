@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "identifier_grammar.hpp"
-
 #include "../../ast/expression_ast.hpp"
 
 #include "../spirit.hpp"
@@ -10,19 +8,23 @@
 
 namespace unilang 
 {
-	// predefinition
+	// predefinitions
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
 	namespace lexer
 	{
-		// predefinition
+		// predefinitions
 		template <typename BaseIterator>
-		struct token_lexer;
+		class token_lexer;
 	}
 
 	namespace parser
 	{
+		// predefinitions
+		template <typename BaseIterator, typename Iterator>
+		struct identifier_grammar;
+
 		namespace qi = boost::spirit::qi;
 
 		//#########################################################################
@@ -38,9 +40,8 @@ namespace unilang
 								identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
 								lexer::token_lexer<BaseIterator>& lexer);
 			
-			qi::rule<Iterator, long double()> float_expr;
-			qi::rule<Iterator, unsigned int()> uint_expr;
-			qi::rule<Iterator, int()> int_expr;
+			qi::rule<Iterator, long double()> ufloat_expr;
+			qi::rule<Iterator, uint64_t()> uint_expr;
 			qi::rule<Iterator, bool()> bool_expr;
 			qi::rule<Iterator, ast::primary_expr()> primary_expr;
 			qi::rule<Iterator, ast::operand()>unary_expr, postfix_expr;
@@ -52,9 +53,8 @@ namespace unilang
 			qi::rule<Iterator, bool()> mutableQualifier;
 			qi::rule<Iterator, ast::type_declaration()> typeDeclaration;
 			
-			qi::rule<Iterator, boost::optional<ast::identifier>()> variableIdentifier;
 			qi::rule<Iterator, ast::variable_declaration()> variableDeclaration;
-			qi::rule<Iterator, std::list<ast::expression>()> parameterList;
+			qi::rule<Iterator, std::list<ast::expression>()> definitionParameterList;
 			qi::rule<Iterator, ast::variable_definition()> variableDefinition;
 
 			qi::rule<Iterator, ast::assignment()> assignment_expr;

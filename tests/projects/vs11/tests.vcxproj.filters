@@ -47,9 +47,6 @@
     <None Include="..\..\code\fail_literal_int_parameter_type_mismatch.u">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\code\fail_literal_uint_parameter_type_mismatch.u">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\code\fail_mismatch_chained_assignment.u">
       <Filter>Resource Files</Filter>
     </None>

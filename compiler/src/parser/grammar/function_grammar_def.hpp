@@ -1,5 +1,11 @@
 ﻿#include "function_grammar.hpp"
 
+#include "identifier_grammar.hpp"
+#include "expression_grammar.hpp"
+#include "statement_grammar.hpp"
+
+#include "../../ast/fusion_adapt/function_ast.hpp"
+
 #include "../../lexer/lexer.hpp"
 #include "../error_handler.hpp"
 #include "../annotation.hpp"

@@ -1,6 +1,6 @@
-decrement:(x:int)->(:int(--x))
+decrement:(x:~int)->(int{--x})
 
-entrypoint: ~()->(iErrorCode:int(1))
+entrypoint: ~()->(int{1})
 {
-	decrement:int(42);
+	decrement:int{42};
 }

@@ -17,16 +17,9 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::operator()(unsigned int const & x)
+		llvm::Value * expression_code_generator::operator()(uint64_t const & x)
 		{
-			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(uiIntSize), uint64_t(x), false));
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::operator()(int const & x)
-		{
-			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(uiIntSize), uint64_t(x), true));
+			return llvm::ConstantInt::get(context, llvm::APInt(unsigned int(uiIntSize), x, false));
 		}
 		//-----------------------------------------------------------------------------
 		//

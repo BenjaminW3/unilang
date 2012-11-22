@@ -1,27 +1,30 @@
 ﻿#pragma once
 
-#include "identifier_grammar.hpp"
-#include "expression_grammar.hpp"
-
 #include "../../ast/statement_ast.hpp"
 
 #include "../spirit.hpp"
 
 namespace unilang 
 { 
-	// predefinition
+	// predefinitions
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
 	namespace lexer
 	{
-		// predefinition
+		// predefinitions
 		template <typename BaseIterator>
-		struct token_lexer;
+		class token_lexer;
 	}
 
 	namespace parser
 	{
+		// predefinitions
+		//template <typename BaseIterator, typename Iterator>
+		//struct identifier_grammar;
+		template <typename BaseIterator, typename Iterator>
+		struct expression_grammar;
+
 		namespace qi = boost::spirit::qi;
 
 		//#########################################################################

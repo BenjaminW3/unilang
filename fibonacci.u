@@ -1,6 +1,6 @@
-entrypoint : ()->( ~int:iErrorCode(0) )
+entrypoint : ()->( iErrorCode:~int{0} )
 {
-	int:iFib10(fib(10));
+	iFib10:int{fib(10)};
 	iErrorCode = iFib10;
 	/*usl::print(iFib10);*/
 }

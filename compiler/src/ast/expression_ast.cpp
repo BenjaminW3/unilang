@@ -11,8 +11,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		primary_expr::primary_expr() : base_type() {}
 		primary_expr::primary_expr(long double val) : base_type(val) {}
-		primary_expr::primary_expr(unsigned int val) : base_type(val) {}
-		primary_expr::primary_expr(int val) : base_type(val) {}
+		primary_expr::primary_expr(uint64_t val) : base_type(val) {}
 		primary_expr::primary_expr(bool val) : base_type(val) {}
 		primary_expr::primary_expr(identifier const& val) : base_type(val) {}
 		primary_expr::primary_expr(expression const& val) : base_type(val) {}
@@ -25,9 +24,8 @@ namespace unilang
 				case 0: return true; break;
 				case 1: return true; break;
 				case 2: return true; break;
-				case 3: return true; break;
-				case 4: return boost::get<identifier>(*this).isPure(); break;
-				case 5: return boost::get<expression>(*this).isPure(); break;
+				case 3: return boost::get<identifier>(*this).isPure(); break;
+				case 4: return boost::get<expression>(*this).isPure(); break;
 				default: throw std::runtime_error("undefined-primary_expr"); break;
 			}
 		}
@@ -36,11 +34,10 @@ namespace unilang
 			switch(x.get().which())
 			{
 				case 0: out << boost::get<long double>(x); break;
-				case 1: out << boost::get<unsigned int>(x); break;
-				case 2: out << boost::get<int>(x); break;
-				case 3: out << boost::get<bool>(x); break;
-				case 4: out << boost::get<identifier>(x); break;
-				case 5: out << boost::get<expression>(x); break;
+				case 1: out << boost::get<uint64_t>(x); break;
+				case 2: out << boost::get<bool>(x); break;
+				case 3: out << boost::get<identifier>(x); break;
+				case 4: out << boost::get<expression>(x); break;
 				default: out << "undefined-primary_expr"; break;
 			}
 			return out;
@@ -90,7 +87,13 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, unary_expr const& x)
 		{
-			out << x.operator_ << x.operand_; return out;
+			out << 
+#ifdef TOKEN_ID
+				x.operator_
+#else
+				static_cast<operators::EOperators>(x.operator_)
+#endif
+				<< x.operand_; return out;
 		}
 		//-------------------------------------------------------------------------
 		//! 
@@ -101,7 +104,13 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, operation const& x)
 		{
-			out << x.operator_;
+			out << 
+#ifdef TOKEN_ID
+				x.operator_
+#else
+				static_cast<operators::EOperators>(x.operator_)
+#endif
+				;
 			out << x.operand_;
 			return out;
 		}
@@ -224,7 +233,13 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, assignment const& x)
 		{
-			out << x.lhs << x.operator_ << x.rhs; return out;
+			out << x.lhs << 
+#ifdef TOKEN_ID
+				x.operator_
+#else
+				static_cast<operators::EOperators>(x.operator_)
+#endif
+				<< x.rhs; return out;
 		}
 	}
 }

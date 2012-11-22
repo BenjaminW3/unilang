@@ -1,5 +1,7 @@
 #include "../code_generator.hpp"
 
+#include "../../ast/operators_def.hpp"
+
 #include "../../log/log.hpp"
 
 #include "llvm/Support/raw_ostream.h"
@@ -56,16 +58,22 @@ namespace unilang
 						}
 						else
 						{
-							if(x.operator_ == STokens::assign)
+							if(
+#ifdef TOKEN_ID
+				x.operator_
+#else
+				static_cast<operators::EOperators>(x.operator_)
+#endif
+								== operators::EOperators::assign)
 							{
 								/*return */builder.CreateStore(rhs, lhs);
 								return rhs;
 							}
 							else // more then just an assignment
 							{
-								ast::operation op;
 								// remove all possible flags to get the pure operation
-								op::types opType = static_cast<op::types>(x.operator_ & ~(op::EOperationTypes::assignmentOperation & op::EOperationTypes::binaryOperation & op::EOperationTypes::unaryOperation));
+								size_t const opRemoveFlags(~(static_cast<size_t>(operators::EOperatorTypes::assignmentOperation) & static_cast<size_t>(operators::EOperatorTypes::binaryOperation) & static_cast<size_t>(operators::EOperatorTypes::unaryOperation)));
+								operators::EOperators const opType = static_cast<operators::EOperators>(static_cast<size_t>(x.operator_) & opRemoveFlags);
 								llvm::Value *CalcVal = CreateBinaryOperation(lhs, rhs, opType);
 								if(!CalcVal)
 								{

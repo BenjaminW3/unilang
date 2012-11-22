@@ -1,10 +1,9 @@
 #pragma once
 
-#include "../lexer/ids.hpp"
+#include "operators.hpp"
 #include "ast_base.hpp"
 #include "identifier_ast.hpp"
 
-#include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/variant/recursive_variant.hpp>
 #include <boost/spirit/include/support_extended_variant.hpp>
 #include <boost/optional.hpp>
@@ -23,8 +22,7 @@ namespace unilang
 		//#########################################################################
 		struct primary_expr :	public ast_base,
 								boost::spirit::extended_variant<	long double,
-																	unsigned int,
-																	int,
+																	uint64_t,
 																	bool,
 																	identifier,
 																	boost::recursive_wrapper<expression>
@@ -32,8 +30,7 @@ namespace unilang
 		{
 			primary_expr();
 			primary_expr(long double val);
-			primary_expr(unsigned int val);
-			primary_expr(int val);
+			primary_expr(uint64_t val);
 			primary_expr(bool val);
 			primary_expr(identifier const& val);
 			primary_expr(expression const& val);
@@ -75,7 +72,11 @@ namespace unilang
 		//#########################################################################
 		struct unary_expr :	public ast_base
 		{
-			op::types operator_;
+#ifdef TOKEN_ID
+			operators::EOperators operator_;
+#else
+			size_t operator_;
+#endif
 			operand operand_;
 
 			bool isPure() const override;
@@ -86,7 +87,11 @@ namespace unilang
 		//#########################################################################
 		struct operation :	public ast_base
 		{
-			op::types operator_;
+#ifdef TOKEN_ID
+			operators::EOperators operator_;
+#else
+			size_t operator_;
+#endif
 			operand operand_;
 
 			bool isPure() const override;
@@ -153,7 +158,11 @@ namespace unilang
 		struct assignment :	public ast_base
 		{
 			identifier lhs;
-			op::types operator_;
+#ifdef TOKEN_ID
+			operators::EOperators operator_;
+#else
+			size_t operator_;
+#endif
 			expression rhs;
 
 			bool isPure() const override;
@@ -161,52 +170,3 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, assignment const& x);
 	}
 }
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::function_call,
-	(unilang::ast::identifier, idf)
-	(std::list<unilang::ast::expression>, arguments)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::unary_expr,
-	(unilang::op::types, operator_)
-	(unilang::ast::operand, operand_)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::operation,
-	(unilang::op::types, operator_)
-	(unilang::ast::operand, operand_)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::expression,
-	(unilang::ast::operand, first)
-	(std::list<unilang::ast::operation>, rest)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::type_declaration,
-	(bool, mutableQualifier)
-	(unilang::ast::identifier, type_identifier)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::variable_declaration,
-	(boost::optional<unilang::ast::identifier>, name)
-	(unilang::ast::type_declaration, type)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::variable_definition,
-	(unilang::ast::variable_declaration, decl)
-	(std::list<unilang::ast::expression>, parameters)
-)
-
-BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::assignment,
-	(unilang::ast::identifier, lhs)
-	(unilang::op::types, operator_)
-	(unilang::ast::expression, rhs)
-)

@@ -1,6 +1,6 @@
-func:(v:int)->(:int(v))
+func:(v:int)->(int{v})
 
-entrypoint: ~()->(iErrorCode:~int(1))
+entrypoint: ~()->(iErrorCode:~int{1})
 {
 	iErrorCode = func(77);
 }

@@ -1,9 +1,9 @@
-entrypoint: ~()->(iErrorCode:int(1))
+entrypoint: ~()->(int{1})
 {
-	x:int(42);
+	x:int{42};
 	
 	if(x==42)
 	{
-		x:int(43);
+		x:int{43};
 	}
 }

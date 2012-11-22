@@ -1,4 +1,4 @@
-entrypoint: ~()->(iErrorCode:int(1))
+entrypoint: ~()->(int{1})
 {
 	bogus(42);
 }

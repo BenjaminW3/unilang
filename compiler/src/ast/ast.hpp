@@ -6,7 +6,6 @@
 #include "statement_ast.hpp"
 #include "function_ast.hpp"
 
-#include <boost/fusion/include/adapt_struct.hpp>
 #include <boost/variant/recursive_variant.hpp>
 #include <boost/spirit/include/support_extended_variant.hpp>
 
@@ -44,8 +43,3 @@ namespace unilang
 		std::ostream& operator<<(std::ostream& out, module const& x);
 	}
 }
-
-BOOST_FUSION_ADAPT_STRUCT(
-    unilang::ast::module,
-    (std::list<unilang::ast::meta_entity>, metaEntities)
-)

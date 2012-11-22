@@ -203,7 +203,7 @@ namespace unilang
 			//-----------------------------------------------------------------------------
 			//! \return The value returned from the execution of 'L op R'.
 			//-----------------------------------------------------------------------------
-			llvm::Value * CreateBinaryOperation(llvm::Value * L, llvm::Value * R, op::types op);
+			llvm::Value * CreateBinaryOperation(llvm::Value * L, llvm::Value * R, operators::EOperators op);
 
 			//-----------------------------------------------------------------------------
 			//! Create an alloca instruction in the entry block of the function.  
@@ -215,8 +215,7 @@ namespace unilang
 			typedef llvm::Value * result_type;
 
 			llvm::Value * operator()(long double const & x);
-			llvm::Value * operator()(unsigned int const & x);
-			llvm::Value * operator()(int const & x);
+			llvm::Value * operator()(uint64_t const & x);
 			llvm::Value * operator()(bool const & x);
 			llvm::Value * operator()(ast::primary_expr const& x);
 			llvm::Value * operator()(ast::identifier const & x);

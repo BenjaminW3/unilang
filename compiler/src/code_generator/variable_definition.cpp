@@ -50,8 +50,8 @@ namespace unilang
 				{
 					std::string type_str;
 					llvm::raw_string_ostream rso(type_str);
-					existantVar->getAllocaInst()->getType()->print(rso);
-					return ErrorValue("Variable with the name '"+x.name.get().name+"' has already been declared with type '"+type_str+"'.");
+					existantVar->getAllocaInst()->getAllocatedType()->print(rso);
+					return ErrorValue("Variable with the name '"+x.name.get().name+"' has already been declared with type '"+rso.str()+"'.");
 				}
 			}
 			// TODO: really needed? We already can have typenames equal to variable names
@@ -100,7 +100,7 @@ namespace unilang
 			{
 				if(x.parameters.size()==0)
 				{
-					InitVal = (*this)(int(0)); // 64bit, initial 0, signed
+					InitVal = (*this)(uint64_t(0)); // 64bit, initial 0, signed
 					if (!InitVal)
 					{
 						std::stringstream sstr;
