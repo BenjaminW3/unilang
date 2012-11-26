@@ -186,23 +186,23 @@ namespace unilang
 
 		public:
 #ifdef TOKEN_ID
-			lex::token_def<lex::omit, char, tokens::ETokenIDs> const tok_whitespace;
-			lex::token_def<lex::omit, char, tokens::ETokenIDs> const tok_comment;
-			lex::token_def<std::string, char, tokens::ETokenIDs> const tok_identifier;
-			lex::token_def<long double, char, tokens::ETokenIDs> const lit_ufloat;
-			lex::token_def<uint64_t, char, tokens::ETokenIDs> const lit_uint;
-			lex::token_def<bool, char, tokens::ETokenIDs> const lit_boolean;
+			lex::token_def<lex::omit, char, tokens::ETokenIDs> const _tok_whitespace;
+			lex::token_def<lex::omit, char, tokens::ETokenIDs> const _tok_comment;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const _tok_identifier;
+			lex::token_def<long double, char, tokens::ETokenIDs> const _lit_ufloat;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const _lit_uint;
+			lex::token_def<bool, char, tokens::ETokenIDs> const _lit_boolean;
 #else
-			lex::token_def<lex::omit> const tok_whitespace;
-			lex::token_def<lex::omit> const tok_comment;
-			lex::token_def<std::string> const tok_identifier;
-			lex::token_def<long double> const lit_ufloat;
-			lex::token_def<uint64_t> const lit_uint;
-			lex::token_def<bool> const lit_boolean;
+			lex::token_def<lex::omit> const _tok_whitespace;
+			lex::token_def<lex::omit> const _tok_comment;
+			lex::token_def<std::string> const _tok_identifier;
+			lex::token_def<long double> const _lit_ufloat;
+			lex::token_def<uint64_t> const _lit_uint;
+			lex::token_def<bool> const _lit_boolean;
 #endif
 
 		private:
-			keyword_map_type keywords_;
+			keyword_map_type _keywords;
 		};
 	}
 }

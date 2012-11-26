@@ -11,6 +11,12 @@
 #include <ostream>
 #include <list>
 
+#ifdef TOKEN_ID
+#define OPERATOR_TYPE operators::EOperators
+#else
+#define OPERATOR_TYPE size_t
+#endif
+
 namespace unilang 
 {
 	namespace ast
@@ -67,103 +73,106 @@ namespace unilang
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, operand const& x);
+
 		//#########################################################################
 		//! A unary expression.
 		//#########################################################################
 		struct unary_expr :	public ast_base
 		{
-#ifdef TOKEN_ID
-			operators::EOperators operator_;
-#else
-			size_t operator_;
-#endif
-			operand operand_;
+			OPERATOR_TYPE _operator;
+			operand _operand;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, unary_expr const& x);
+
 		//#########################################################################
 		//! A operation.
 		//#########################################################################
 		struct operation :	public ast_base
 		{
-#ifdef TOKEN_ID
-			operators::EOperators operator_;
-#else
-			size_t operator_;
-#endif
-			operand operand_;
+			OPERATOR_TYPE _operator;
+			operand _operand;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, operation const& x);
+
 		//#########################################################################
 		//! An expression.
 		//#########################################################################
 		struct expression :	public ast_base
 		{
-			operand first;
-			std::list<operation> rest;
+			operand _first;
+			std::list<operation> _rest;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, expression const& x);
+
 		//#########################################################################
 		//! A function call.
 		//#########################################################################
 		struct function_call :	public ast_base
 		{
-			identifier idf;
-			std::list<expression> arguments;
+			identifier _identifier;
+			std::list<expression> _lArgumentExpressions;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, function_call const& x);
+
 		//#########################################################################
 		//! A type declaration.
 		//#########################################################################
 		struct type_declaration :	public ast_base
 		{
-			bool mutableQualifier;
-			identifier type_identifier;
+			type_declaration();
+			type_declaration(identifier const & type_identifier);
+			type_declaration(bool bHasMutableQualifier, identifier const & type_identifier);
+
+			bool _bHasMutableQualifier;
+			identifier _identifier;
 			
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, type_declaration const& x);
+
 		//#########################################################################
 		//! A variable declaration.
 		//#########################################################################
 		struct variable_declaration :	public ast_base
 		{
-			boost::optional<identifier> name;
-			type_declaration type;
+			boost::optional<identifier> _optionalIdentifier;
+			type_declaration _type;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, variable_declaration const& x);
+
 		//#########################################################################
 		//! A variable definition.
 		//#########################################################################
 		struct variable_definition :	public ast_base
 		{
-			variable_declaration decl;
-			std::list<expression> parameters;
+			variable_declaration _declaration;
+			std::list<expression> _lParameterExpressions;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, variable_definition const& x);
+
 		//#########################################################################
 		//! Assignment consists of a identifier, the operator and an expression.
 		//#########################################################################
 		struct assignment :	public ast_base
 		{
-			identifier lhs;
-#ifdef TOKEN_ID
-			operators::EOperators operator_;
-#else
-			size_t operator_;
-#endif
-			expression rhs;
+			assignment();
+			assignment(identifier lhs, OPERATOR_TYPE op, expression rhs);
+
+			identifier _lhs;
+			OPERATOR_TYPE _operator;
+			expression _rhs;
 
 			bool isPure() const override;
 		};

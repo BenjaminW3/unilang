@@ -10,8 +10,18 @@ namespace unilang
 		//#########################################################################
 		struct ast_base abstract
 		{
-			size_t id;
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
+			ast_base();
 
+			size_t _id;
+			
+			//-------------------------------------------------------------------------
+			//! Base mathode that can be overwritten.
+			//! This base method always returns false.
+			//! \return If the object is pure.
+			//-------------------------------------------------------------------------
 			virtual bool isPure() const
 			{
 				return false;

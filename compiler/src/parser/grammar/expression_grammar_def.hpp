@@ -72,11 +72,11 @@ namespace unilang
 				;
 			postfix_expr.name("postfix_expr");
 
-			ufloat_expr = lexer.lit_ufloat;
+			ufloat_expr = lexer._lit_ufloat;
 			ufloat_expr.name("ufloat_expr");
-			uint_expr = lexer.lit_uint;
+			uint_expr = lexer._lit_uint;
 			uint_expr.name("uint_expr");
-			bool_expr = lexer.lit_boolean;
+			bool_expr = lexer._lit_boolean;
 			bool_expr.name("bool_expr");
 
 			primary_expr =

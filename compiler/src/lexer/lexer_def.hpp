@@ -13,25 +13,25 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
 #ifdef TOKEN_ID
-		token_lexer<BaseIterator>::token_lexer() :	tok_whitespace("\\s+", tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-													tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", tokens::ETokenIDs::comment),
-													tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", tokens::ETokenIDs::identifier),
+		token_lexer<BaseIterator>::token_lexer() :	_tok_whitespace("\\s+", tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+													_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", tokens::ETokenIDs::comment),
+													_tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", tokens::ETokenIDs::identifier),
 													//tok_string("[^\"]+", tokens::ETokenIDs::string),
-													lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_ufloat),
+													_lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::_lit_ufloat),
 													//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
-													lit_uint("[1-9][0-9]*|0", tokens::ETokenIDs::lit_uint),
+													_lit_uint("[1-9][0-9]*|0", tokens::ETokenIDs::_lit_uint),
 													//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
-													lit_boolean("true|false", tokens::ETokenIDs::lit_boolean)
+													_lit_boolean("true|false", tokens::ETokenIDs::_lit_boolean)
 #else
-		token_lexer<BaseIterator>::token_lexer() :	tok_whitespace("\\s+", static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-													tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", static_cast<size_t>(tokens::ETokenIDs::comment)),
-													tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", static_cast<size_t>(tokens::ETokenIDs::identifier)),
+		token_lexer<BaseIterator>::token_lexer() :	_tok_whitespace("\\s+", static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+													_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", static_cast<size_t>(tokens::ETokenIDs::comment)),
+													_tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", static_cast<size_t>(tokens::ETokenIDs::identifier)),
 													//tok_string("[^\"]+", tokens::ETokenIDs::string),
-													lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
+													_lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", static_cast<size_t>(tokens::ETokenIDs::_lit_ufloat)),
 													//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
-													lit_uint("[1-9][0-9]*|0", static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+													_lit_uint("[1-9][0-9]*|0", static_cast<size_t>(tokens::ETokenIDs::_lit_uint)),
 													//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
-													lit_boolean("true|false", static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
+													_lit_boolean("true|false", static_cast<size_t>(tokens::ETokenIDs::_lit_boolean))
 #endif
 													/*
 													this->self.add_pattern
@@ -41,8 +41,8 @@ namespace unilang
 												*/
 		{
 			lex::_pass_type _pass;
-			this->self += tok_whitespace [lex::_pass = lex::pass_flags::pass_ignore];
-			this->self += tok_comment [lex::_pass = lex::pass_flags::pass_ignore];
+			this->self += _tok_whitespace [lex::_pass = lex::pass_flags::pass_ignore];
+			this->self += _tok_comment [lex::_pass = lex::pass_flags::pass_ignore];
 
 			add_("=",       tokens::ETokenIDs::assign);
 			add_("\\+=",    tokens::ETokenIDs::plus_assign);
@@ -95,15 +95,15 @@ namespace unilang
 			add_("~",		tokens::ETokenIDs::tilde);
 			add_("\\?",		tokens::ETokenIDs::question_mark);
 			
-			/*this->self.add(lit_ufloat);
-			this->self.add(lit_uint);
-			this->self.add(lit_boolean);*/
+			/*this->self.add(_lit_ufloat);
+			this->self.add(_lit_uint);
+			this->self.add(_lit_boolean);*/
 
-			this->self += lit_ufloat;
-			this->self += lit_uint;
-			this->self += lit_boolean;
+			this->self += _lit_ufloat;
+			this->self += _lit_uint;
+			this->self += _lit_boolean;
 
-			this->self += tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
+			this->self += _tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
 		}
 		//-------------------------------------------------------------------------
 		// 
@@ -116,11 +116,11 @@ namespace unilang
 #ifdef TOKEN_ID
 			this->self.add(keyword, id);
 			// store the mapping for later retrieval
-			std::pair<typename keyword_map_type::iterator, bool> p = keywords_.insert(typename keyword_map_type::value_type(keyword, id));
+			std::pair<typename keyword_map_type::iterator, bool> p = _keywords.insert(typename keyword_map_type::value_type(keyword, id));
 #else
 			this->self.add(keyword, static_cast<size_t>(id));
 			// store the mapping for later retrieval
-			std::pair<typename keyword_map_type::iterator, bool> p = keywords_.insert(typename keyword_map_type::value_type(keyword, static_cast<size_t>(id)));
+			std::pair<typename keyword_map_type::iterator, bool> p = _keywords.insert(typename keyword_map_type::value_type(keyword, static_cast<size_t>(id)));
 #endif
 			return p.second;
 		}
@@ -133,9 +133,13 @@ namespace unilang
 			namespace qi = boost::spirit::qi;
 			qi::raw_token_type raw_token;
 
-			typename keyword_map_type::const_iterator it = keywords_.find(kwd);
-			assert(it != keywords_.end());
-			return raw_token((it != keywords_.end()) ? (*it).second : static_cast<size_t>(tokens::ETokenIDs::invalid));
+			typename keyword_map_type::const_iterator it = _keywords.find(kwd);
+			assert(it != _keywords.end());
+#ifdef TOKEN_ID
+			return raw_token((it != _keywords.end()) ? (*it).second : tokens::ETokenIDs::invalid);
+#else
+			return raw_token((it != _keywords.end()) ? (*it).second : static_cast<size_t>(tokens::ETokenIDs::invalid));
+#endif
 		}
 		//-------------------------------------------------------------------------
 		// 
@@ -146,9 +150,13 @@ namespace unilang
 			namespace qi = boost::spirit::qi;
 			qi::token_type token;
 
-			typename keyword_map_type::const_iterator it = keywords_.find(kwd);
-			assert(it != keywords_.end());
-			return token((it != keywords_.end()) ? (*it).second : static_cast<size_t>(tokens::ETokenIDs::invalid));
+			typename keyword_map_type::const_iterator it = _keywords.find(kwd);
+			assert(it != _keywords.end());
+#ifdef TOKEN_ID
+			return token((it != _keywords.end()) ? (*it).second : tokens::ETokenIDs::invalid);
+#else
+			return token((it != _keywords.end()) ? (*it).second : static_cast<size_t>(tokens::ETokenIDs::invalid));
+#endif
 		}
 	}
 }

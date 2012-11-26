@@ -1,32 +1,15 @@
-#include "../code_generator.hpp"
+#include "exp_code_gen.hpp"
 
 #include "../../ast/operators_def.hpp"
 
 #include "../../log/log.hpp"
 
-#include "llvm/Support/raw_ostream.h"
+#include "../types.hpp"
 
 namespace unilang 
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::operator()(ast::primary_expr const& x)
-		{
-			LOG(x);
-			return x.apply_visitor(*this);
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
-		/*llvm::Value * expression_code_generator::operator()(ast::operand const & x)
-		{
-			LOG(x);
-			return x.apply_visitor(*this);
-		}*/
-		
 		//-----------------------------------------------------------------------------
 		// The Shunting-yard algorithm
 		//-----------------------------------------------------------------------------
@@ -37,42 +20,42 @@ namespace unilang
 		{
 			while ((rest_begin != rest_end) && (operators::getPrecedenceOfOperator(
 #ifdef TOKEN_ID
-				rest_begin->operator_
+				rest_begin->_operator
 #else
-				static_cast<operators::EOperators>(rest_begin->operator_)
+				static_cast<operators::EOperators>(rest_begin->_operator)
 #endif
 				) >= min_precedence))
 			{
 				operators::EOperators op = 
 #ifdef TOKEN_ID
-				rest_begin->operator_
+				rest_begin->_operator
 #else
-				static_cast<operators::EOperators>(rest_begin->operator_)
+				static_cast<operators::EOperators>(rest_begin->_operator)
 #endif
 				;
 
-				llvm::Value * rhs = rest_begin->operand_.apply_visitor(*this);
+				llvm::Value * rhs = rest_begin->_operand.apply_visitor(*this);
 				if (!rhs)
 				{
 					std::stringstream sstr;
-					sstr << "Operand '" << rest_begin->operand_ << "' could not be evaluated!";
+					sstr << "Operand '" << rest_begin->_operand << "' could not be evaluated!";
 					return ErrorValue( sstr.str() );
 				}
 				++rest_begin;
 
 				while ((rest_begin != rest_end) && (operators::getPrecedenceOfOperator(
 #ifdef TOKEN_ID
-				rest_begin->operator_
+				rest_begin->_operator
 #else
-				static_cast<operators::EOperators>(rest_begin->operator_)
+				static_cast<operators::EOperators>(rest_begin->_operator)
 #endif
 				) > operators::getPrecedenceOfOperator(op)))
 				{
 					operators::EOperators next_op = 
 #ifdef TOKEN_ID
-				rest_begin->operator_
+				rest_begin->_operator
 #else
-				static_cast<operators::EOperators>(rest_begin->operator_)
+				static_cast<operators::EOperators>(rest_begin->_operator)
 #endif
 				;
 					rhs = CreateExpression( operators::getPrecedenceOfOperator(next_op), rhs, rest_begin, rest_end);
@@ -90,16 +73,21 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value * lhs = x.first.apply_visitor(*this);
+			llvm::Value * lhs = x._first.apply_visitor(*this);
 			if (!lhs)
 			{
 				std::stringstream sstr;
-				sstr << "Operand '" << x.first << "' in expression '" << x << "' could not be evaluated!";
+				sstr << "Operand '" << x._first;
+				if(x._rest.size()>0)
+				{
+					sstr << "' in expression '" << x << "' could not be evaluated!";
+				}
+				sstr << "' could not be evaluated!";
 				lhs = ErrorValue( sstr.str() );
 			}
 			
-			std::list<ast::operation>::const_iterator rest_begin = x.rest.begin();
-			return CreateExpression(0, lhs, rest_begin, x.rest.end());
+			std::list<ast::operation>::const_iterator rest_begin = x._rest.begin();
+			return CreateExpression(0, lhs, rest_begin, x._rest.end());
 		}
 		//-----------------------------------------------------------------------------
 		//
@@ -288,14 +276,7 @@ namespace unilang
 			}
 			else
 			{
-				std::string type_str;
-				llvm::raw_string_ostream rso(type_str);
-				rso << "Trying to mix type '";
-				L->getType()->print(rso);
-				rso << "' and '";
-				R->getType()->print(rso);
-				rso << "' in operation.";
-				return ErrorValue("Operation type mismatch! "+rso.str());
+				return ErrorValue("Operation type mismatch! Trying to mix LHS type '"+getLLVMTypeName(L->getType())+ "' and RHS type '"+getLLVMTypeName(R->getType())+"' in operation.");
 			}
 		}
 	}

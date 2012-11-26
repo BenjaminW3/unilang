@@ -1,4 +1,4 @@
-#include "../code_generator.hpp"
+#include "exp_code_gen.hpp"
 
 #include "../../log/log.hpp"
 
@@ -14,20 +14,20 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			VarData const * const V = getVarFromName(x.name);
-			if(!getVarFromName(x.name))
+			VarData const * const V = getVarFromName(x._name);
+			if(!getVarFromName(x._name))
 			{
-				return ErrorValue("Undeclared variable name: '"+x.name+"' !");
+				return ErrorValue("Undeclared variable name: '"+x._name+"' !");
 			}
 			else
 			{
 				if(!V->getAllocaInst())
 				{
-					return ErrorValue("Variable is not allocated: '"+x.name+"' !", EErrorLevel::Internal);
+					return ErrorValue("Variable is not allocated: '"+x._name+"' !", EErrorLevel::Internal);
 				}
 				else
 				{
-					return builder.CreateLoad(V->getAllocaInst(), x.name.c_str());
+					return builder.CreateLoad(V->getAllocaInst(), x._name.c_str());
 				}
 			}
 		}

@@ -1,8 +1,8 @@
-apply : ( func:(int)->(int), v:int )->( int{func(v)} )
+apply : ( func:(i64)->(i64), v:i64 )->( i64{func(v)} )
 
-broken: ( x:float )->( int{x} )
+broken: ( x:f64 )->( i64{x} )
 
-entrypoint: ~()->(iErrorCode:int{1})
+entrypoint: ~()->(iErrorCode:i64{1})
 {
 	apply(broken, 42);
 }

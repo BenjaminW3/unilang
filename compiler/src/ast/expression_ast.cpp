@@ -1,5 +1,7 @@
 #include "expression_ast.hpp"
 
+#include "operators_def.hpp"		// assignment default constructor
+
 #include <boost/variant/get.hpp>
 
 namespace unilang 
@@ -83,35 +85,35 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		bool unary_expr::isPure() const
 		{
-			return operand_.isPure();
+			return _operand.isPure();
 		}
 		std::ostream& operator<<(std::ostream& out, unary_expr const& x)
 		{
 			out << 
 #ifdef TOKEN_ID
-				x.operator_
+				x._operator
 #else
-				static_cast<operators::EOperators>(x.operator_)
+				static_cast<operators::EOperators>(x._operator)
 #endif
-				<< x.operand_; return out;
+				<< x._operand; return out;
 		}
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
 		bool operation::isPure() const
 		{
-			return operand_.isPure();
+			return _operand.isPure();
 		}
 		std::ostream& operator<<(std::ostream& out, operation const& x)
 		{
 			out << 
 #ifdef TOKEN_ID
-				x.operator_
+				x._operator
 #else
-				static_cast<operators::EOperators>(x.operator_)
+				static_cast<operators::EOperators>(x._operator)
 #endif
 				;
-			out << x.operand_;
+			out << x._operand;
 			return out;
 		}
 		//-------------------------------------------------------------------------
@@ -119,9 +121,9 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		bool expression::isPure() const
 		{
-			if(!first.isPure()){return false;}
+			if(!_first.isPure()){return false;}
 			// all rest have to be pure
-			for(ast::operation const & op : rest)
+			for(ast::operation const & op : _rest)
 			{
 				if(!op.isPure()) {return false;}
 			}
@@ -129,8 +131,8 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, expression const& x)
 		{
-			out << x.first; 
-			for(operation const & op : x.rest)
+			out << x._first; 
+			for(operation const & op : x._rest)
 			{
 				out << op;
 			}
@@ -144,7 +146,7 @@ namespace unilang
 			// FIXME: pure test for function itself
 
 			// all parameters have to be pure
-			for(ast::expression const & ex : arguments)
+			for(ast::expression const & ex : _lArgumentExpressions)
 			{
 				if(!ex.isPure()) {return false;}
 			}
@@ -153,9 +155,9 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, function_call const& x)
 		{
-			out << x.idf << "(";
+			out << x._identifier << "(";
 			bool bFirst = true;
-			for(expression const & ex : x.arguments)
+			for(expression const & ex : x._lArgumentExpressions)
 			{
 				if(bFirst){bFirst = false;}
 				else{out << ", ";}
@@ -168,18 +170,33 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
+		type_declaration::type_declaration()
+			:_bHasMutableQualifier(false),
+			_identifier(/*"unnamed-type"*/)
+		{
+		}
+		type_declaration::type_declaration(identifier const & type_identifier)
+			:_bHasMutableQualifier(false),
+			_identifier(type_identifier)
+		{
+		}
+		type_declaration::type_declaration(bool bHasMutableQualifier, identifier const & type_identifier)
+			:_bHasMutableQualifier(bHasMutableQualifier),
+			_identifier(type_identifier)
+		{
+		}
 		bool type_declaration::isPure() const
 		{
 			// it has to be non mutable
-			return (!mutableQualifier);
+			return (!_bHasMutableQualifier);
 		}
 		std::ostream& operator<<(std::ostream& out, type_declaration const& x)
 		{
-			if(x.mutableQualifier)
+			if(x._bHasMutableQualifier)
 			{
 				out << "~";
 			}
-			out << x.type_identifier;
+			out << x._identifier;
 			return out;
 		}
 		//-------------------------------------------------------------------------
@@ -188,15 +205,15 @@ namespace unilang
 		bool variable_declaration::isPure() const
 		{
 			// it has to be non mutable
-			return type.isPure();
+			return _type.isPure();
 		}
 		std::ostream& operator<<(std::ostream& out, variable_declaration const& x)
 		{
-			if(x.name.is_initialized())
+			if(x._optionalIdentifier.is_initialized())
 			{
-				out << x.name.get().name << ":";
+				out << x._optionalIdentifier.get()._name << ":";
 			}
-			out << x.type;
+			out << x._type;
 			return out;
 		}
 		//-------------------------------------------------------------------------
@@ -207,39 +224,51 @@ namespace unilang
 			// FIXME: constructor has to be pure!
 
 			// all parameters have to be pure
-			for(ast::expression const & ex : parameters)
+			for(ast::expression const & ex : _lParameterExpressions)
 			{
 				if(!ex.isPure()) {return false;}
 			}
 			// it has to be non mutable
-			return decl.isPure();
+			return _declaration.isPure();
 		}
 		std::ostream& operator<<(std::ostream& out, variable_definition const& x)
 		{
-			out << x.decl << "(";
-			for(expression const & ex : x.parameters)
+			out << x._declaration << "{";
+			for(expression const & ex : x._lParameterExpressions)
 			{
 				out << ex;
 			}
-			out << ")";
+			out << "}";
 			return out;
 		}
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
+		assignment::assignment()
+			:_lhs(/*"unnamed-identifier"*/),
+			_operator(static_cast<OPERATOR_TYPE>(operators::EOperators::assign)),
+			_rhs()
+		{
+		}
+		assignment::assignment(identifier lhs, OPERATOR_TYPE op, expression rhs)
+			:_lhs(lhs),
+			_operator(op),
+			_rhs(rhs)
+		{
+		}
 		bool assignment::isPure() const
 		{
 			return false;
 		}
 		std::ostream& operator<<(std::ostream& out, assignment const& x)
 		{
-			out << x.lhs << 
+			out << x._lhs << 
 #ifdef TOKEN_ID
-				x.operator_
+				x._operator
 #else
-				static_cast<operators::EOperators>(x.operator_)
+				static_cast<operators::EOperators>(x._operator)
 #endif
-				<< x.rhs; return out;
+				<< x._rhs; return out;
 		}
 	}
 }

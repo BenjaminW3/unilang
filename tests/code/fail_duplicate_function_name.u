@@ -1,2 +1,2 @@
-add: (i1:int, i2:int)->(int{i1+i2}) 
-add: (i3:int, i4:int)->(int{i3+i4})
+add: (i1:i64, i2:i64)->(i64{i1+i2}) 
+add: (i3:i64, i4:i64)->(i64{i3+i4})

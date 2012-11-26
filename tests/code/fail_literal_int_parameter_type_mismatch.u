@@ -1,6 +1,6 @@
-increment:(x:float)->(float{x+1.0})
+increment:(x:f64)->(f64{x+1.0})
 
-entrypoint: ~()->(iErrorCode:~int{1})
+entrypoint: ~()->(iErrorCode:~i64{1})
 {
-	iErrorCode = int{increment(3)};
+	iErrorCode = i64{increment(3)};
 }

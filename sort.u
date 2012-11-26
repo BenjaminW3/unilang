@@ -1,4 +1,4 @@
-entrypoint : () -> ( iErrorCode:int{0} ) 
+entrypoint : () -> ( iErrorCode:i64{0} ) 
 {
 	/*define two lists. First one with concatenation with empty list.*/
 	k : [uint]{1 : 2 : 3 : [uint]};

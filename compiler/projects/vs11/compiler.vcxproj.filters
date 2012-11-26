@@ -67,6 +67,36 @@
     <Filter Include="Header Files\ast\fusion_adapt">
       <UniqueIdentifier>{b633697b-0373-48cb-b638-bb4c018cb462}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\code_generator\allocation">
+      <UniqueIdentifier>{ddc6ed94-f9a4-46d5-b426-38ab9f0b2a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\symbols">
+      <UniqueIdentifier>{b91db9cf-fb2f-4aab-b863-b19fbd0c2361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\symbols">
+      <UniqueIdentifier>{be500f15-d8e8-4a6a-b553-339cc5ad9a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\allocation">
+      <UniqueIdentifier>{6c747db5-b803-4e5b-acef-a34e9ac76867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\llvm">
+      <UniqueIdentifier>{8dfb392e-2cfc-4eb2-b933-1cf741920b13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\llvm">
+      <UniqueIdentifier>{96dcff49-a244-4e12-b6ac-f96ca3f49564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\statements">
+      <UniqueIdentifier>{ea496253-d49f-49df-9b22-25d846ae8241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\expressions">
+      <UniqueIdentifier>{34d7c4b7-0800-4245-a243-931739c820e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\constants">
+      <UniqueIdentifier>{472e192c-4c2b-4f9e-8919-285ced0d20b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\constants">
+      <UniqueIdentifier>{d2941f01-5adf-4f01-b4bb-3e7f6800693e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\parser\parser.cpp">
@@ -77,15 +107,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\log\log.cpp">
       <Filter>Source Files\log</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\statments\if.cpp">
-      <Filter>Source Files\code_generator\statements</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\variable_definition.cpp">
-      <Filter>Source Files\code_generator</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\statments\statement.cpp">
-      <Filter>Source Files\code_generator\statements</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\expressions\function_call.cpp">
       <Filter>Source Files\code_generator\expressions</Filter>
@@ -98,12 +119,6 @@
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\expressions\identifier.cpp">
       <Filter>Source Files\code_generator\expressions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\expressions\basic_types.cpp">
-      <Filter>Source Files\code_generator\expressions</Filter>
-    </ClCompile>
-    <ClCompile Include="..\..\src\code_generator\statments\while.cpp">
-      <Filter>Source Files\code_generator\statements</Filter>
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\functions\function_declaration.cpp">
       <Filter>Source Files\code_generator\functions</Filter>
@@ -158,6 +173,48 @@
     </ClCompile>
     <ClCompile Include="..\..\src\ast\operators.cpp">
       <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\types.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\ast\ast_base.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\allocation\variable_declaration.cpp">
+      <Filter>Source Files\code_generator\allocation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\allocation\variable_definition.cpp">
+      <Filter>Source Files\code_generator\allocation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\symbols\symbols.cpp">
+      <Filter>Source Files\code_generator\symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\allocation\alloc_code_gen.cpp">
+      <Filter>Source Files\code_generator\allocation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\llvm\llvm_code_gen.cpp">
+      <Filter>Source Files\code_generator\llvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\symbols\symbol_code_gen.cpp">
+      <Filter>Source Files\code_generator\symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\expressions\exp_code_gen.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\errors.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statements\if.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statements\statement_code_gen.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\statements\while.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\constants\constants_code_gen.cpp">
+      <Filter>Source Files\code_generator\constants</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -268,6 +325,33 @@
     </ClInclude>
     <ClInclude Include="..\..\src\ast\fusion_adapt\statement_ast.hpp">
       <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\types.hpp">
+      <Filter>Header Files\code_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\symbols\symbols.hpp">
+      <Filter>Header Files\code_generator\symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\allocation\alloc_code_gen.hpp">
+      <Filter>Header Files\code_generator\allocation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\llvm\llvm_code_gen.hpp">
+      <Filter>Header Files\code_generator\llvm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\symbols\symbol_code_gen.hpp">
+      <Filter>Header Files\code_generator\symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\expressions\exp_code_gen.hpp">
+      <Filter>Header Files\code_generator\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\errors.hpp">
+      <Filter>Header Files\code_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\statements\statement_code_gen.hpp">
+      <Filter>Header Files\code_generator\statements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\constants\constants_code_gen.hpp">
+      <Filter>Header Files\code_generator\constants</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

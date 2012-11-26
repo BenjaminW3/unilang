@@ -6,18 +6,18 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::if_statement,
-	(unilang::ast::expression, condition)
-	(unilang::ast::statement_list, then)
-	(boost::optional<unilang::ast::statement_list>, else_)
+	(unilang::ast::expression, _condition)
+	(unilang::ast::statement_list, _then)
+	(boost::optional<unilang::ast::statement_list>, _else)
 )
 
 /*BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::while_statement,
-	(unilang::ast::expression, condition)
-	(unilang::ast::statement_list, body)
+	(unilang::ast::expression, _condition)
+	(unilang::ast::statement_list, _body)
 )*/
 
 /*BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::return_statement,
-	(boost::optional<unilang::ast::expression>, expr)
+	(boost::optional<unilang::ast::expression>, _expr)
 )*/

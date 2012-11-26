@@ -14,7 +14,10 @@ namespace unilang
 		//#########################################################################
 		struct identifier :	public ast_base
 		{
-			std::string name;
+			identifier();
+			identifier(std::string const & name);
+
+			std::string _name;
 
 			bool isPure() const override;
 		};

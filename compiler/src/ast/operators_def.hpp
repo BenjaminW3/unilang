@@ -59,7 +59,7 @@ namespace unilang
 			times_assign,
 			divide_assign,
 			mod_assign,
-			plus_assign			= static_cast<size_t>(EOperatorTypes::unaryOperation) | static_cast<size_t>(EOperatorTypes::binaryOperation) | static_cast<size_t>(EOperatorTypes::assignmentOperation) + 1,
+			plus_assign			= static_cast<size_t>(EOperatorTypes::assignmentOperation) | static_cast<size_t>(EOperatorTypes::unaryOperation) | static_cast<size_t>(EOperatorTypes::binaryOperation) + 1,
 			minus_assign,
 		};
 	}

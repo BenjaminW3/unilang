@@ -1,8 +1,6 @@
-#include "../code_generator.hpp"
+#include "exp_code_gen.hpp"
 
 #include "../../log/log.hpp"
-
-#include "llvm/Support/raw_ostream.h"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -16,6 +14,8 @@
 #pragma warning(push)
 #endif
 
+#include "../types.hpp"
+
 namespace unilang 
 { 
 	namespace code_generator
@@ -28,25 +28,12 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			// Look up the name in the global module table.
-			llvm::Function *CalleeF = module->getFunction(x.idf.name);
-			if (!CalleeF)
-			{
-				return ErrorValue("Unknown function '"+x.idf.name+"' referenced.");
-			}
-  
-			// If argument number mismatch error.
-			if (CalleeF->arg_size() != x.arguments.size())
-			{
-				std::stringstream sstr;
-				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x.arguments.size() << " are given.";
-				return ErrorValue("Incorrect number of arguments passed to '"+x.idf.name+"' ! "+sstr.str());
-			}
+			ast::function_declaration funcDecl;
+			funcDecl._identifier = x._identifier;
 
-			// argument type match?
+			// argument types
 			std::vector<llvm::Value*> ArgsV;
-			auto itArg = CalleeF->arg_begin();
-			for(ast::expression const & ex: x.arguments)
+			for(ast::expression const & ex: x._lArgumentExpressions)
 			{
 				ArgsV.push_back((*this)(ex));
 				if(!ArgsV.back())
@@ -56,19 +43,40 @@ namespace unilang
 					return ErrorValue("Invalid argument returned from '" +sstr.str()+ "'.");
 				}
 
+				ast::type_declaration ty;
+				ty._identifier = llvmTypeToUnilangTypeName(ArgsV.back()->getType());
+
+				funcDecl._parameter_types.push_back(ty);
+			}
+			// Look up the mangled name in the global module table.
+			std::string const mangledName (funcDecl.build_mangled_name());
+
+			llvm::Function *CalleeF = module->getFunction(mangledName);
+			if (!CalleeF)
+			{
+				return ErrorValue("Unknown function '"+mangledName+"' referenced.");
+			}
+  
+			// If argument number mismatch error.
+			/*if (CalleeF->arg_size() != x._lArgumentExpressions.size())
+			{
+				std::stringstream sstr;
+				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x._lArgumentExpressions.size() << " are given.";
+				return ErrorValue("Incorrect number of arguments passed to '"+x._identifier._name+"' ! "+sstr.str());
+			}
+
+			// argument type match?
+			auto itArg = CalleeF->arg_begin();
+			for(ast::expression const & ex: x._lArgumentExpressions)
+			{
 				if(ArgsV.back()->getType()!=(*itArg).getType())
 				{
-					std::string type_str;
-					llvm::raw_string_ostream rso(type_str);
-					rso << "Trying to call function '" << x.idf.name << "' with argument number " << (*itArg).getArgNo() << " with type '";
-					ArgsV.back()->getType()->print(rso);
-					rso << "' but function expects a value of type '";
-					(*itArg).getType()->print(rso);
-					rso << "'.";
-					return ErrorValue("Argument type mismatch! "+rso.str());
+					std::stringstream sstr;
+					sstr << "Trying to call function '" << x._identifier._name << "' with argument number " << (*itArg).getArgNo();
+					return ErrorValue("Argument type mismatch! "+sstr.str()+" with type '"+getLLVMTypeName(ArgsV.back()->getType())+"' but function expects a value of type '"+getLLVMTypeName((*itArg).getType())+"'.");
 				}
 				++itArg;
-			}
+			}*/
   
 			return builder.CreateCall(CalleeF, ArgsV, "call");
 		}
@@ -88,7 +96,7 @@ namespace unilang
 		MLType type = typer.visit(node);
 		LLVMOpaqueValue arg =
 			(LLVMOpaqueValue)((Visit)node.get(0)).visit(this);
-		if (type.name().equals("int")) {
+		if (type.name().equals("i64")) {
 			if (dn == null) {
 				dn = I.LLVMBuildGlobalString(builder, "%d\n", "dn");
 			}

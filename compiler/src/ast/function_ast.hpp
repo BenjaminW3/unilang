@@ -16,10 +16,15 @@ namespace unilang
 		//#########################################################################
 		struct function_declaration :	public ast_base
 		{
-			identifier idf;
-			bool unpureQualifier;
-			std::vector<type_declaration> parameter_types;
-			std::vector<type_declaration> return_types;
+			identifier _identifier;
+			bool _bHasUnpureQualifier;
+			std::vector<type_declaration> _parameter_types;
+#ifdef IMPLEMENT_VAR_ARG
+			bool _bIsVarArg;
+#endif
+			std::vector<type_declaration> _return_types;
+
+			std::string build_mangled_name() const;
 
 			bool isPure() const override;
 		};
@@ -30,11 +35,14 @@ namespace unilang
 		//#########################################################################
 		struct function_definition :	public ast_base
 		{
-			identifier idf;
-			bool unpureQualifier;
-			std::vector<variable_declaration> parameter_declarations;
-			std::vector<variable_definition> return_value_definitions;
-			statement_list body;
+			identifier _identifier;
+			bool _bHasUnpureQualifier;
+			std::vector<variable_declaration> _parameter_declarations;
+#ifdef IMPLEMENT_VAR_ARG
+			bool _bIsVarArg;
+#endif
+			std::vector<variable_definition> _return_value_definitions;
+			statement_list _body;
 
 			bool isPure() const override;
 		};

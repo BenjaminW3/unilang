@@ -5,7 +5,7 @@ namespace unilang
 	namespace ast
 	{
 		//-------------------------------------------------------------------------
-		//! 
+		//
 		//-------------------------------------------------------------------------
 		meta_entity::meta_entity() : base_type() {}
 		meta_entity::meta_entity(function_declaration const & val) : base_type(val) {}
@@ -23,12 +23,12 @@ namespace unilang
 		}
 		
 		//-------------------------------------------------------------------------
-		//! 
+		//
 		//-------------------------------------------------------------------------
 		std::ostream& operator<<(std::ostream& out, module const& x)
 		{
 			bool bFirstRet = false;
-			for(meta_entity const & me : x.metaEntities)
+			for(meta_entity const & me : x._metaEntities)
 			{
 				if(bFirstRet){bFirstRet = false;}
 				else{out << std::endl;}

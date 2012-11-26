@@ -7,5 +7,5 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::identifier,
-	(std::string, name)
+	(std::string, _name)
 )

@@ -38,7 +38,7 @@ namespace unilang
 		//#########################################################################
 		struct module : public ast_base
 		{
-			std::list<meta_entity> metaEntities;
+			std::list<meta_entity> _metaEntities;
 		};
 		std::ostream& operator<<(std::ostream& out, module const& x);
 	}

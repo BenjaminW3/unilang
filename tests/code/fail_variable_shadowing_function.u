@@ -1,6 +1,6 @@
-decrement:(x:~int)->(int{--x})
+decrement:(x:~i64)->(i64{--x})
 
-entrypoint: ~()->(int{1})
+entrypoint: ~()->(i64{1})
 {
-	decrement:int{42};
+	decrement:i64{42};
 }

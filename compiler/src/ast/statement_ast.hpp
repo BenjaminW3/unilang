@@ -56,9 +56,9 @@ namespace unilang
 		//#########################################################################
 		struct if_statement :	public ast_base
 		{
-			expression condition;
-			statement_list then;
-			boost::optional<statement_list> else_;
+			expression _condition;
+			statement_list _then;
+			boost::optional<statement_list> _else;
 
 			bool isPure() const override;
 		};
@@ -69,8 +69,8 @@ namespace unilang
 		//#########################################################################
 		/*struct while_statement :	public ast_base
 		{
-			expression condition;
-			statement body;
+			expression _condition;
+			statement _body;
 		};*/
 
 		//#########################################################################

@@ -2,8 +2,6 @@
 
 #include "../../log/log.hpp"
 
-#include "llvm/Support/raw_ostream.h"
-
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
@@ -15,6 +13,8 @@
 #if defined(_MSC_VER)
 #pragma warning(push)
 #endif
+
+#include "../types.hpp"
 
 namespace unilang 
 { 
@@ -28,79 +28,67 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			// create list of parameters types
+			// create list of parameter types
 			std::vector<llvm::Type*> vpParameterTypes;
-			for( ast::type_declaration const & typeDecl : x.parameter_types)
+			for( ast::type_declaration const & typeDecl : x._parameter_types)
 			{
 				//FIXME: mutable not saved.
-				vpParameterTypes.push_back(getTypeByName(typeDecl.type_identifier.name));
+				vpParameterTypes.push_back(getTypeByName(typeDecl._identifier._name));
 			}
 			
 			// create return type
 			llvm::Type* pReturnType = nullptr;
-			if(x.return_types.size()==0)
+			if(x._return_types.size()==0)
 			{
 				pReturnType = llvm::Type::getVoidTy(context);
 			}
 			else
 			{
 				// FIXME: only one return value/type
-				pReturnType = getTypeByName((*x.return_types.begin()).type_identifier.name);
+				pReturnType = getTypeByName((*x._return_types.begin())._identifier._name);
 			}
-
+			
+#ifdef IMPLEMENT_VAR_ARG
+			llvm::FunctionType *FT = llvm::FunctionType::get(pReturnType,	vpParameterTypes, x._bIsVarArg);
+#else
 			llvm::FunctionType *FT = llvm::FunctionType::get(pReturnType,	vpParameterTypes, false);
+#endif
 
-			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x.idf.name, module.get());
+			std::string const mangledName (x.build_mangled_name());
+			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, mangledName/*x._identifier._name*/, module.get());
 
-			// If F conflicted, there was already something named 'Name'.  If it has a body, don't allow redefinition or reextern.
-			if (F->getName() != x.idf.name)
+			// If F conflicted, there was already something named 'Name'. So LLVM creates a new unique name for the just declared function.
+			if (F->getName() != mangledName/*x._identifier._name*/)
 			{
 				// Delete the one we just made and get the existing one.
 				F->eraseFromParent();
-				F = getFunctionFromName(x.idf.name);
+				F = getFunctionFromName(mangledName/*x._identifier._name*/);
 
 				// If F already has a body, reject this.
 				if (!F->empty())
 				{
-					return ErrorFunction("Redefinition of function '"+x.idf.name+"' !");
+					return ErrorFunction("Redeclaration/definition of function '"+mangledName/*x._identifier._name*/+"' !");
 				}
 	
 				// If F took a different number of args, reject it.
-				if (F->arg_size() != x.parameter_types.size())
+				if (F->arg_size() != x._parameter_types.size())
 				{
-					return ErrorFunction("Definition of function "+x.idf.name+"' with different number of parameters then previous declaration!");	// TODO: Log numbers
+					return ErrorFunction("Definition of function "+mangledName/*x._identifier._name*/+"' with different number of parameters then previous declaration!");	// TODO: Log numbers
 				}
 
 				unsigned int uiArg=0;
 				for (llvm::Function::arg_iterator AI = F->arg_begin(); AI != F->arg_end();	++AI, ++uiArg)
 				{
-					llvm::Type * pDefType = getTypeByName(x.parameter_types[uiArg].type_identifier.name);
+					llvm::Type * pDefType = getTypeByName(x._parameter_types[uiArg]._identifier._name);
 					//FIXME: mutable not checked.
 					if(AI->getType()!=pDefType)
 					{
-						std::string type_str;
-						llvm::raw_string_ostream rso(type_str);
-						rso << "Definition of function "+x.idf.name+"' differs from declaration in " << uiArg+1 << ". parameter type. '";
-						AI->getType()->print(rso);
-						rso << "' was declared but '";
-						pDefType->print(rso);
-						rso << "' used in definition.";
-						return ErrorFunction(rso.str());
+						std::stringstream sstr;
+						sstr << "Definition of function "+mangledName/*x._identifier._name*/+"' differs from declaration in " << uiArg+1;
+						return ErrorFunction(sstr.str()+". parameter type. '"+getLLVMTypeName(AI->getType())+"' was declared but '"+getLLVMTypeName(pDefType)+ "' used in definition.");
 					}
 				}
 			}
-
-			// FIXME: declared types do not have names! But function_definition has names
-			/*// Set names for all parameters.
-			unsigned int Idx = 0;
-			for (llvm::Function::arg_iterator AI = F->arg_begin(); Idx != x.parameter_types.size();	++AI, ++Idx) 
-			{
-				if(x.parameter_types[Idx].identifier.is_initialized())
-				{
-					// FIXME check for conflicting parameter names
-					AI->setName(x.parameter_types[Idx].identifier.name.get().name);
-				}
-			}*/
 
 			return F;
 		}

@@ -34,7 +34,7 @@ namespace unilang
 			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
 			typedef function<unilang::annotation<Iterator> > annotation_function;
 
-			identifier = lexer.tok_identifier >> eps; // struct with one element needs eps http://boost.2283326.n4.nabble.com/BOOST-FUSION-ADAPT-STRUCT-with-single-entry-td2675332.html#a2675332
+			identifier = lexer._tok_identifier >> eps; // struct with one element needs eps http://boost.2283326.n4.nabble.com/BOOST-FUSION-ADAPT-STRUCT-with-single-entry-td2675332.html#a2675332
 			identifier.name("identifier");
 
 #ifdef _DEBUG

@@ -1,5 +1,5 @@
-entrypoint: ~()->(int{1})
+entrypoint: ~()->(i64{1})
 {
-	foo:int{1};
-	foo:int{2};
+	foo:i64{1};
+	foo:i64{2};
 }

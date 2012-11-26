@@ -37,7 +37,7 @@ namespace unilang
 			size_t id = iters.size();
 			iters.push_back(pos);
 			boost::apply_visitor(set_annotation_id(id), ast);
-			ast.id = id;
+			ast._id = id;
 		}
 
 		void operator()(ast::primary_expr& ast, Iterator pos) const
@@ -45,7 +45,7 @@ namespace unilang
 			size_t id = iters.size();
 			iters.push_back(pos);
 			boost::apply_visitor(set_annotation_id(id), ast);
-			ast.id = id;
+			ast._id = id;
 		}
 
 		void operator()(ast::statement& ast, Iterator pos) const
@@ -53,7 +53,7 @@ namespace unilang
 			size_t id = iters.size();
 			iters.push_back(pos);
 			boost::apply_visitor(set_annotation_id(id), ast);
-			ast.id = id;
+			ast._id = id;
 		}*/
 		
 		//-----------------------------------------------------------------------------
@@ -64,7 +64,7 @@ namespace unilang
 		{
 			size_t id = m_iters.size();
 			m_iters.push_back(pos);
-			ast.id = id;
+			ast._id = id;
 		}
 		//-----------------------------------------------------------------------------
 		//! Does nothing if it is not a base of ast::ast_base.

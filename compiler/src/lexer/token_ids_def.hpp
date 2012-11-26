@@ -1,6 +1,6 @@
 #pragma once
 
-#include "token_ids_def.hpp"
+#include "token_ids.hpp"
 
 #include "../ast/operators_def.hpp"
 
@@ -84,9 +84,9 @@ namespace unilang
 				plus_assign			= operators::EOperators::plus_assign,
 				minus_assign,
 
-				lit_ufloat			= minus_assign + 1,
-				lit_uint,
-				lit_boolean,
+				_lit_ufloat			= minus_assign + 1,
+				_lit_uint,
+				_lit_boolean,
 			};
 		}
 	}

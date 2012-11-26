@@ -1,4 +1,4 @@
-#include "../code_generator.hpp"
+#include "statement_code_gen.hpp"
 
 #include "../../log/log.hpp"
 
@@ -25,11 +25,11 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 
-			llvm::Value *CondV = (*static_cast<expression_code_generator*>(this))(x.condition);
+			llvm::Value *CondV = (*static_cast<expression_code_generator*>(this))(x._condition);
 			if (!CondV)
 			{
 				std::stringstream sstr;
-				sstr << "Unable to generate condition: '" << x.condition << "' in if_statement '" << x << "'.";
+				sstr << "Unable to generate _condition: '" << x._condition << "' in if_statement '" << x << "'.";
 				return ErrorBool( sstr.str() );
 			}
   
@@ -45,8 +45,8 @@ namespace unilang
 			}
   
 			// Create blocks for the then and else cases.  Insert the 'then' block at the end of the function.
-			llvm::BasicBlock * ThenBB = llvm::BasicBlock::Create(context, "if.then", TheFunction);
-			llvm::BasicBlock * ElseBB = x.else_.is_initialized() ? llvm::BasicBlock::Create(context, "if.else") : nullptr;
+			llvm::BasicBlock * ThenBB = llvm::BasicBlock::Create(context, "if._then", TheFunction);
+			llvm::BasicBlock * ElseBB = x._else.is_initialized() ? llvm::BasicBlock::Create(context, "if.else") : nullptr;
 			llvm::BasicBlock * MergeBB = llvm::BasicBlock::Create(context, "if.merge");
 
 			llvm::BranchInst * condBranch = builder.CreateCondBr(CondV, ThenBB, ElseBB);
@@ -57,15 +57,15 @@ namespace unilang
 				return ErrorBool( sstr.str() );
 			}
 
-			builder.SetInsertPoint(ThenBB);		// Emit then value.
+			builder.SetInsertPoint(ThenBB);		// Emit _then value.
 
-			if (!(*this)(x.then)) 
+			if (!(*this)(x._then)) 
 			{
 				std::stringstream sstr;
-				sstr << "Unable to generate then block: '" << x.then << "' in if_statement '" << x << "'.";
+				sstr << "Unable to generate _then block: '" << x._then << "' in if_statement '" << x << "'.";
 				condBranch->eraseFromParent();
 				ThenBB->eraseFromParent();
-				//if(x.else_.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
+				//if(x._else.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
 				//MergeBB->eraseFromParent();									// not attached here
 				return ErrorBool( sstr.str() );
 			}
@@ -76,7 +76,7 @@ namespace unilang
 			{
 				condBranch->eraseFromParent();
 				ThenBB->eraseFromParent();
-				//if(x.else_.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
+				//if(x._else.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
 				//MergeBB->eraseFromParent();									// not attached here
 				std::stringstream sstr;
 				sstr << "Unable to generate thenMergeBranch in if_statement '" << x << "'.";
@@ -86,16 +86,16 @@ namespace unilang
 			ThenBB = builder.GetInsertBlock();		// Codegen of 'Then' can change the current block, update ThenBB for the PHI.
 
 			llvm::BranchInst * elseMergeBranch = nullptr;
-			if(x.else_.is_initialized())
+			if(x._else.is_initialized())
 			{
 				// Emit else block.
 				TheFunction->getBasicBlockList().push_back(ElseBB);
 				builder.SetInsertPoint(ElseBB);
   
-				if (!(*this)(x.else_.get()))
+				if (!(*this)(x._else.get()))
 				{
 					std::stringstream sstr;
-					sstr << "Unable to generate else block: '" << x.else_ << "' in if_statement '" << x << "'.";
+					sstr << "Unable to generate else block: '" << x._else << "' in if_statement '" << x << "'.";
 					condBranch->eraseFromParent();
 					ThenBB->eraseFromParent();
 					thenMergeBranch->eraseFromParent();

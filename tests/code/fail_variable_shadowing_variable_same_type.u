@@ -1,9 +1,9 @@
-entrypoint: ~()->(int{1})
+entrypoint: ~()->(i64{1})
 {
-	x:int{42};
+	x:i64{42};
 	
 	if(x==42)
 	{
-		x:int{43};
+		x:i64{43};
 	}
 }

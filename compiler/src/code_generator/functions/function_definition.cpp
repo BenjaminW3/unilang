@@ -2,7 +2,6 @@
 
 #include "../../log/log.hpp"
 
-#include "llvm/Support/raw_ostream.h"
 #include "llvm/Analysis/Verifier.h"
 
 #if defined(_MSC_VER)
@@ -16,6 +15,8 @@
 #if defined(_MSC_VER)
 #pragma warning(push)
 #endif
+
+#include "../types.hpp"
 
 namespace unilang 
 { 
@@ -31,27 +32,27 @@ namespace unilang
 			vLocalSymbolTable.clear();
 
 			// purity test
-			/*if (x.decl.pureQualifier && x.body)
+			/*if ((!x.decl._bHasUnpureQualifier) && !x._body.IsPure())
 			{
-				return ErrorFunction("Pure function '"+x.decl.idf.name+"' contains unpure expressions!");
+				return ErrorFunction("Pure function '"+x.decl._identifier._name+"' contains unpure expressions!");
 			}*/
   
 			// build function declaration
 			ast::function_declaration decl;
-			decl.idf = x.idf;
-			decl.unpureQualifier = x.unpureQualifier;
-			for(ast::variable_declaration const & x : x.parameter_declarations)
+			decl._identifier = x._identifier;
+			decl._bHasUnpureQualifier = x._bHasUnpureQualifier;
+			for(ast::variable_declaration const & x : x._parameter_declarations)
 			{
-				decl.parameter_types.push_back(x.type);
+				decl._parameter_types.push_back(x._type);
 			}
-			for(ast::variable_definition const & x : x.return_value_definitions)
+			for(ast::variable_definition const & x : x._return_value_definitions)
 			{
-				decl.return_types.push_back(x.decl.type);
+				decl._return_types.push_back(x._declaration._type);
 			}
 			llvm::Function *TheFunction = (*this)(decl);
 			if (TheFunction == 0)
 			{
-				return ErrorFunction("Unable to build function declaration for function definition: '"+x.idf.name+"'.");
+				return ErrorFunction("Unable to build function declaration for function definition: '"+x._identifier._name+"'.");
 			}
 
 			// Create a new basic block to start insertion into.
@@ -59,90 +60,85 @@ namespace unilang
 			builder.SetInsertPoint(BB);
 
 			// add the parameters
-			llvm::Function::arg_iterator AI = TheFunction->arg_begin();
-			for (size_t Idx = 0, e = x.parameter_declarations.size(); Idx != e; ++Idx, ++AI)
+			llvm::Function::arg_iterator itArgs = TheFunction->arg_begin();
+			for (size_t Idx = 0, e = x._parameter_declarations.size(); Idx != e; ++Idx, ++itArgs)
 			{
 				// TODO: Think about order? l->r, r->l
-				llvm::Value * V = (*static_cast<expression_code_generator*>(this))(x.parameter_declarations[Idx]);
-				if (!V)
+				llvm::AllocaInst * pDeclAlloc = (*static_cast<allocation_code_generator*>(this))(x._parameter_declarations[Idx]);
+				if (!pDeclAlloc)
 				{
-					const auto sVarName = x.parameter_declarations[Idx].name.is_initialized() ? " '"+x.parameter_declarations[Idx].name.get().name+"'" : "";
-					return ErrorFunction("Unable to create parameter '"+ sVarName+"' from function '"+x.idf.name+"'");
+					const auto sVarName = x._parameter_declarations[Idx]._optionalIdentifier.is_initialized() ? " '"+x._parameter_declarations[Idx]._optionalIdentifier.get()._name+"'" : "";
+					return ErrorFunction("Unable to create parameter '"+ sVarName+"' for function '"+x._identifier._name+"'");
 				}
 
-				// create storage for the parameter
-				builder.CreateStore(AI, V);
+				// store the parameters in the parameter variables
+				builder.CreateStore(itArgs, pDeclAlloc);
 			}
 
 			// add the return values
-			std::vector<llvm::Value *> retValues;
-			for (unsigned int Idx = 0; Idx != x.return_value_definitions.size(); ++Idx)
+			std::vector<llvm::AllocaInst *> vpRetAllocas;
+			for (unsigned int Idx = 0; Idx != x._return_value_definitions.size(); ++Idx)
 			{
-				retValues.push_back((*static_cast<expression_code_generator*>(this))(x.return_value_definitions[Idx]));
-				if(!retValues.back())
+				vpRetAllocas.push_back((*static_cast<allocation_code_generator*>(this))(x._return_value_definitions[Idx]));
+				if(!vpRetAllocas.back())
 				{
-					const auto sVarName = x.return_value_definitions[Idx].decl.name.is_initialized() ? " '"+x.return_value_definitions[Idx].decl.name.get().name+"'" : "";
-					return ErrorFunction("Unable to create return value '"+ sVarName+"' from function '"+x.idf.name+"'");
+					const auto sVarName = x._return_value_definitions[Idx]._declaration._optionalIdentifier.is_initialized() ? " '"+x._return_value_definitions[Idx]._declaration._optionalIdentifier.get()._name+"'" : "";
+					return ErrorFunction("Unable to create return value '"+ sVarName+"' from function '"+x._identifier._name+"'");
 				}
 			}
 
 			// add body
-			if(!(*static_cast<statement_code_generator*>(this))(x.body))
+			if(!(*static_cast<statement_code_generator*>(this))(x._body))
 			{
-				return ErrorFunction("Unable to create body for function '"+x.idf.name+"'.");
+				return ErrorFunction("Unable to create body for function '"+x._identifier._name+"'.");
 			}
 
 			// return value(s)
-			if(retValues.empty())
+			if(vpRetAllocas.empty())
 			{
 				builder.CreateRetVoid();
 			}
-			else if(retValues.size() == 1)
+			else if(vpRetAllocas.size() == 1)
 			{
-				llvm::Value *RetVal = builder.CreateLoad(retValues[0], "loadret");
-				if(!RetVal)
+				llvm::Value *pRetVal = builder.CreateLoad(vpRetAllocas[0], "loadret");
+				if(!pRetVal)
 				{
-					return ErrorFunction("Unable to create load return from function '"+x.idf.name+"'.");
+					return ErrorFunction("Unable to create load return from function '"+x._identifier._name+"'.");
 				}
-				if(RetVal->getType() != TheFunction->getReturnType())
+				if(pRetVal->getType() != TheFunction->getReturnType())
 				{
-					std::string type_str;
-					llvm::raw_string_ostream rso(type_str);
-					rso << "Trying to return '";
-					RetVal->getType()->print(rso);
-					rso << "' from a function '"+x.idf.name+" 'returning '";
-					TheFunction->getReturnType()->print(rso);
-					rso << "'.";
-					return ErrorFunction("Return type mismatch! "+rso.str());
+					return ErrorFunction("Return type mismatch! Trying to return '"+getLLVMTypeName(pRetVal->getType())+"' from a function '"+x._identifier._name+" 'returning '"+getLLVMTypeName(TheFunction->getReturnType())+"'.");
 				}
 				/*if(!TheFunction->getReturnType()->isPointerTy())
 				{
-					if(retValues[0]->isDereferenceablePointer())
+					if(vpRetValues[0]->isDereferenceablePointer())
 					{
 						//llvm::GetElementPtrInst* gep = new llvm::GetElementPtrInst(retValues[0],);
 						//const llvm::PointerType * ptr_type = dynamic_cast<const llvm::PointerType*>((retValues[0]->getType()));
 						//ptr_type->
 					}
 				}*/
-				builder.CreateRet(RetVal);
+				builder.CreateRet(pRetVal);
 			}
 			else
 			{
 				if(TheFunction->getReturnType()->isAggregateType())
 				{
 					// FIXME: handle multi-return value functions in result expressions.
-					builder.CreateAggregateRet(retValues.data(), (unsigned int)x.return_value_definitions.size());
+					// FIXME: not alloca, instead values
+					//builder.CreateAggregateRet(vpRetAllocas.data(), (unsigned int)x._return_value_definitions.size());
+					return ErrorFunction("Unable to return multiple return values from aggregate return type function '"+x._identifier._name+"'.");
 				}
 				else
 				{
-					return ErrorFunction("Unable to return multiple return values from the non aggregate return type function '"+x.idf.name+"'.");
+					return ErrorFunction("Unable to return multiple return values from the non aggregate return type function '"+x._identifier._name+"'.");
 				}
 			}
 
 			// Validate the generated code, checking for consistency.
 			if(llvm::verifyFunction(*TheFunction, llvm::VerifierFailureAction::PrintMessageAction))
 			{
-				return ErrorFunction("verifyFunction failure '"+x.idf.name+"'.", EErrorLevel::Internal);
+				return ErrorFunction("verifyFunction failure '"+x._identifier._name+"'.", EErrorLevel::Internal);
 			}
 
 			return TheFunction;
@@ -163,6 +159,84 @@ def bar() foo(1, 2); # error, unknown function "foo"
 
 				*/
 			//}
+		}
+	}
+}
+/*#include <llvm/CallingConv.h>
+#include <llvm/PassManager.h>
+#include <llvm/Support/CallSite.h>
+#include <llvm/Transforms/Utils/BasicBlockUtils.h>
+
+#include <llvm/ExecutionEngine/JIT.h>
+#include <llvm/Bitcode/ReaderWriter.h>
+#include <llvm/Support/MemoryBuffer.h>
+#include <llvm/Linker.h>*/
+
+#include "llvm/Module.h"
+
+#include <llvm/Support/DynamicLibrary.h>
+//#include <llvm/System/DynamicLibrary.h>
+
+#include "../types.hpp"
+
+namespace unilang 
+{ 
+	namespace code_generator
+	{
+		llvm::Function *code_generator::declare_extern(std::string name, std::vector<std::string> resTypes, std::vector<std::string> const & paramTypes, bool _bIsVarArg, void *fp)
+		{
+			if (fp) 
+			{
+				// build function declaration
+				ast::function_declaration decl;
+				decl._identifier._name = name;
+				decl._bHasUnpureQualifier = true;
+#ifdef IMPLEMENT_VAR_ARG
+				decl._bIsVarArg = _bIsVarArg;
+#else
+				if(_bIsVarArg)
+				{
+					return ErrorFunction("Variable argument count not implemented during extern declaration of '"+name+"'.", EErrorLevel::Internal);
+				}
+#endif
+				for(std::string const & x : paramTypes)
+				{
+					ast::identifier id(x);
+					ast::type_declaration td(false, id);
+					decl._parameter_types.push_back(td);
+				}
+				for(std::string const & x : resTypes)
+				{
+					ast::identifier id(x);
+					ast::type_declaration td(false, id);
+					decl._return_types.push_back(td);
+				}
+
+				llvm::Function * TheFunction = module.get()->getFunction(name);
+				if (TheFunction)
+				{
+					if (llvm::sys::DynamicLibrary::SearchForAddressOfSymbol(name) != fp)
+					{
+						return ErrorFunction("The extern function: '"+name+"' has been bound to a different adress before.");
+					}
+				}
+				else
+				{
+					TheFunction = (*this)(decl);
+					if (TheFunction == 0)
+					{
+						return ErrorFunction("Unable to build function declaration for extern function: '"+name+"'.");
+					}
+
+					// Enter a fixed association into the dynamic linker table.
+					llvm::sys::DynamicLibrary::AddSymbol(name, fp);
+				}
+				return TheFunction;
+			}
+			else
+			{
+				return ErrorFunction("Extern declaration of '"+name+"' passed invalid pointer to external function.", EErrorLevel::Fatal);
+			}
 		}
 	}
 }

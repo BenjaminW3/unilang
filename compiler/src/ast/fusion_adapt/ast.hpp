@@ -6,5 +6,5 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::module,
-	(std::list<unilang::ast::meta_entity>, metaEntities)
+	(std::list<unilang::ast::meta_entity>, _metaEntities)
 )

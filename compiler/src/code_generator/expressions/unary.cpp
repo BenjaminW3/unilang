@@ -1,10 +1,10 @@
-#include "../code_generator.hpp"
+#include "exp_code_gen.hpp"
 
 #include "../../ast/operators_def.hpp"
 
 #include "../../log/log.hpp"
 
-#include "llvm/Support/raw_ostream.h"
+#include "../types.hpp"
 
 namespace unilang 
 { 
@@ -18,19 +18,19 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value *L = x.operand_.apply_visitor(*this);
+			llvm::Value *L = x._operand.apply_visitor(*this);
 			if(!L)
 			{
 				std::stringstream sstr;
-				sstr << x.operand_;
+				sstr << x._operand;
 				return ErrorValue("Invalid value returned from '"+sstr.str()+"'");
 			}
 
 			switch (
 #ifdef TOKEN_ID
-				x.operator_
+				x._operator
 #else
-				static_cast<operators::EOperators>(x.operator_)
+				static_cast<operators::EOperators>(x._operator)
 #endif
 				)
 			{
@@ -53,33 +53,34 @@ namespace unilang
 				}*/
 			case operators::EOperators::plus_plus:
 				{
-					if(	x.operand_.var.type()==typeid(ast::primary_expr) && 
-						boost::get<ast::primary_expr>(x.operand_.var).var.type()==typeid(ast::identifier))
+					if(	x._operand.var.type()==typeid(ast::primary_expr) && 
+						boost::get<ast::primary_expr>(x._operand.var).var.type()==typeid(ast::identifier))
 					{
-						ast::assignment assign;
-						assign.id = x.id;
-						assign.lhs = boost::get<ast::identifier>(boost::get<ast::primary_expr>(x.operand_.var).var);
-						assign.operator_ = static_cast<size_t>(operators::EOperators::plus_assign);
 						ast::expression rightEx;
-						rightEx.id = x.id;
 						if(L->getType()->isIntegerTy())
 						{
-							rightEx.first = ast::operand(ast::primary_expr(size_t(1)));
+							rightEx._first = ast::operand(ast::primary_expr(size_t(1)));
 						}
 						else if(L->getType()->isFloatingPointTy())
 						{
-							rightEx.first = ast::operand(ast::primary_expr(long double(1.0)));
+							rightEx._first = ast::operand(ast::primary_expr(long double(1.0)));
 						}
 						else
 						{
-							std::string type_str;
-							llvm::raw_string_ostream rso(type_str);
-							rso << "Operator '++' is not available for value of type '";
-							L->getType()->print(rso);
-							rso << "' !";
-							return ErrorValue(rso.str(), EErrorLevel::Fatal);
+							return ErrorValue("Operator '++' is not available for value of type '"+getLLVMTypeName(L->getType())+"' !", EErrorLevel::Fatal);
 						}
-						assign.rhs = rightEx;
+
+						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._operand.var).var));
+
+						ast::assignment assign	(idf,				
+#ifdef TOKEN_ID
+												operators::EOperators::plus_assign,
+#else
+												static_cast<size_t>(operators::EOperators::plus_assign),
+#endif
+												rightEx);
+						assign._id = x._id;
+						assign._lhs._id = idf._id;
 						return (*this)(assign);
 					}
 					else
@@ -89,33 +90,34 @@ namespace unilang
 				}
 			case operators::EOperators::minus_minus:
 				{
-					if(	x.operand_.var.type()==typeid(ast::primary_expr) && 
-						boost::get<ast::primary_expr>(x.operand_.var).var.type()==typeid(ast::identifier))
+					if(	x._operand.var.type()==typeid(ast::primary_expr) && 
+						boost::get<ast::primary_expr>(x._operand.var).var.type()==typeid(ast::identifier))
 					{
-						ast::assignment assign;
-						assign.id = x.id;
-						assign.lhs = boost::get<ast::identifier>(boost::get<ast::primary_expr>(x.operand_.var).var);
-						assign.operator_ = static_cast<size_t>(operators::EOperators::minus_assign);
 						ast::expression rightEx;
-						rightEx.id = x.id;
 						if(L->getType()->isIntegerTy())
 						{
-							rightEx.first = ast::operand(ast::primary_expr(size_t(1)));
+							rightEx._first = ast::operand(ast::primary_expr(size_t(1)));
 						}
 						else if(L->getType()->isFloatingPointTy())
 						{
-							rightEx.first = ast::operand(ast::primary_expr(long double(1.0)));
+							rightEx._first = ast::operand(ast::primary_expr(long double(1.0)));
 						}
 						else
 						{
-							std::string type_str;
-							llvm::raw_string_ostream rso(type_str);
-							rso << "Operator '--' is not available for value of type '";
-							L->getType()->print(rso);
-							rso << "' !";
-							return ErrorValue(rso.str(), EErrorLevel::Fatal);
+							return ErrorValue("Operator '--' is not available for value of type '"+getLLVMTypeName(L->getType())+ "' !", EErrorLevel::Fatal);
 						}
-						assign.rhs = rightEx;
+
+						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._operand.var).var));
+
+						ast::assignment assign	(idf,				
+#ifdef TOKEN_ID
+												operators::EOperators::plus_assign,
+#else
+												static_cast<size_t>(operators::EOperators::minus_assign),
+#endif
+												rightEx);
+						assign._id = x._id;
+						assign._lhs._id = idf._id;
 						return (*this)(assign);
 					}
 					else
@@ -162,12 +164,7 @@ namespace unilang
 					}
 					else
 					{
-						std::string type_str;
-						llvm::raw_string_ostream rso(type_str);
-						rso << "String conversion for type '";
-						L->getType()->print(rso);
-						rso << "' is not implemented!";
-						return ErrorValue(rso.str(), EErrorLevel::Fatal);
+						return ErrorValue("String conversion for type '"+getLLVMTypeName(L->getType())+"' is not implemented!", EErrorLevel::Fatal);
 					}
 					/*return builder.CreateGlobalString(L, "stringifytmp");*/
 				}

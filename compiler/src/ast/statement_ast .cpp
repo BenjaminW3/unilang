@@ -67,19 +67,19 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		bool if_statement::isPure() const
 		{
-			return condition.isPure() && then.isPure() && (!else_.is_initialized() || else_.get().isPure());
+			return _condition.isPure() && _then.isPure() && (!_else.is_initialized() || _else.get().isPure());
 		}
 		std::ostream& operator<<(std::ostream& out, if_statement const& x)
 		{
-			out << "if(" << x.condition << ")" << std::endl
+			out << "if(" << x._condition << ")" << std::endl
 				<< "{" << std::endl 
-				<< x.then
+				<< x._then
 				<< "}";
-			if(x.else_.is_initialized())
+			if(x._else.is_initialized())
 			{
 				out << "else"
 					<< "{"
-					<< x.else_.get()
+					<< x._else.get()
 					<< "}";
 			}
 			return out;

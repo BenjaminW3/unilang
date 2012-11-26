@@ -1,12 +1,12 @@
-entrypoint : ()->( iErrorCode:~int{0} )
+entrypoint : ()->( iErrorCode:~i64{0} )
 {
-	iFib10:int{fib(10)};
+	iFib10:i64{fib(10)};
 	iErrorCode = iFib10;
 	/*usl::print(iFib10);*/
 }
 
 /*FIXME only uint*/
-fib : (int:n)->(int:f)
+fib : (i64:n)->(i64:f)
 {
 	if(n<1)	{f=1;}
 	else	{f=fib(n-1)+fib(n-2);}
