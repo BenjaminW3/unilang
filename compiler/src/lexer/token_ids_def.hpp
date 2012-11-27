@@ -65,6 +65,7 @@ namespace unilang
 
 				// unary operators
 				not_                = operators::EOperators::not_,
+				compl,
 				stringify,
 
 				// unary operators with overlaps '++' and '--' can be prefix or postfix (the lexer cannot distinguish which)
@@ -84,9 +85,9 @@ namespace unilang
 				plus_assign			= operators::EOperators::plus_assign,
 				minus_assign,
 
-				_lit_ufloat			= minus_assign + 1,
-				_lit_uint,
-				_lit_boolean,
+				lit_ufloat			= minus_assign + 1,
+				lit_uint,
+				lit_boolean,
 			};
 		}
 	}

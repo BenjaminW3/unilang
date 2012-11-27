@@ -3,8 +3,9 @@
 #include "../export.hpp"
 
 #include <memory>
+#include <string>
 
-// predefinitions
+// forward declarations
 namespace llvm
 {
 	class Module;
@@ -23,6 +24,14 @@ namespace unilang
 		//! \param module The generated llvm::Module.
 		//! \return The ErrorCode returned from the program.
 		//-----------------------------------------------------------------------------
-		U_EXPORT int execute_module( std::shared_ptr<llvm::Module> module );
+		U_EXPORT int64_t execute_module( std::shared_ptr<llvm::Module> module );
+
+		//-----------------------------------------------------------------------------
+		//! Executes the module inside the given bitcode file.
+		//!
+		//! \param sBitCodeFilePath The path to the bitcode file to be loaded.
+		//! \return The ErrorCode returned from the program.
+		//-----------------------------------------------------------------------------
+		U_EXPORT int64_t execute_bitcode_file( std::string const & sBitCodeFilePath );
 	}
 }

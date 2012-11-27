@@ -4,11 +4,18 @@
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 #pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
+#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
+#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include "llvm/Module.h"
+#include <llvm/Module.h>
+
+#include <llvm/IRBuilder.h>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -51,7 +58,7 @@ namespace unilang
 			// Look up the mangled name in the global module table.
 			std::string const mangledName (funcDecl.build_mangled_name());
 
-			llvm::Function *CalleeF = module->getFunction(mangledName);
+			llvm::Function *CalleeF = getModule()->getFunction(mangledName);
 			if (!CalleeF)
 			{
 				return ErrorValue("Unknown function '"+mangledName+"' referenced.");
@@ -78,7 +85,7 @@ namespace unilang
 				++itArg;
 			}*/
   
-			return builder.CreateCall(CalleeF, ArgsV, "call");
+			return getBuilder()->CreateCall(CalleeF, ArgsV, "call");
 		}
 		/*
 		if (printf == null) {

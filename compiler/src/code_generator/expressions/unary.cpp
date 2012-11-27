@@ -6,6 +6,25 @@
 
 #include "../types.hpp"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
+#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
+#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
+#endif
+
+#include <llvm/IRBuilder.h>
+
+#include <llvm/Type.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
 namespace unilang 
 { 
 	namespace code_generator
@@ -36,11 +55,11 @@ namespace unilang
 			{
 			case operators::EOperators::minus:
 				{
-					return builder.CreateNeg(L, "neg");
+					return getBuilder()->CreateNeg(L, "neg");
 				}
 			case operators::EOperators::not_:
 				{
-					return builder.CreateNot(L, "not");
+					return getBuilder()->CreateNot(L, "not");
 				}
 			/*case operators::EOperators::compl_:
 				{
@@ -49,7 +68,7 @@ namespace unilang
 					{
 						return ErrorValue("Unable to create -1.");
 					}
-					return builder.CreateXor(L, Minus1, "compl.xor");
+					return getBuilder()->CreateXor(L, Minus1, "compl.xor");
 				}*/
 			case operators::EOperators::plus_plus:
 				{
@@ -137,36 +156,36 @@ namespace unilang
 					if(L->getType()->isDoubleTy())
 					{
 						// convert to int
-						llvm::Value *pUi = builder.CreateFPToUI(L, llvm::IntegerType::get(context, 8), "FpToUiTmp");
+						llvm::Value *pUi = getBuilder()->CreateFPToUI(L, llvm::IntegerType::get(getContext(), 8), "FpToUiTmp");
 						if(!pUi)
 						{
 							return ErrorValue("CreateFPToUI returned invalid value!", EErrorLevel::Internal);
 						}
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = builder.CreateURem(pUi, (*this)(uint64_t(10)), "URemTmp");
+						llvm::Value *pPosLastDigit = getBuilder()->CreateURem(pUi, (*this)(uint64_t(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
 							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
-						return builder.CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
+						return getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
 					else if(L->getType()->isIntegerTy())
 					{
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = builder.CreateURem(L, (*this)(uint64_t(10)), "URemTmp");
+						llvm::Value *pPosLastDigit = getBuilder()->CreateURem(L, (*this)(uint64_t(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
 							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
-						return builder.CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
+						return getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
 					else
 					{
 						return ErrorValue("String conversion for type '"+getLLVMTypeName(L->getType())+"' is not implemented!", EErrorLevel::Fatal);
 					}
-					/*return builder.CreateGlobalString(L, "stringifytmp");*/
+					/*return getBuilder()->CreateGlobalString(L, "stringifytmp");*/
 				}
 			default:
 				{

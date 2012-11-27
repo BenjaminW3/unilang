@@ -8,20 +8,20 @@
 
 namespace unilang
 { 
-	// predefinitions
+	// forward declarations
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
 	namespace lexer
 	{
-		// predefinitions
+		// forward declarations
 		template <typename BaseIterator>
 		class token_lexer;
 	}
 
 	namespace parser
 	{
-		// predefinitions
+		// forward declarations
 		template <typename BaseIterator, typename Iterator>
 		struct identifier_grammar;
 		template <typename BaseIterator, typename Iterator>

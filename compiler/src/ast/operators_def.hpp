@@ -46,7 +46,9 @@ namespace unilang
 
 			// unary
 			not_				= static_cast<size_t>(EOperatorTypes::unaryOperation) + 1,
+			compl,
 			stringify,
+
 			plus_plus,
 			minus_minus,
 

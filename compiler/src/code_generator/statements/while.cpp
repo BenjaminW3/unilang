@@ -13,7 +13,7 @@ namespace unilang
 		{
 			LOG_SCOPE;
 
-			builder.
+			getBuilder()->
 			BOOST_ASSERT(current != 0);
 			std::size_t loop = current->size();         // mark our position
 			if (!(*this)(x._condition))

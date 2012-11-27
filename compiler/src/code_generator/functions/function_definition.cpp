@@ -2,18 +2,25 @@
 
 #include "../../log/log.hpp"
 
-#include "llvm/Analysis/Verifier.h"
+#include <llvm/Analysis/Verifier.h>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-#pragma warning(disable: 4244)		// 'argument' : conversion from 'int' to 'unsigned short', possible loss of data
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 #pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
+#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
+#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include "llvm/Function.h"
+#include <llvm/IRBuilder.h>
+#include <llvm/Function.h>
+#include <llvm/Type.h>
 
 #if defined(_MSC_VER)
-#pragma warning(push)
+#pragma warning(pop)
 #endif
 
 #include "../types.hpp"
@@ -56,8 +63,8 @@ namespace unilang
 			}
 
 			// Create a new basic block to start insertion into.
-			llvm::BasicBlock *BB = llvm::BasicBlock::Create(context, "entry", TheFunction);
-			builder.SetInsertPoint(BB);
+			llvm::BasicBlock *BB = llvm::BasicBlock::Create(getContext(), "entry", TheFunction);
+			getBuilder()->SetInsertPoint(BB);
 
 			// add the parameters
 			llvm::Function::arg_iterator itArgs = TheFunction->arg_begin();
@@ -72,7 +79,7 @@ namespace unilang
 				}
 
 				// store the parameters in the parameter variables
-				builder.CreateStore(itArgs, pDeclAlloc);
+				getBuilder()->CreateStore(itArgs, pDeclAlloc);
 			}
 
 			// add the return values
@@ -96,11 +103,11 @@ namespace unilang
 			// return value(s)
 			if(vpRetAllocas.empty())
 			{
-				builder.CreateRetVoid();
+				getBuilder()->CreateRetVoid();
 			}
 			else if(vpRetAllocas.size() == 1)
 			{
-				llvm::Value *pRetVal = builder.CreateLoad(vpRetAllocas[0], "loadret");
+				llvm::Value *pRetVal = getBuilder()->CreateLoad(vpRetAllocas[0], "loadret");
 				if(!pRetVal)
 				{
 					return ErrorFunction("Unable to create load return from function '"+x._identifier._name+"'.");
@@ -118,7 +125,7 @@ namespace unilang
 						//ptr_type->
 					}
 				}*/
-				builder.CreateRet(pRetVal);
+				getBuilder()->CreateRet(pRetVal);
 			}
 			else
 			{
@@ -126,7 +133,7 @@ namespace unilang
 				{
 					// FIXME: handle multi-return value functions in result expressions.
 					// FIXME: not alloca, instead values
-					//builder.CreateAggregateRet(vpRetAllocas.data(), (unsigned int)x._return_value_definitions.size());
+					//getBuilder()->CreateAggregateRet(vpRetAllocas.data(), (unsigned int)x._return_value_definitions.size());
 					return ErrorFunction("Unable to return multiple return values from aggregate return type function '"+x._identifier._name+"'.");
 				}
 				else
@@ -172,7 +179,7 @@ def bar() foo(1, 2); # error, unknown function "foo"
 #include <llvm/Support/MemoryBuffer.h>
 #include <llvm/Linker.h>*/
 
-#include "llvm/Module.h"
+#include <llvm/Module.h>
 
 #include <llvm/Support/DynamicLibrary.h>
 //#include <llvm/System/DynamicLibrary.h>
@@ -212,7 +219,7 @@ namespace unilang
 					decl._return_types.push_back(td);
 				}
 
-				llvm::Function * TheFunction = module.get()->getFunction(name);
+				llvm::Function * TheFunction = getModule()->getFunction(name);
 				if (TheFunction)
 				{
 					if (llvm::sys::DynamicLibrary::SearchForAddressOfSymbol(name) != fp)

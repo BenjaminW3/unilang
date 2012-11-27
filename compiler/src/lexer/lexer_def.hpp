@@ -27,11 +27,11 @@ namespace unilang
 													_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", static_cast<size_t>(tokens::ETokenIDs::comment)),
 													_tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", static_cast<size_t>(tokens::ETokenIDs::identifier)),
 													//tok_string("[^\"]+", tokens::ETokenIDs::string),
-													_lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", static_cast<size_t>(tokens::ETokenIDs::_lit_ufloat)),
+													_lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
 													//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
-													_lit_uint("[1-9][0-9]*|0", static_cast<size_t>(tokens::ETokenIDs::_lit_uint)),
+													_lit_uint("[1-9][0-9]*|0", static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
 													//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
-													_lit_boolean("true|false", static_cast<size_t>(tokens::ETokenIDs::_lit_boolean))
+													_lit_boolean("true|false", static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
 #endif
 													/*
 													this->self.add_pattern
@@ -45,38 +45,40 @@ namespace unilang
 			this->self += _tok_comment [lex::_pass = lex::pass_flags::pass_ignore];
 
 			add_("=",       tokens::ETokenIDs::assign);
-			add_("\\+=",    tokens::ETokenIDs::plus_assign);
-			add_("\\-=",    tokens::ETokenIDs::minus_assign);
 			add_("\\*=",    tokens::ETokenIDs::times_assign);
 			add_("\\/=",    tokens::ETokenIDs::divide_assign);
 			add_("%=",      tokens::ETokenIDs::mod_assign);
+			//add_("\\^=",    tokens::ETokenIDs::exponent_assign);
 			add_("\\&=",    tokens::ETokenIDs::bit_and_assign);
-			add_("\\^=",    tokens::ETokenIDs::bit_xor_assign);
+			add_("\\#=",    tokens::ETokenIDs::bit_xor_assign);
 			add_("\\|=",    tokens::ETokenIDs::bit_or_assign);
 			add_("<<=",     tokens::ETokenIDs::shift_left_assign);
 			add_(">>=",     tokens::ETokenIDs::shift_right_assign);
+			add_("\\+=",    tokens::ETokenIDs::plus_assign);
+			add_("\\-=",    tokens::ETokenIDs::minus_assign);
 			add_("\\|\\|",  tokens::ETokenIDs::logical_or);
 			add_("&&",      tokens::ETokenIDs::logical_and);
-			add_("\\|",     tokens::ETokenIDs::bit_or);
-			add_("\\^",     tokens::ETokenIDs::bit_xor);
-			add_("&",       tokens::ETokenIDs::bit_and);
-			add_("<<",      tokens::ETokenIDs::shift_left);
-			add_(">>",      tokens::ETokenIDs::shift_right);
 			add_("==",      tokens::ETokenIDs::equal);
 			add_("!=",      tokens::ETokenIDs::not_equal);
 			add_("<",       tokens::ETokenIDs::less);
 			add_("<=",      tokens::ETokenIDs::less_equal);
 			add_(">",       tokens::ETokenIDs::greater);
 			add_(">=",      tokens::ETokenIDs::greater_equal);
-			add_("\\+",     tokens::ETokenIDs::plus);
-			add_("\\-",     tokens::ETokenIDs::minus);
 			add_("\\*",     tokens::ETokenIDs::times);
 			add_("\\/",     tokens::ETokenIDs::divide);
 			add_("%",       tokens::ETokenIDs::mod);
+			//add_("\\^",    tokens::ETokenIDs::exponent);
+			add_("\\+",     tokens::ETokenIDs::plus);
+			add_("\\-",     tokens::ETokenIDs::minus);
 			add_("\\+\\+",  tokens::ETokenIDs::plus_plus);
 			add_("\\-\\-",  tokens::ETokenIDs::minus_minus);
-			//add_("~",       tokens::ETokenIDs::compl_);
+			add_("\\|",     tokens::ETokenIDs::bit_or);
+			add_("\\#",     tokens::ETokenIDs::bit_xor);
+			add_("&",       tokens::ETokenIDs::bit_and);
+			add_("<<",      tokens::ETokenIDs::shift_left);
+			add_(">>",      tokens::ETokenIDs::shift_right);
 			add_("!",       tokens::ETokenIDs::not_);
+			add_("~",       tokens::ETokenIDs::compl);
 			add_("\\$",     tokens::ETokenIDs::stringify);
 			add_(":",		tokens::ETokenIDs::colon);
 			add_("->",		tokens::ETokenIDs::arrow);

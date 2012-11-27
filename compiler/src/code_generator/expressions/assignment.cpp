@@ -6,6 +6,25 @@
 
 #include "../types.hpp"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
+#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
+#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
+#endif
+
+#include <llvm/IRBuilder.h>
+
+#include <llvm/Type.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
 namespace unilang 
 { 
 	namespace code_generator
@@ -60,12 +79,12 @@ namespace unilang
 #endif
 								== operators::EOperators::assign)
 							{
-								/*return */builder.CreateStore(rhsVal, lhsAlloca);
+								/*return */getBuilder()->CreateStore(rhsVal, lhsAlloca);
 								return rhsVal;
 							}
 							else // more _then just an assignment
 							{
-								llvm::Value * pVal (builder.CreateLoad(lhsAlloca, "loadAssignLHSVal"));
+								llvm::Value * pVal (getBuilder()->CreateLoad(lhsAlloca, "loadAssignLHSVal"));
 								if(!pVal)
 								{
 									return ErrorValue("Unable to load LHS variable value in combined assignment.");
@@ -79,7 +98,7 @@ namespace unilang
 								{
 									return ErrorValue("Unable to compute result of operation prior to assignment!");
 								}
-								/*return */builder.CreateStore(CalcVal, lhsAlloca);
+								/*return */getBuilder()->CreateStore(CalcVal, lhsAlloca);
 								return CalcVal;
 							}
 						}

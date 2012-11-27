@@ -1,34 +1,24 @@
 #pragma once
 
-#if defined(_MSC_VER)
-#pragma warning(push)
-//#pragma warning(disable: 4100)		// unreferenced formal parameter
-#pragma warning(disable: 4127)		// conditional expression is constant
-#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
-#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
-#pragma warning(disable: 4244)		// conversion from 'int' to 'unsigned short', possible loss of data
-#pragma warning(disable: 4245)		// conversion from 'int' to 'unsigned int', signed/unsigned mismatch
-#pragma warning(disable: 4512)		// assignment operator could not be generated
-#pragma warning(disable: 4800)		// 'unsigned int' : forcing value to bool 'true' or 'false' (performance warning)
-#endif
+#include "../errors.hpp"
 
-#include "llvm/LLVMContext.h"
-#include "llvm/IRBuilder.h"
+#include <boost/noncopyable.hpp>
 
-// predefinitions
+#include <memory>
+
+// forward declarations
 namespace llvm
 {
 	class Module;
 	class Value;
+	class LLVMContext;
+
+	class ConstantFolder;
+	template <bool preserveNames>
+	class IRBuilderDefaultInserter;
+	template<bool preserveNames, typename T, typename Inserter>
+	class IRBuilder;
 }
-
-#if defined(_MSC_VER)
-#pragma warning(pop)
-#endif
-
-#include "../errors.hpp"
-
-#include <boost/noncopyable.hpp>
 
 namespace unilang 
 { 
@@ -43,6 +33,9 @@ namespace unilang
 		class llvm_code_generator : virtual public code_generator_errors,
 									virtual boost::noncopyable
 		{
+			// This typedef must be held the same as llvm::IRBuilder<> so that this always reflects the default arguments.
+			// We have to do this because we can not forward declare templates with default parameters without warnings/errors.
+			typedef llvm::IRBuilder<true, llvm::ConstantFolder, llvm::IRBuilderDefaultInserter<true>> IRBuilderType;
 		public:
 			//-------------------------------------------------------------------------
 			//! Constructor
@@ -65,26 +58,25 @@ namespace unilang
 			void print_bytecode() const;
 
 			//-------------------------------------------------------------------------
-			//! \return The generated module.
-			//-------------------------------------------------------------------------
-			std::shared_ptr<llvm::Module> getModule() const;
-			//-------------------------------------------------------------------------
 			//! \return The LLVMContext used to build the module.
 			//-------------------------------------------------------------------------
-			llvm::LLVMContext& getContext() const;
+			llvm::LLVMContext & getContext() const;
 			//-------------------------------------------------------------------------
 			//! \return The IRBuilder used to build the module.
 			//-------------------------------------------------------------------------
-			llvm::IRBuilder<>& getBuilder();
+			std::shared_ptr<IRBuilderType> getBuilder();
+			//-------------------------------------------------------------------------
+			//! \return The generated module.
+			//-------------------------------------------------------------------------
+			std::shared_ptr<llvm::Module> getModule() const;
 
 			//-----------------------------------------------------------------------------
 			//! \return The Function with the given name.
 			//-----------------------------------------------------------------------------
 			llvm::Function * getFunctionFromName( std::string const & name );
 
-		protected:
-			llvm::LLVMContext & context;
-			llvm::IRBuilder<> builder;
+		private:
+			std::shared_ptr<IRBuilderType> builder;
 
 			std::shared_ptr<llvm::Module> module;
 		};

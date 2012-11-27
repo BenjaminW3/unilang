@@ -6,10 +6,14 @@
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 #pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
+#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
 #pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
+#include <llvm/LLVMContext.h>
+#include <llvm/IRBuilder.h>
 #include <llvm/Support/TargetSelect.h>
 //#include <llvm/ExecutionEngine/ExecutionEngine.h>
 //#include <llvm/ExecutionEngine/JIT.h>
@@ -40,13 +44,6 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> llvm_code_generator::getModule() const
-		{
-			return module;
-		}
-		//-----------------------------------------------------------------------------
-		//
-		//-----------------------------------------------------------------------------
 		llvm::LLVMContext& llvm_code_generator::getContext() const
 		{
 			return llvm::getGlobalContext(); 
@@ -54,9 +51,16 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::IRBuilder<>& llvm_code_generator::getBuilder()
+		std::shared_ptr<llvm::IRBuilder<>> llvm_code_generator::getBuilder()
 		{
 			return builder;
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		std::shared_ptr<llvm::Module> llvm_code_generator::getModule() const
+		{
+			return module;
 		}
 		//-----------------------------------------------------------------------------
 		//
@@ -76,9 +80,8 @@ namespace unilang
 		//
 		//-----------------------------------------------------------------------------
 		llvm_code_generator::llvm_code_generator()
-			:context(llvm::getGlobalContext()),
-			builder(context),
-			module(new llvm::Module("unilang-JIT", context))
+			:builder(std::make_shared<IRBuilderType>(getContext())),
+			module(new llvm::Module("unilang-JIT", getContext()))
 		{
 			LOG_SCOPE_DEBUG;
 

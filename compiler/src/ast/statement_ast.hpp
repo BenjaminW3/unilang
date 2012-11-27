@@ -13,7 +13,7 @@ namespace unilang
 {
 	namespace ast
 	{
-		// predefinitions for variant
+		// forward declarations for variant
 		struct if_statement;
 		//struct while_statement;
 		//struct return_statement;

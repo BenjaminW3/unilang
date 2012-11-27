@@ -9,6 +9,7 @@
 #endif
 
 #include <llvm/Function.h>
+#include <llvm/IRBuilder.h>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -34,8 +35,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::AllocaInst * allocation_code_generator::createEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName)
 		{
-			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(),
-			TheFunction->getEntryBlock().begin());
+			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
 			std::string const sTempName = "EntryBlockAlloca_" + VarName;
 			return TmpB.CreateAlloca(pType, 0,  sTempName.c_str());
 		}
@@ -59,7 +59,7 @@ namespace unilang
 			{
 				llvm::Instruction::CastOps castOp (llvm::CastInst::getCastOpcode(pVal, true, pDestinationType, true));
 
-				llvm::CastInst * castInst (llvm::CastInst::Create(castOp, pVal, pDestinationType, "FirstClassTypeCast", builder.GetInsertPoint()));
+				llvm::CastInst * castInst (llvm::CastInst::Create(castOp, pVal, pDestinationType, "FirstClassTypeCast", getBuilder()->GetInsertPoint()));
 				pVal = castInst;
 				if(!pVal)
 				{
@@ -76,7 +76,7 @@ namespace unilang
 						// if it is a fp type first convert it to int
 						if(pVal->getType()->isFloatingPointTy())
 						{	
-							pVal = builder.CreateFPToSI(pVal, pDestinationType, "FPtoSI");
+							pVal = getBuilder()->CreateFPToSI(pVal, pDestinationType, "FPtoSI");
 							if(!pVal)
 							{
 								return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
@@ -95,7 +95,7 @@ namespace unilang
 					{
 						// could use getScalarSizeInBits() that returns bit size for scalars directly and element bit size for vector types
 						// we could use CreateSExtOrTrunc instead but we want to generate extra downcast warnings.
-						pVal = builder.CreateSExtOrTrunc(pVal, (llvm::IntegerType*) pDestinationType, "IntCast");
+						pVal = getBuilder()->CreateSExtOrTrunc(pVal, (llvm::IntegerType*) pDestinationType, "IntCast");
 						if(!pVal)
 						{
 							// TODO: different error message if pVal->getType!=pInitType
@@ -110,7 +110,7 @@ namespace unilang
 						// convert if it is int
 						if(pVal->getType()->isIntegerTy())
 						{	
-							pVal = builder.CreateSIToFP(pVal, pDestinationType, "SItoFP");
+							pVal = getBuilder()->CreateSIToFP(pVal, pDestinationType, "SItoFP");
 							if(!pVal)
 							{
 								return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
@@ -129,7 +129,7 @@ namespace unilang
 					{
 						// could use getScalarSizeInBits() that returns bit size for scalars directly and element bit size for vector types
 						// we could use CreateSExtOrTrunc instead but we want to generate extra downcast warnings.
-						pVal = builder.CreateFPCast(pVal, pDestinationType, "FloatCast");
+						pVal = getBuilder()->CreateFPCast(pVal, pDestinationType, "FloatCast");
 						if(!pVal)
 						{
 							// TODO: different error message if pVal->getType!=pInitType

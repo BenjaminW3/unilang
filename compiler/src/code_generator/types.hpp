@@ -5,7 +5,7 @@
 
 #include <vector>
 
-// predefinitions
+// forward declarations
 namespace llvm
 {
 	class Type;

@@ -4,6 +4,12 @@
 
 #include <boost/noncopyable.hpp>
 
+// forward declarations
+namespace llvm
+{
+	class Constant;
+}
+
 namespace unilang 
 { 
 	//-----------------------------------------------------------------------------

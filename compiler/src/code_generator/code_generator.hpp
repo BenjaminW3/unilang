@@ -4,7 +4,7 @@
 
 //#include <boost/variant/apply_visitor.hpp>
 
-// predefinitions
+// forward declarations
 namespace llvm
 {
 	class Function;

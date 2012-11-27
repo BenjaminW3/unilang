@@ -6,6 +6,25 @@
 
 #include "../types.hpp"
 
+#if defined(_MSC_VER)
+#pragma warning(push)
+#pragma warning(disable: 4127)		// conditional expression is constant
+#pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
+#pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
+#pragma warning(disable: 4146)		// unary minus operator applied to unsigned type, result still unsigned
+#pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
+#pragma warning(disable: 4512)		// 'llvm::IRBuilderBase' : assignment operator could not be generated
+#pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
+#endif
+
+#include <llvm/IRBuilder.h>
+
+#include <llvm/Type.h>
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif
+
 namespace unilang 
 { 
 	namespace code_generator
@@ -110,59 +129,62 @@ namespace unilang
 					{
 					case operators::EOperators::plus:
 						{
-							return builder.CreateFAdd(L, R, "add");
+							return getBuilder()->CreateFAdd(L, R, "add");
 						}
 					case operators::EOperators::minus:
 						{
-							return builder.CreateFSub(L, R, "sub");
+							return getBuilder()->CreateFSub(L, R, "sub");
 						}
 					case operators::EOperators::times:
 						{
-							return builder.CreateFMul(L, R, "mul");
+							return getBuilder()->CreateFMul(L, R, "mul");
 						}
 					case operators::EOperators::divide:
 						{
-							return builder.CreateFDiv(L, R, "div");
+							return getBuilder()->CreateFDiv(L, R, "div");
 						}
 					case operators::EOperators::mod:
 						{
-							return builder.CreateFRem(L, R, "rem");
+							return getBuilder()->CreateFRem(L, R, "rem");
 						}
 					case operators::EOperators::equal:
 						{
-							return builder.CreateFCmpUEQ(L, R, "equ");
+							return getBuilder()->CreateFCmpUEQ(L, R, "equ");
 						}
 					case operators::EOperators::not_equal:
 						{
-							return builder.CreateFCmpUNE(L, R, "nequ");
+							return getBuilder()->CreateFCmpUNE(L, R, "nequ");
 						}
 					case operators::EOperators::less:
 						{
-							return builder.CreateFCmpULT(L, R, "lt");
+							return getBuilder()->CreateFCmpULT(L, R, "lt");
 						}
 					case operators::EOperators::less_equal:
 						{
-							return builder.CreateFCmpULE(L, R, "ltequ");
+							return getBuilder()->CreateFCmpULE(L, R, "ltequ");
 						}
 					case operators::EOperators::greater:
 						{
-							return builder.CreateFCmpUGT(L, R, "gt");
+							return getBuilder()->CreateFCmpUGT(L, R, "gt");
 						}
 					case operators::EOperators::greater_equal:
 						{
-							return builder.CreateFCmpUGE(L, R, "gtequ");
+							return getBuilder()->CreateFCmpUGE(L, R, "gtequ");
 						}
-					case operators::EOperators::logical_and:
+					/*case operators::EOperators::logical_and:
 						{
-							return builder.CreateAnd(L, R, "and");
+							// FIXME both !=0
+							//return getBuilder()->CreateAnd(L, R, "and");
 						}
 					case operators::EOperators::logical_or:
 						{
-							return builder.CreateOr(L, R, "or");
-						}
+							return getBuilder()->CreateOr(L, R, "or");
+						}*/
 					default: 
 						{
-							return ErrorValue("Unknown operation!", EErrorLevel::Fatal);
+							std::stringstream sstr;
+							sstr << "Operation '" << op << "unknown for values of type";
+							return ErrorValue(sstr.str()+getLLVMTypeName(L->getType()), EErrorLevel::Fatal);
 						}
 					}
 				}
@@ -172,100 +194,113 @@ namespace unilang
 					{
 					case operators::EOperators::plus:
 						{
-							return builder.CreateAdd(L, R, "add");
+							return getBuilder()->CreateAdd(L, R, "add");
 						}
 					case operators::EOperators::minus:
 						{
-							return builder.CreateSub(L, R, "sub");
+							return getBuilder()->CreateSub(L, R, "sub");
 						}
 					case operators::EOperators::times:
 						{
-							return builder.CreateMul(L, R, "mul");
+							return getBuilder()->CreateMul(L, R, "mul");
 						}
 					case operators::EOperators::divide:
 						{
-							return builder.CreateSDiv(L, R, "div");
+							return getBuilder()->CreateSDiv(L, R, "div");
 						}
 					case operators::EOperators::mod:
 						{
-							return builder.CreateSRem(L, R, "rem");
+							return getBuilder()->CreateSRem(L, R, "rem");
 						}
 					case operators::EOperators::equal:
 						{
-							return builder.CreateICmpEQ(L, R, "equ");
+							return getBuilder()->CreateICmpEQ(L, R, "equ");
 						}
 					case operators::EOperators::not_equal:
 						{
-							return builder.CreateICmpNE(L, R, "nequ");
+							return getBuilder()->CreateICmpNE(L, R, "nequ");
 						}
 					case operators::EOperators::less:
 						{
-							return builder.CreateICmpSLT(L, R, "lt");
+							return getBuilder()->CreateICmpSLT(L, R, "lt");
 						}
 					case operators::EOperators::less_equal:
 						{
-							return builder.CreateICmpSLE(L, R, "ltequ");
+							return getBuilder()->CreateICmpSLE(L, R, "ltequ");
 						}
 					case operators::EOperators::greater:
 						{
-							return builder.CreateICmpSGT(L, R, "gt");
+							return getBuilder()->CreateICmpSGT(L, R, "gt");
 						}
 					case operators::EOperators::greater_equal:
 						{
-							return builder.CreateICmpSGE(L, R, "gtequ");
+							return getBuilder()->CreateICmpSGE(L, R, "gtequ");
 						}
 					case operators::EOperators::bit_and:
 						{
-							return builder.CreateAnd(L, R, "and");
+							return getBuilder()->CreateAnd(L, R, "and");
 						}
 					/*case operators::EOperators::bit_nand:
 						{
-							return builder.CreateNot(builder.CreateAnd(L, R, "nand.and"), "nand.not");
+							return getBuilder()->CreateNot(getBuilder()->CreateAnd(L, R, "nand.and"), "nand.not");
 						}*/
 					case operators::EOperators::bit_or:
 						{
-							return builder.CreateOr(L, R, "or");
+							return getBuilder()->CreateOr(L, R, "or");
 						}
 					case operators::EOperators::bit_xor:
 						{
-							return builder.CreateXor(L, R, "xor");
+							return getBuilder()->CreateXor(L, R, "xor");
 						}
-					/*case operators::EOperators::compl_:
+					case operators::EOperators::compl:
 						{
-							return builder.CreateOr(L, R, "or");
-						}*/
+							return getBuilder()->CreateNeg(L, "compl");
+						}
 					case operators::EOperators::not_:
 						{
-							return ErrorValue("not_ not implemented!", EErrorLevel::Fatal);
-							//return builder.CreateOr(L, R, "not");
+							return getBuilder()->CreateNot(L, "not");
 						}
 					case operators::EOperators::shift_left:
 						{
-							return builder.CreateShl(L, R, "shl");
+							// fill with zeros to the right
+							return getBuilder()->CreateShl(L, R, "shl");
 						}
 					case operators::EOperators::shift_right:
 						{
-							return builder.CreateLShr(L, R, "shr");
+							// logical shift right: we do not preserve the sign!
+							// arithmetic shift would be AShr
+							return getBuilder()->CreateLShr(L, R, "shr");
 						}
+					/*case operators::EOperators::logical_and:
+						{
+							// FIXME both !=0
+							//return getBuilder()->CreateAnd(L, R, "and");
+						}
+					case operators::EOperators::logical_or:
+						{
+							return getBuilder()->CreateOr(L, R, "or");
+						}*/
 					/*case operators::EOperators::max:
 						{
-							return builder.CreateSelect(builder.CreateICmpSLT(L, R, "min.slt"), L, R, "max.sel");
+							return getBuilder()->CreateSelect(getBuilder()->CreateICmpSLT(L, R, "min.slt"), L, R, "max.sel");
 						}
 					case operators::EOperators::min:
 						{
-							return builder.CreateSelect(builder.CreateICmpSLT(L, R, "min.slt"), R, L, "min.sel");
+							return getBuilder()->CreateSelect(getBuilder()->CreateICmpSLT(L, R, "min.slt"), R, L, "min.sel");
 						}*/
 					/*case operators::EOperators::umax:
 						{
-							return builder.CreateSelect(builder.CreateICmpULT(L, R, "min.ult"), L, R, "max.sel");
+							return getBuilder()->CreateSelect(getBuilder()->CreateICmpULT(L, R, "min.ult"), L, R, "max.sel");
 						}
 					case operators::EOperators::umin:
 						{
-							return builder.CreateSelect(builder.CreateICmpULT(L, R, "min.ult"), R, L, "min.sel");
+							return getBuilder()->CreateSelect(getBuilder()->CreateICmpULT(L, R, "min.ult"), R, L, "min.sel");
 						}*/
 					default: 
 						{
-							return ErrorValue("Unknown operation!", EErrorLevel::Fatal);
+							std::stringstream sstr;
+							sstr << "Operation '" << op << "unknown for values of type";
+							return ErrorValue(sstr.str()+getLLVMTypeName(L->getType()), EErrorLevel::Fatal);
 						}
 					}
 				}

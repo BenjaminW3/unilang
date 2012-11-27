@@ -4,7 +4,7 @@
 
 #include <boost/noncopyable.hpp>
 
-// predefinitions
+// forward declarations
 namespace llvm
 {
 	class Value;

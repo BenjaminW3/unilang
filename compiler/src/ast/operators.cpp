@@ -97,13 +97,14 @@ namespace unilang
 				case EOperators::mod:				out << "%"; break;
 
 				case EOperators::not_:				out << "!"; break;
+				case EOperators::compl:				out << "~"; break;
 				case EOperators::stringify:			out << "$"; break;
 				case EOperators::plus_plus:			out << "++"; break;
 				case EOperators::minus_minus:		out << "--"; break;
 
 				case EOperators::assign:			out << "="; break;
 				case EOperators::bit_or_assign:		out << "|="; break;
-				case EOperators::bit_xor_assign:	out << "~="; break;
+				case EOperators::bit_xor_assign:	out << "#="; break;
 				case EOperators::bit_and_assign:	out << "&="; break;
 				case EOperators::shift_left_assign:	out << "<<="; break;
 				case EOperators::shift_right_assign:out << ">>="; break;

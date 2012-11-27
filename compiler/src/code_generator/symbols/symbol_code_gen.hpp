@@ -6,8 +6,15 @@
 #include "../errors.hpp"
 
 #include <string>
+#include <vector>
 
 #include <boost/noncopyable.hpp>
+
+// forward declarations
+namespace llvm
+{
+	class Type;
+}
 
 namespace unilang 
 { 

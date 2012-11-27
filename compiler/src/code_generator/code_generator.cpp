@@ -11,8 +11,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		void code_generator::addStringConverters()
 		{
-			/*std::vector<llvm::Type*> Doubles(	x._lArgumentExpressions.size(),	llvm::Type::getDoubleTy(context));
-			llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::get(context),	Doubles, false);
+			/*std::vector<llvm::Type*> Doubles(	x._lArgumentExpressions.size(),	llvm::Type::getDoubleTy(getContext()));
+			llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::get(getContext()),	Doubles, false);
 
 			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x._identifier._name, module.get());
 

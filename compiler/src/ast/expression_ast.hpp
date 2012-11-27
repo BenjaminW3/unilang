@@ -21,7 +21,7 @@ namespace unilang
 {
 	namespace ast
 	{
-		// predefinitions
+		// forward declarations
 		struct expression;
 		//#########################################################################
 		//! A primary expression.
@@ -46,7 +46,7 @@ namespace unilang
 		};
 		std::ostream& operator<<(std::ostream& out, primary_expr const& x);
 
-		// predefinitions
+		// forward declarations
 		struct unary_expr;
 		struct function_call;
 		struct variable_definition;

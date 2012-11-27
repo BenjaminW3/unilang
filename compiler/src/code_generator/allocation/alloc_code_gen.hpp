@@ -4,7 +4,7 @@
 
 //#include <boost/variant/apply_visitor.hpp>
 
-// predefinitions
+// forward declarations
 namespace llvm
 {
 	class AllocaInst;
@@ -25,7 +25,7 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		// predefinitions
+		// forward declarations
 		class expression_code_generator;
 		//#########################################################################
 		//! 

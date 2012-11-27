@@ -2,7 +2,7 @@
 
 #include <string>
 
-// predefinitions
+// forward declarations
 namespace llvm
 {
 	class Module;

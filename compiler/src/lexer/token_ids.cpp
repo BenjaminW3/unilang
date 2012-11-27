@@ -64,7 +64,7 @@ namespace unilang
 
 					case ETokenIDs::not_:					out << "!"; break;
 					case ETokenIDs::stringify:				out << "$"; break;
-					//case ETokenIDs::compl_:				out << "!"; break;
+					case ETokenIDs::compl:					out << "~"; break;
 
 					case ETokenIDs::plus_plus:				out << "++"; break;
 					case ETokenIDs::minus_minus:			out << "--"; break;
@@ -81,9 +81,9 @@ namespace unilang
 					case ETokenIDs::plus_assign:			out << "+="; break;
 					case ETokenIDs::minus_assign:			out << "-="; break;
 
-					case ETokenIDs::_lit_ufloat:				out << "_lit_ufloat"; break;
-					case ETokenIDs::_lit_uint:				out << "_lit_uint"; break;
-					case ETokenIDs::_lit_boolean:			out << "_lit_boolean"; break;
+					case ETokenIDs::lit_ufloat:				out << "lit_ufloat"; break;
+					case ETokenIDs::lit_uint:				out << "lit_uint"; break;
+					case ETokenIDs::lit_boolean:			out << "lit_boolean"; break;
 
 					default: out << "unknown-token-ETokenIDs"; break;
 				}

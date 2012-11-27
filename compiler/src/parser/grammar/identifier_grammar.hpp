@@ -6,13 +6,13 @@
 
 namespace unilang
 { 
-	// predefinitions
+	// forward declarations
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
 	namespace lexer
 	{
-		// predefinitions
+		// forward declarations
 		template <typename BaseIterator>
 		class token_lexer;
 	}

@@ -1,11 +1,8 @@
 #pragma once
 
 ///////////////////////////////////////////////////////////////////////////////
-// Spirit v2.5 allows you to suppress automatic generation
-// of predefined terminals to speed up complation. With
-// BOOST_SPIRIT_NO_PREDEFINED_TERMINALS defined, you are
-// responsible in creating instances of the terminals that
-// you need (e.g. see qi::uint_type uint_ below).
+// Spirit v2.5 allows you to suppress automatic generation of predefined terminals to speed up complation. 
+// With BOOST_SPIRIT_NO_PREDEFINED_TERMINALS defined, you are responsible in creating instances of the terminals that you need.
 #define BOOST_SPIRIT_NO_PREDEFINED_TERMINALS
 #define BOOST_PHOENIX_NO_PREDEFINED_TERMINALS
 ///////////////////////////////////////////////////////////////////////////////
