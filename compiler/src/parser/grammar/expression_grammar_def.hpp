@@ -1,15 +1,16 @@
 ﻿#include "expression_grammar.hpp"
 
-#include <boost/spirit/include/lex_plain_token.hpp>
-
 #include "identifier_grammar.hpp"
-
-#include "../../ast/operators_def.hpp"
-#include "../../ast/fusion_adapt/expression_ast.hpp"
 
 #include "../../lexer/lexer.hpp"
 #include "../error_handler.hpp"
 #include "../annotation.hpp"
+
+#include "../../ast/operators_def.hpp"
+#include "../../ast/expression_ast.hpp"
+#include "../../ast/fusion_adapt/expression_ast.hpp"
+
+#include <boost/spirit/include/lex_plain_token.hpp>
 
 namespace unilang 
 {

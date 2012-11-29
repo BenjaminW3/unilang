@@ -1,7 +1,5 @@
 #include "types.hpp"
 
-#include <llvm/Type.h>
-
 #if defined(_MSC_VER)
 #pragma warning(push)
 #pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
@@ -9,12 +7,11 @@
 #endif
 
 #include <llvm/Type.h>
+#include <llvm/Support/raw_ostream.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-
-#include <llvm/Support/raw_ostream.h>
 
 namespace unilang 
 { 
@@ -48,6 +45,11 @@ namespace unilang
 		{
 			return "i32";
 		}
+		template<>
+		std::string cTypeToUnilangTypeName<bool>()
+		{
+			return "i1";
+		}
 		
 		//-----------------------------------------------------------------------------
 		//
@@ -79,6 +81,10 @@ namespace unilang
 			else if(type->isIntegerTy() && type->getScalarSizeInBits() == 64)
 			{
 				return "i64";
+			}
+			else if(type->isIntegerTy() && type->getScalarSizeInBits() == 1)
+			{
+				return "i1";
 			}
 			else
 			{

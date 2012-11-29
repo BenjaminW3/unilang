@@ -5,8 +5,6 @@
 #include "expression_grammar.hpp"
 #include "statement_grammar.hpp"
 
-#include "../../ast/ast.hpp"
-
 #include "../spirit.hpp"
 
 namespace unilang
@@ -15,11 +13,17 @@ namespace unilang
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
+	// forward declarations
 	namespace lexer
 	{
-		// forward declarations
 		template <typename BaseIterator>
 		class token_lexer;
+	}
+	// forward declarations
+	namespace ast
+	{
+		struct meta_entity;
+		struct module;
 	}
 
 	namespace parser

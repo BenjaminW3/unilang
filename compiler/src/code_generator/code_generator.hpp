@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../ast/ast.hpp"
+//#include "../ast/ast.hpp"
 
 //#include <boost/variant/apply_visitor.hpp>
 
@@ -22,6 +22,14 @@ namespace llvm
 
 namespace unilang 
 { 
+	// forward declarations
+	namespace ast
+	{
+		struct function_declaration;
+		struct function_definition;
+		struct module;
+	}
+
 	//-----------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
 	//-----------------------------------------------------------------------------

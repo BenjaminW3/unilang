@@ -1,10 +1,11 @@
 #include "exp_code_gen.hpp"
 
+#include "../types.hpp"
+
+#include "../../ast/expression_ast.hpp"
 #include "../../ast/operators_def.hpp"
 
 #include "../../log/log.hpp"
-
-#include "../types.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -18,7 +19,6 @@
 #endif
 
 #include <llvm/IRBuilder.h>
-
 #include <llvm/Type.h>
 
 #if defined(_MSC_VER)
@@ -37,8 +37,8 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value *L = x._operand.apply_visitor(*this);
-			if(!L)
+			llvm::Value *pVal = x._operand.apply_visitor(*this);
+			if(!pVal)
 			{
 				std::stringstream sstr;
 				sstr << x._operand;
@@ -55,38 +55,43 @@ namespace unilang
 			{
 			case operators::EOperators::minus:
 				{
-					return getBuilder()->CreateNeg(L, "neg");
+					return getBuilder()->CreateNeg(pVal, "neg");
 				}
 			case operators::EOperators::not_:
 				{
-					return getBuilder()->CreateNot(L, "not");
+					return getBuilder()->CreateNot(pVal, "not");
 				}
-			/*case operators::EOperators::compl_:
+			case operators::EOperators::compl:
 				{
-					llvm::Value* Minus1 = (*this)(int(-1));
+					/*llvm::Value* Minus1 = (*this)(int(-1));
 					if(!Minus1)
 					{
 						return ErrorValue("Unable to create -1.");
 					}
-					return getBuilder()->CreateXor(L, Minus1, "compl.xor");
-				}*/
+					return getBuilder()->CreateXor(L, Minus1, "compl.xor");*/
+					return getBuilder()->CreateNeg(pVal, "compl");
+				}
 			case operators::EOperators::plus_plus:
 				{
 					if(	x._operand.var.type()==typeid(ast::primary_expr) && 
 						boost::get<ast::primary_expr>(x._operand.var).var.type()==typeid(ast::identifier))
 					{
 						ast::expression rightEx;
-						if(L->getType()->isIntegerTy())
+						if(pVal->getType()->isIntegerTy() || pVal->getType()->isFloatingPointTy())
 						{
-							rightEx._first = ast::operand(ast::primary_expr(size_t(1)));
-						}
-						else if(L->getType()->isFloatingPointTy())
-						{
-							rightEx._first = ast::operand(ast::primary_expr(long double(1.0)));
+							// create the one as primary expression
+							ast::expression ex;
+							ex._first = ast::operand(ast::primary_expr(size_t(1)));
+							// cast it to the type needed
+							ast::variable_definition varDef;
+							varDef._declaration._type._identifier = llvmTypeToUnilangTypeName(pVal->getType());
+							varDef._declaration._type._bHasMutableQualifier = false;
+							varDef._lParameterExpressions.push_back(ex);
+							rightEx._first = ast::operand(varDef);
 						}
 						else
 						{
-							return ErrorValue("Operator '++' is not available for value of type '"+getLLVMTypeName(L->getType())+"' !", EErrorLevel::Fatal);
+							return ErrorValue("Operator '++' is not available for value of type '"+getLLVMTypeName(pVal->getType())+"' !", EErrorLevel::Fatal);
 						}
 
 						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._operand.var).var));
@@ -113,17 +118,21 @@ namespace unilang
 						boost::get<ast::primary_expr>(x._operand.var).var.type()==typeid(ast::identifier))
 					{
 						ast::expression rightEx;
-						if(L->getType()->isIntegerTy())
+						if(pVal->getType()->isIntegerTy() || pVal->getType()->isFloatingPointTy())
 						{
-							rightEx._first = ast::operand(ast::primary_expr(size_t(1)));
-						}
-						else if(L->getType()->isFloatingPointTy())
-						{
-							rightEx._first = ast::operand(ast::primary_expr(long double(1.0)));
+							// create the one as primary expression
+							ast::expression ex;
+							ex._first = ast::operand(ast::primary_expr(size_t(1)));
+							// cast it to the type needed
+							ast::variable_definition varDef;
+							varDef._declaration._type._identifier = llvmTypeToUnilangTypeName(pVal->getType());
+							varDef._declaration._type._bHasMutableQualifier = false;
+							varDef._lParameterExpressions.push_back(ex);
+							rightEx._first = ast::operand(varDef);
 						}
 						else
 						{
-							return ErrorValue("Operator '--' is not available for value of type '"+getLLVMTypeName(L->getType())+ "' !", EErrorLevel::Fatal);
+							return ErrorValue("Operator '--' is not available for value of type '"+getLLVMTypeName(pVal->getType())+ "' !", EErrorLevel::Fatal);
 						}
 
 						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._operand.var).var));
@@ -146,17 +155,17 @@ namespace unilang
 				}
 			case operators::EOperators::plus:
 				{
-					return L; // + does not change anything
+					return pVal; // + does not change anything
 				}
 			case operators::EOperators::stringify:
 				{
 					//throw std::runtime_error("Not implemented!");
 
 					// FIXME: char conversion only for last digit!
-					if(L->getType()->isDoubleTy())
+					if(pVal->getType()->isDoubleTy())
 					{
 						// convert to int
-						llvm::Value *pUi = getBuilder()->CreateFPToUI(L, llvm::IntegerType::get(getContext(), 8), "FpToUiTmp");
+						llvm::Value *pUi = getBuilder()->CreateFPToUI(pVal, llvm::IntegerType::get(getContext(), 8), "FpToUiTmp");
 						if(!pUi)
 						{
 							return ErrorValue("CreateFPToUI returned invalid value!", EErrorLevel::Internal);
@@ -170,10 +179,10 @@ namespace unilang
 						// ascii
 						return getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
-					else if(L->getType()->isIntegerTy())
+					else if(pVal->getType()->isIntegerTy())
 					{
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = getBuilder()->CreateURem(L, (*this)(uint64_t(10)), "URemTmp");
+						llvm::Value *pPosLastDigit = getBuilder()->CreateURem(pVal, (*this)(uint64_t(10)), "URemTmp");
 						if(!pPosLastDigit)
 						{
 							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
@@ -183,13 +192,21 @@ namespace unilang
 					}
 					else
 					{
-						return ErrorValue("String conversion for type '"+getLLVMTypeName(L->getType())+"' is not implemented!", EErrorLevel::Fatal);
+						return ErrorValue("String conversion for type '"+getLLVMTypeName(pVal->getType())+"' is not implemented!", EErrorLevel::Fatal);
 					}
 					/*return getBuilder()->CreateGlobalString(L, "stringifytmp");*/
 				}
 			default:
 				{
-					return ErrorValue("Unknown operation!", EErrorLevel::Fatal);
+					std::stringstream sstr;
+					sstr << 
+#ifdef TOKEN_ID
+					x._operator
+#else
+					static_cast<operators::EOperators>(x._operator)
+#endif
+					;
+					return ErrorValue("Unknown operation '"+sstr.str()+"'!", EErrorLevel::Fatal);
 				}
 			}
 		}

@@ -1,5 +1,7 @@
 #include "exp_code_gen.hpp"
 
+#include "../../ast/identifier_ast.hpp"
+
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)

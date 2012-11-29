@@ -2,6 +2,7 @@
 
 #include "expression_grammar.hpp"
 
+#include "../../ast/statement_ast.hpp"
 #include "../../ast/fusion_adapt/statement_ast.hpp"
 
 #include "../../lexer/lexer.hpp"

@@ -1,6 +1,10 @@
 #include "code_generator.hpp"
 
+#include "../ast/ast.hpp"
+
 #include "../log/log.hpp"
+
+#include <stdio.h>
 
 namespace unilang
 { 

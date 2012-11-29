@@ -10,6 +10,17 @@
 
 namespace unilang 
 { 
+	// forward declarations
+	namespace ast
+	{
+		struct statement_list;
+		struct statement;
+		struct expression;
+		struct if_statement;
+		//struct while_statement;
+		//struct return_statement;
+	}
+
 	//-----------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
 	//-----------------------------------------------------------------------------

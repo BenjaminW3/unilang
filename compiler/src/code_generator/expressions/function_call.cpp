@@ -1,5 +1,9 @@
 #include "exp_code_gen.hpp"
 
+#include "../types.hpp"
+
+#include "../../ast/function_ast.hpp"
+
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
@@ -14,14 +18,11 @@
 #endif
 
 #include <llvm/Module.h>
-
 #include <llvm/IRBuilder.h>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
 #endif
-
-#include "../types.hpp"
 
 namespace unilang 
 { 

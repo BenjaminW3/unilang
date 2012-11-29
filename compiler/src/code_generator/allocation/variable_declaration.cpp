@@ -1,12 +1,12 @@
 #include "alloc_code_gen.hpp"
 
-#include "../../log/log.hpp"
-
 #include "../types.hpp"
+#include "../../ast/expression_ast.hpp"
+
+#include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-//#pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 #pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
@@ -41,7 +41,7 @@ namespace unilang
 			// redeclaration?
 			if(bHasName)
 			{
-				VarData const * const existantVar = getVarFromName(sName);
+				VarData const * const existantVar	(getVarFromName(sName));
 				if(existantVar)
 				{
 					return ErrorAllocaInst("Variable with the name '"+sName+"' has already been declared with type '"+getLLVMTypeName(existantVar->getAllocaInst()->getAllocatedType())+"'.");
@@ -54,14 +54,19 @@ namespace unilang
 				return ErrorAllocaInst("Variable with the name '"+sName+"' is shadowing the keyword with same identifier.");
 			}
 
-			llvm::Function * TheFunction = getBuilder()->GetInsertBlock()->getParent();
+			llvm::Function * TheFunction	(getBuilder()->GetInsertBlock()->getParent());
 			if(!TheFunction)
 			{
 				return ErrorAllocaInst("Unable to get the allocation insert point function for variable '"+sName+"'.");
 			}
 
 			// allocate in function head
-			llvm::AllocaInst * Alloca = createEntryBlockAlloca(TheFunction, getTypeByName(x._type._identifier._name), sName);
+			llvm::Type * const pType	(getTypeByName(x._type._identifier._name));
+			if(!pType)
+			{
+				return ErrorAllocaInst("Unable to get type of variable '"+sName+"'.");
+			}
+			llvm::AllocaInst * Alloca	(createEntryBlockAlloca(TheFunction, pType, sName));
 			if(!Alloca)
 			{
 				return ErrorAllocaInst("Unable to allocate variable '"+sName+"'.");

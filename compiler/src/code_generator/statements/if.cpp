@@ -1,5 +1,7 @@
 #include "statement_code_gen.hpp"
 
+#include "../../ast/statement_ast.hpp"
+
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)

@@ -1,5 +1,6 @@
 #include "identifier_grammar.hpp"
 
+#include "../../ast/identifier_ast.hpp"
 #include "../../ast/fusion_adapt/identifier_ast.hpp"
 
 #include "../../lexer/lexer.hpp"

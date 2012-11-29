@@ -1,10 +1,11 @@
 #include "exp_code_gen.hpp"
 
+#include "../types.hpp"
+
+#include "../../ast/expression_ast.hpp"
 #include "../../ast/operators_def.hpp"
 
 #include "../../log/log.hpp"
-
-#include "../types.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -18,7 +19,6 @@
 #endif
 
 #include <llvm/IRBuilder.h>
-
 #include <llvm/Type.h>
 
 #if defined(_MSC_VER)

@@ -1,10 +1,11 @@
 #include "exp_code_gen.hpp"
 
+#include "../types.hpp"
+
+#include "../../ast/expression_ast.hpp"
 #include "../../ast/operators_def.hpp"
 
 #include "../../log/log.hpp"
-
-#include "../types.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -18,7 +19,6 @@
 #endif
 
 #include <llvm/IRBuilder.h>
-
 #include <llvm/Type.h>
 
 #if defined(_MSC_VER)
@@ -183,13 +183,28 @@ namespace unilang
 					default: 
 						{
 							std::stringstream sstr;
-							sstr << "Operation '" << op << "unknown for values of type";
-							return ErrorValue(sstr.str()+getLLVMTypeName(L->getType()), EErrorLevel::Fatal);
+							sstr << "Operation '" << op;
+							return ErrorValue(sstr.str()+"' unknown for values of type '"+getLLVMTypeName(L->getType())+"'.", EErrorLevel::Fatal);
 						}
 					}
 				}
 				else if (L->getType()->isIntegerTy())
 				{
+					if (L->getType()->isIntegerTy() && L->getType()->getPrimitiveSizeInBits()==1)
+					{
+						switch (op)
+						{
+						case operators::EOperators::logical_and:
+							{
+								return getBuilder()->CreateAnd(L, R, "and");
+							}
+						case operators::EOperators::logical_or:
+							{
+								return getBuilder()->CreateOr(L, R, "or");
+							}
+						}
+					}
+
 					switch (op)
 					{
 					case operators::EOperators::plus:
@@ -299,8 +314,8 @@ namespace unilang
 					default: 
 						{
 							std::stringstream sstr;
-							sstr << "Operation '" << op << "unknown for values of type";
-							return ErrorValue(sstr.str()+getLLVMTypeName(L->getType()), EErrorLevel::Fatal);
+							sstr << "Operation '" << op;
+							return ErrorValue(sstr.str()+"' unknown for values of type '"+getLLVMTypeName(L->getType())+"'.", EErrorLevel::Fatal);
 						}
 					}
 				}

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "../../ast/ast.hpp"
+//#include "../../ast/ast.hpp"
 
 //#include <boost/variant/apply_visitor.hpp>
+
 
 // forward declarations
 namespace llvm
@@ -23,6 +24,13 @@ namespace llvm
 
 namespace unilang 
 { 
+	// forward declarations
+	namespace ast
+	{
+		struct variable_declaration;
+		struct variable_definition;
+	}
+
 	namespace code_generator
 	{
 		// forward declarations

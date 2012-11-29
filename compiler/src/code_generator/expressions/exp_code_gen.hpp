@@ -6,10 +6,27 @@
 #include "../symbols/symbol_code_gen.hpp"
 #include "../allocation/alloc_code_gen.hpp"
 
+#include "../../ast/operators.hpp"
+
 #include <boost/noncopyable.hpp>
+#include <list>
 
 namespace unilang 
 { 
+	// forward declarations
+	namespace ast
+	{
+		struct primary_expr;
+		struct identifier;
+		struct unary_expr;
+		struct function_call;
+		struct expression;
+		//struct operand;
+		struct assignment;
+		struct identifier;
+		struct operation;
+	}
+
 	//-----------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
 	//-----------------------------------------------------------------------------

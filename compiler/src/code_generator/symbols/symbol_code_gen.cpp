@@ -32,12 +32,11 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Type* symbol_code_generator::getTypeByName(std::string sTypeName)
 		{
-			// FIXME: hard coded types
 			if(sTypeName=="f64")
 			{
 				return llvm::Type::getDoubleTy(getContext());
 			}
-			if(sTypeName=="f32")
+			else if(sTypeName=="f32")
 			{
 				return llvm::Type::getFloatTy(getContext());
 			}
@@ -48,6 +47,10 @@ namespace unilang
 			else if(sTypeName=="i32")
 			{
 				return llvm::Type::getIntNTy(getContext(),32);
+			}
+			else if(sTypeName=="i1")
+			{
+				return llvm::Type::getIntNTy(getContext(),1);
 			}
 			else
 			{

@@ -1,8 +1,9 @@
 #include "../code_generator.hpp"
 
+#include "../../ast/function_ast.hpp"
 #include "../../log/log.hpp"
 
-#include <llvm/Analysis/Verifier.h>
+#include "../types.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -15,6 +16,7 @@
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
+#include <llvm/Analysis/Verifier.h>
 #include <llvm/IRBuilder.h>
 #include <llvm/Function.h>
 #include <llvm/Type.h>
@@ -22,8 +24,6 @@
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
-
-#include "../types.hpp"
 
 namespace unilang 
 { 

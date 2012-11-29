@@ -33,6 +33,8 @@ namespace unilang
 		std::string cTypeToUnilangTypeName<int64_t>();
 		template<>
 		std::string cTypeToUnilangTypeName<int32_t>();
+		template<>
+		std::string cTypeToUnilangTypeName<bool>();
 		
 		//-----------------------------------------------------------------------------
 		//! \return The llvm type converted to a string.

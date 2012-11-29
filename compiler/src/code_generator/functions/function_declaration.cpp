@@ -1,5 +1,10 @@
 #include "../code_generator.hpp"
 
+#include "../types.hpp"
+
+#include "../../ast/function_ast.hpp"
+#include "../../ast/expression_ast.hpp"
+
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
@@ -21,8 +26,6 @@
 #pragma warning(pop)
 #endif
 
-#include "../types.hpp"
-
 namespace unilang 
 { 
 	namespace code_generator
@@ -39,6 +42,11 @@ namespace unilang
 			std::vector<llvm::Type*> vpParameterTypes;
 			for( ast::type_declaration const & typeDecl : x._parameter_types)
 			{
+				llvm::Type * const pType	(getTypeByName(typeDecl._identifier._name));
+				if(!pType)
+				{
+					return ErrorFunction("Declared function parameter type '"+typeDecl._identifier._name+"' is not valid.");
+				}
 				//FIXME: mutable not saved.
 				vpParameterTypes.push_back(getTypeByName(typeDecl._identifier._name));
 			}
@@ -53,6 +61,10 @@ namespace unilang
 			{
 				// FIXME: only one return value/type
 				pReturnType = getTypeByName((*x._return_types.begin())._identifier._name);
+			}
+			if(!pReturnType)
+			{
+				return ErrorFunction("Declared function return type '"+(*x._return_types.begin())._identifier._name+"' is not valid.");
 			}
 			
 #ifdef IMPLEMENT_VAR_ARG
@@ -87,6 +99,12 @@ namespace unilang
 				for (llvm::Function::arg_iterator AI = F->arg_begin(); AI != F->arg_end();	++AI, ++uiArg)
 				{
 					llvm::Type * pDefType = getTypeByName(x._parameter_types[uiArg]._identifier._name);
+					if(!pDefType)
+					{
+						std::stringstream sstr;
+						sstr << "Definition of function "+mangledName/*x._identifier._name*/+"' uses undefined type '" << x._parameter_types[uiArg]._identifier._name << "' as "<< uiArg+1;
+						return ErrorFunction(sstr.str()+" parameter type. ");
+					}
 					//FIXME: mutable not checked.
 					if(AI->getType()!=pDefType)
 					{

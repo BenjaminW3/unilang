@@ -1,5 +1,7 @@
 #include "exp_code_gen.hpp"
 
+#include "../../ast/expression_ast.hpp"
+
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
@@ -58,6 +60,10 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 			llvm::AllocaInst * pDeclAlloca ((*dynamic_cast<allocation_code_generator*>(this))(x));
+			if(!pDeclAlloca)
+			{
+				return ErrorValue("Unable to load variable definition value from invalid allocation.");
+			}
 
 			llvm::Value * pRetVal (getBuilder()->CreateLoad(pDeclAlloca, "loadDefVal"));
 			if(!pRetVal)

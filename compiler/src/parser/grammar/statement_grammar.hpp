@@ -1,7 +1,5 @@
 ﻿#pragma once
 
-#include "../../ast/statement_ast.hpp"
-
 #include "../spirit.hpp"
 
 namespace unilang 
@@ -10,11 +8,21 @@ namespace unilang
 	template <typename BaseIterator, typename Iterator>
 	struct error_handler;
 
+	// forward declarations
 	namespace lexer
 	{
-		// forward declarations
 		template <typename BaseIterator>
 		class token_lexer;
+	}
+	// forward declarations
+	namespace ast
+	{
+		struct expression;
+		struct if_statement;
+		//struct while_statement;
+		//struct return_statement;
+		struct statement;
+		struct statement_list;
 	}
 
 	namespace parser

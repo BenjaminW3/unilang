@@ -1,12 +1,12 @@
 #include "alloc_code_gen.hpp"
 
 #include "../expressions/exp_code_gen.hpp"
+#include "../../ast/expression_ast.hpp"
 
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-//#pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4244)		// conversion from 'uint64_t' to 'const unsigned int', possible loss of data
 #pragma warning(disable: 4245)		// 'argument' : conversion from 'llvm::AttrListPtr::AttrIndex' to 'unsigned int'
@@ -17,7 +17,6 @@
 #endif
 
 #include <llvm/IRBuilder.h>
-
 #include <llvm/Type.h>
 
 #if defined(_MSC_VER)
@@ -44,6 +43,11 @@ namespace unilang
 			// TODO: hard coded types
 			std::string const sTypeName		(x._declaration._type._identifier._name);
 			llvm::Type * const pDeclType	(getTypeByName(sTypeName));
+			if(!pDeclType)
+			{
+				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
+				return ErrorAllocaInst("Unable to get type of variable '"+sVarName+"'.");
+			}
 
 			if(pDeclType->isIntegerTy())
 			{
@@ -56,6 +60,10 @@ namespace unilang
 					else if(sTypeName == "i32")
 					{
 						pInitVal = (*dynamic_cast<constants_code_generator*>(this))(int32_t(0));
+					}
+					else if(sTypeName == "i1")
+					{
+						pInitVal = (*dynamic_cast<constants_code_generator*>(this))(bool(false));
 					}
 					if (!pInitVal)
 					{

@@ -4,6 +4,7 @@
 #include "expression_grammar.hpp"
 #include "statement_grammar.hpp"
 
+#include "../../ast/function_ast.hpp"
 #include "../../ast/fusion_adapt/function_ast.hpp"
 
 #include "../../lexer/lexer.hpp"
