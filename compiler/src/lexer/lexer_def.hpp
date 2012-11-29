@@ -27,7 +27,7 @@ namespace unilang
 													_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", static_cast<size_t>(tokens::ETokenIDs::comment)),
 													_tok_identifier("[a-zA-Z_][a-zA-Z_0-9]*", static_cast<size_t>(tokens::ETokenIDs::identifier)),
 													//tok_string("[^\"]+", tokens::ETokenIDs::string),
-													_lit_ufloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
+													_lit_ufloat("[-\\+]?((([1-9][0-9]*)|(0?))\\.[0-9]+)([eE][-\\+]?[0-9]+)?", static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
 													//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
 													_lit_uint("[1-9][0-9]*|0", static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
 													//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
@@ -103,7 +103,7 @@ namespace unilang
 
 			this->self += _lit_ufloat;
 			this->self += _lit_uint;
-			this->self += _lit_boolean;
+			this->self += _lit_boolean;	// FIXME: returned value?
 
 			this->self += _tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
 		}
