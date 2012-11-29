@@ -3,7 +3,7 @@ Thumbs.db
 Desktop.ini
 ~not_implemented/
 ~misc/
-compiler/doc/html/
+doc/html/
 *.obj
 *.exe
 *.pdb
