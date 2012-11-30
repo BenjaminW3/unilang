@@ -71,12 +71,6 @@
     <None Include="..\..\code\pass_chained_assignment.u">
       <Filter>Resource Files</Filter>
     </None>
-    <None Include="..\..\code\pass_decrement.u">
-      <Filter>Resource Files</Filter>
-    </None>
-    <None Include="..\..\code\pass_increment.u">
-      <Filter>Resource Files</Filter>
-    </None>
     <None Include="..\..\code\pass_int_empty_initialization_list_const.u">
       <Filter>Resource Files</Filter>
     </None>
@@ -96,6 +90,51 @@
       <Filter>Resource Files</Filter>
     </None>
     <None Include="..\..\code\fail_variable_shadowing_variable_same_type.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_addition.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_bit_and.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_bit_or.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_bit_xor.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_division.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_multiplication.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_shift_left.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_shift_right.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_subtraction.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_decrement.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_increment.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_not.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_combined_assignment_mod.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_operator_compl.u">
+      <Filter>Resource Files</Filter>
+    </None>
+    <None Include="..\..\code\pass_boolean_type.u">
       <Filter>Resource Files</Filter>
     </None>
   </ItemGroup>

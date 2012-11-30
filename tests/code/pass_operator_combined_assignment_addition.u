@@ -1,0 +1,4 @@
+entrypoint: ~()->(iErrorCode:~i64{-15})
+{
+	iErrorCode += 30;
+}

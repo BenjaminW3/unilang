@@ -36,7 +36,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
@@ -179,14 +179,27 @@
     <None Include="..\..\code\fail_variable_shadowing_variable_different_type.u" />
     <None Include="..\..\code\fail_variable_shadowing_variable_same_type.u" />
     <None Include="..\..\code\fail_write_to_non_mutable_variable.u" />
+    <None Include="..\..\code\pass_boolean_type.u" />
     <None Include="..\..\code\pass_chained_assignment.u" />
-    <None Include="..\..\code\pass_decrement.u" />
-    <None Include="..\..\code\pass_increment.u" />
     <None Include="..\..\code\pass_int_empty_initialization_list_const.u" />
     <None Include="..\..\code\pass_int_empty_initialization_list_nonconst.u" />
     <None Include="..\..\code\pass_int_initialization_list_const.u" />
     <None Include="..\..\code\pass_int_initialization_list_nonconst.u" />
     <None Include="..\..\code\pass_missing_return_variable_name.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_addition.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_bit_and.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_bit_or.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_bit_xor.u" />
+    <None Include="..\..\code\pass_operator_compl.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_division.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_mod.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_multiplication.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_shift_left.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_shift_right.u" />
+    <None Include="..\..\code\pass_operator_combined_assignment_subtraction.u" />
+    <None Include="..\..\code\pass_operator_decrement.u" />
+    <None Include="..\..\code\pass_operator_increment.u" />
+    <None Include="..\..\code\pass_operator_not.u" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\compiler\projects\vs11\compiler.vcxproj">

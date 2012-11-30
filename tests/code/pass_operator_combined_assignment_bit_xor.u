@@ -1,0 +1,4 @@
+entrypoint: ~()->(iErrorCode:~i64{8+64+128+1})
+{
+	iErrorCode #= i64{64+128+1};
+}
