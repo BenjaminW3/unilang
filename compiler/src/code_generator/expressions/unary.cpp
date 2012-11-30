@@ -63,13 +63,12 @@ namespace unilang
 				}
 			case operators::EOperators::compl:
 				{
-					/*llvm::Value* Minus1 = (*this)(int(-1));
-					if(!Minus1)
+					llvm::Value * pValAllOnes = llvm::Constant::getAllOnesValue(pVal->getType());
+					if(!pValAllOnes)
 					{
-						return ErrorValue("Unable to create -1.");
+						return ErrorValue("Unable to generate value with all bits set inside of complement!", EErrorLevel::Internal);
 					}
-					return getBuilder()->CreateXor(L, Minus1, "compl.xor");*/
-					return getBuilder()->CreateNeg(pVal, "compl");
+					return getBuilder()->CreateXor(pVal, pValAllOnes, "compl.xor");
 				}
 			case operators::EOperators::plus_plus:
 				{
