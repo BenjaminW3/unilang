@@ -38,6 +38,7 @@ namespace unilang
 			("EXP",     "(e|E)(\\+|-)?\\d+")
 			("FLOAT",    "-?(((\\d+)|(\\d*\\.\\d+)|(\\d+\\.\\d*))({EXP}|{SUFFIX})?)")
 			("SYMBOL",  "[a-zA-Z_?@](\\w|\\?|@)*")
+			hex_value("0[xX][0-9a-fA-F]+")
 												*/
 		{
 			lex::_pass_type _pass;
@@ -94,16 +95,12 @@ namespace unilang
 			//add_("\\]",		tokens::ETokenIDs::closing_bracket);
 			add_(",",		tokens::ETokenIDs::comma);
 			add_(";",		tokens::ETokenIDs::semicolon);
-			add_("~",		tokens::ETokenIDs::tilde);
+			//add_("~",		tokens::ETokenIDs::tilde);
 			add_("\\?",		tokens::ETokenIDs::question_mark);
-			
-			/*this->self.add(_lit_ufloat);
-			this->self.add(_lit_uint);
-			this->self.add(_lit_boolean);*/
 
 			this->self += _lit_ufloat;
 			this->self += _lit_uint;
-			this->self += _lit_boolean;	// FIXME: returned value?
+			this->self += _lit_boolean;
 
 			this->self += _tok_identifier;	// After adding symbols and keywords, so that identifiers do not use keywords
 		}
