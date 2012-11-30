@@ -95,7 +95,7 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 
-			std::string const sTripleStr = "i686-unknown-win32";//llvm::sys::getDefaultTargetTriple();
+			std::string const sTripleStr = llvm::sys::getDefaultTargetTriple(); // "i686-unknown-win32"
 			std::cout << "Using target triple: '" << sTripleStr << "'" << std::endl;
 
 			// Or just call llvm::InitializeAllTargetInfos() and llvm::InitializeAllTargets() for all targets enabled by your LLVM build.
