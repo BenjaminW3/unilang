@@ -98,13 +98,23 @@ namespace unilang
 					// at this point both types are at least integers of unknown precision
 					if(pVal->getType() != pDestinationType)
 					{
+						llvm::Type * const pInitIntegerType (pVal->getType());
+
 						// could use getScalarSizeInBits() that returns bit size for scalars directly and element bit size for vector types
-						// we could use CreateSExtOrTrunc instead but we want to generate extra downcast warnings.
-						pVal = getBuilder()->CreateSExtOrTrunc(pVal, (llvm::IntegerType*) pDestinationType, "IntCast");
+						if(pVal->getType()->getScalarSizeInBits()==1) // boolean is unsigned
+						{
+							// We cannot have a truncation here because we are casting from bool to int
+							pVal = getBuilder()->CreateZExt(pVal, (llvm::IntegerType*) pDestinationType, "cast.bool.int");
+						}
+						else
+						{
+							pVal = getBuilder()->CreateSExtOrTrunc(pVal, (llvm::IntegerType*) pDestinationType, "cast.int.int");
+						}
+
 						if(!pVal)
 						{
-							// TODO: different error message if pVal->getType!=pInitType
-							return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
+							std::string const strIntermediateCast ((pInitType != pInitIntegerType) ? (" during intermediate cast from '"+getLLVMTypeName(pInitIntegerType)+"' to type '"+getLLVMTypeName(pInitType))+"'" : "");
+							return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'"+strIntermediateCast+".", EErrorLevel::Internal);
 						}
 					}
 				}
@@ -115,7 +125,15 @@ namespace unilang
 						// convert if it is int
 						if(pVal->getType()->isIntegerTy())
 						{	
-							pVal = getBuilder()->CreateSIToFP(pVal, pDestinationType, "SItoFP");
+							if(pVal->getType()->getScalarSizeInBits()==1) // boolean is unsigned
+							{
+								pVal = getBuilder()->CreateUIToFP(pVal, pDestinationType, "SItoFP");
+							}
+							else
+							{
+								pVal = getBuilder()->CreateSIToFP(pVal, pDestinationType, "SItoFP");
+							}
+
 							if(!pVal)
 							{
 								return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
@@ -132,13 +150,14 @@ namespace unilang
 					// at this point both types are at least integers of unknown precision
 					if(pVal->getType() != pDestinationType)
 					{
+						llvm::Type * const pInitIntegerType (pVal->getType());
 						// could use getScalarSizeInBits() that returns bit size for scalars directly and element bit size for vector types
 						// we could use CreateSExtOrTrunc instead but we want to generate extra downcast warnings.
 						pVal = getBuilder()->CreateFPCast(pVal, pDestinationType, "FloatCast");
 						if(!pVal)
 						{
-							// TODO: different error message if pVal->getType!=pInitType
-							return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
+							std::string const strIntermediateCast ((pInitType != pInitIntegerType) ? (" during intermediate cast from '"+getLLVMTypeName(pInitIntegerType)+"' to type '"+getLLVMTypeName(pInitType))+"'" : "");
+							return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'"+strIntermediateCast+".", EErrorLevel::Internal);
 						}
 					}
 				}

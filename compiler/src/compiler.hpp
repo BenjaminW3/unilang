@@ -25,6 +25,12 @@
 //! Unilang defines a few fundamental types. There is only the differentation between floating point and integer types of different precision.
 //! Integer types implemented are i64, i32 and i1 commonly known as boolean type.
 //! Floating point types supported are f64 and f32.
+//!
+//! There is no implicit type conversion. Each conversion has to be made explicitly. 
+//! Numeric types can be converted into each other but be aware of the precision loss while casting between floating point numbers and the risc of truncation when casting between integers.
+//! Integer upcasts from all integer types with more then one bit are always done by using sign extension. Bools are always unsigned so that true == 1 and false == 0.
+//! Integer downcasts are done by trunction so there is no implicit mapping from integer values bigger then one to true in the case of a boolean cast!
+//! E.g. <tt>bBool:i1{12};</tt> will evaluate to <tt>false</tt>!
 //! 
 //! \subsection lang3 Variables
 //! All data Objects are zero initialised on creation.
