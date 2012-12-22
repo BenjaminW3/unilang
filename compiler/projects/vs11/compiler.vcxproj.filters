@@ -335,9 +335,6 @@
     <ClInclude Include="..\..\src\code_generator\allocation\alloc_code_gen.hpp">
       <Filter>Header Files\code_generator\allocation</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\src\code_generator\llvm\llvm_code_gen.hpp">
-      <Filter>Header Files\code_generator\llvm</Filter>
-    </ClInclude>
     <ClInclude Include="..\..\src\code_generator\symbols\symbol_code_gen.hpp">
       <Filter>Header Files\code_generator\symbols</Filter>
     </ClInclude>
@@ -352,6 +349,9 @@
     </ClInclude>
     <ClInclude Include="..\..\src\code_generator\constants\constants_code_gen.hpp">
       <Filter>Header Files\code_generator\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\llvm\llvm_code_gen.hpp">
+      <Filter>Header Files\code_generator\llvm</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

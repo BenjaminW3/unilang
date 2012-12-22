@@ -243,6 +243,7 @@
     <ClInclude Include="..\..\src\code_generator\constants\constants_code_gen.hpp" />
     <ClInclude Include="..\..\src\code_generator\errors.hpp" />
     <ClInclude Include="..\..\src\code_generator\expressions\exp_code_gen.hpp" />
+    <ClInclude Include="..\..\src\code_generator\llvm\llvm_code_gen.hpp" />
     <ClInclude Include="..\..\src\code_generator\statements\statement_code_gen.hpp" />
     <ClInclude Include="..\..\src\code_generator\symbols\symbols.hpp" />
     <ClInclude Include="..\..\src\code_generator\symbols\symbol_code_gen.hpp" />

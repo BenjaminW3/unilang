@@ -9,6 +9,9 @@
 
 struct Test
 {
+	//-----------------------------------------------------------------------------
+	//! Constructor.
+	//-----------------------------------------------------------------------------
 	Test(std::string sTestFile, bool bSucceeds, int64_t iReturnValue)
 		:_sTestFile(sTestFile),
 		_bSucceeds(bSucceeds),

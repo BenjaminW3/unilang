@@ -176,11 +176,7 @@ namespace unilang
 			// Simplify the control flow graph (deleting unreachable blocks, etc).
 			OurPM.add(llvm::createCFGSimplificationPass());
 
-			OurPM.doInitialization();
-
 			OurPM.run(*module.get());
-
-			OurPM.doFinalization();
 		}
 		//-----------------------------------------------------------------------------
 		//
