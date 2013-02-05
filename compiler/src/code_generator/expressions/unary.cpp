@@ -37,7 +37,7 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value *pVal = x._operand.apply_visitor(*this);
+			llvm::Value * const pVal (x._operand.apply_visitor(*this));
 			if(!pVal)
 			{
 				std::stringstream sstr;

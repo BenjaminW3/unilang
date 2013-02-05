@@ -41,7 +41,7 @@ namespace unilang
 
 			// argument types
 			std::vector<llvm::Value*> ArgsV;
-			for(ast::expression const & ex: x._lArgumentExpressions)
+			for(ast::expression const & ex : x._lArgumentExpressions)
 			{
 				ArgsV.push_back((*this)(ex));
 				if(!ArgsV.back())
@@ -59,8 +59,8 @@ namespace unilang
 			// Look up the mangled name in the global module table.
 			std::string const mangledName (funcDecl.build_mangled_name());
 
-			llvm::Function *CalleeF = getModule()->getFunction(mangledName);
-			if (!CalleeF)
+			llvm::Function * const pCalledFunction (getModule()->getFunction(mangledName));
+			if (!pCalledFunction)
 			{
 				return ErrorValue("Unknown function '"+mangledName+"' referenced.");
 			}
@@ -86,7 +86,7 @@ namespace unilang
 				++itArg;
 			}*/
   
-			return getBuilder()->CreateCall(CalleeF, ArgsV, "call");
+			return getBuilder()->CreateCall(pCalledFunction, ArgsV, "call");
 		}
 		/*
 		if (printf == null) {

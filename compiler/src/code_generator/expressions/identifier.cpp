@@ -33,7 +33,7 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			VarData const * const V = getVarFromName(x._name);
+			VarData const * const V (getVarFromName(x._name));
 			if(!getVarFromName(x._name))
 			{
 				return ErrorValue("Undeclared variable name: '"+x._name+"' !");

@@ -63,22 +63,22 @@ namespace unilang
 			}
 
 			// Create a new basic block to start insertion into.
-			llvm::BasicBlock *BB = llvm::BasicBlock::Create(getContext(), "entry", TheFunction);
+			llvm::BasicBlock * const BB (llvm::BasicBlock::Create(getContext(), "entry", TheFunction));
 			getBuilder()->SetInsertPoint(BB);
 
 			// add the parameters
-			llvm::Function::arg_iterator itArgs = TheFunction->arg_begin();
-			for (size_t Idx = 0, e = x._parameter_declarations.size(); Idx != e; ++Idx, ++itArgs)
+			llvm::Function::arg_iterator itArgs (TheFunction->arg_begin());
+			for (size_t Idx (0), e = x._parameter_declarations.size(); Idx != e; ++Idx, ++itArgs)
 			{
 				// TODO: Think about order? l->r, r->l
-				llvm::AllocaInst * pDeclAlloc = (*static_cast<allocation_code_generator*>(this))(x._parameter_declarations[Idx]);
+				llvm::AllocaInst * const pDeclAlloc ((*static_cast<allocation_code_generator*>(this))(x._parameter_declarations[Idx]));
 				if (!pDeclAlloc)
 				{
-					const auto sVarName = x._parameter_declarations[Idx]._optionalIdentifier.is_initialized() ? " '"+x._parameter_declarations[Idx]._optionalIdentifier.get()._name+"'" : "";
+					const auto sVarName (x._parameter_declarations[Idx]._optionalIdentifier.is_initialized() ? " '"+x._parameter_declarations[Idx]._optionalIdentifier.get()._name+"'" : "");
 					return ErrorFunction("Unable to create parameter '"+ sVarName+"' for function '"+x._identifier._name+"'");
 				}
 
-				// store the parameters in the parameter variables
+				// store the arguments in the parameter variables
 				getBuilder()->CreateStore(itArgs, pDeclAlloc);
 			}
 
@@ -89,7 +89,7 @@ namespace unilang
 				vpRetAllocas.push_back((*static_cast<allocation_code_generator*>(this))(x._return_value_definitions[Idx]));
 				if(!vpRetAllocas.back())
 				{
-					const auto sVarName = x._return_value_definitions[Idx]._declaration._optionalIdentifier.is_initialized() ? " '"+x._return_value_definitions[Idx]._declaration._optionalIdentifier.get()._name+"'" : "";
+					const auto sVarName (x._return_value_definitions[Idx]._declaration._optionalIdentifier.is_initialized() ? " '"+x._return_value_definitions[Idx]._declaration._optionalIdentifier.get()._name+"'" : "");
 					return ErrorFunction("Unable to create return value '"+ sVarName+"' from function '"+x._identifier._name+"'");
 				}
 			}
@@ -107,7 +107,7 @@ namespace unilang
 			}
 			else if(vpRetAllocas.size() == 1)
 			{
-				llvm::Value *pRetVal = getBuilder()->CreateLoad(vpRetAllocas[0], "loadret");
+				llvm::Value * const pRetVal (getBuilder()->CreateLoad(vpRetAllocas[0], "loadret"));
 				if(!pRetVal)
 				{
 					return ErrorFunction("Unable to create load return from function '"+x._identifier._name+"'.");
@@ -219,8 +219,8 @@ namespace unilang
 					decl._return_types.push_back(td);
 				}
 
-				llvm::Function * TheFunction = getModule()->getFunction(name);
-				if (TheFunction)
+				llvm::Function * pExternFunction (getModule()->getFunction(name));
+				if (pExternFunction)
 				{
 					if (llvm::sys::DynamicLibrary::SearchForAddressOfSymbol(name) != fp)
 					{
@@ -229,8 +229,8 @@ namespace unilang
 				}
 				else
 				{
-					TheFunction = (*this)(decl);
-					if (TheFunction == 0)
+					pExternFunction = (*this)(decl);
+					if (pExternFunction == nullptr)
 					{
 						return ErrorFunction("Unable to build function declaration for extern function: '"+name+"'.");
 					}
@@ -238,7 +238,7 @@ namespace unilang
 					// Enter a fixed association into the dynamic linker table.
 					llvm::sys::DynamicLibrary::AddSymbol(name, fp);
 				}
-				return TheFunction;
+				return pExternFunction;
 			}
 			else
 			{

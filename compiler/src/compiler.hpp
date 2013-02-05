@@ -31,6 +31,7 @@
 //! Integer upcasts from all integer types with more then one bit are always done by using sign extension. Bools are always unsigned so that true == 1 and false == 0.
 //! Integer downcasts are done by trunction so there is no implicit mapping from integer values bigger then one to true in the case of a boolean cast!
 //! E.g. <tt>bBool:i1{12};</tt> will evaluate to <tt>false</tt>!
+//! Condition expressions must have boolean type. If you want C semantics you have to add "!= 0" explicitly.
 //! 
 //! \subsection lang3 Variables
 //! All data Objects are zero initialised on creation.
@@ -41,7 +42,7 @@
 //! To give a special value as construction parameter you can use the initialiser-list syntax. E.g.: <tt>my64BitInteger:i64{42};</tt> defines a constant integer.
 //! 
 //! \subsection lang4 Functions
-//! Functions can be defined like <tt>increment:(i:i64)->(ret:i64{++i});</tt>. This is an inline definition because we didnt even need a function body at all.
+//! Functions can be defined like <tt>increment:(i:i64)->(ret:i64{++i});</tt>. This is an inline definition because we did not even need a function body at all.
 //! We could also have written the function like: <tt>increment:(i:i64)->(ret:~i64){ret=i+1};</tt>
 //!
 //! \subsection lang5 Executable modules
