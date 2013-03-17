@@ -13,7 +13,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -36,14 +36,24 @@ namespace unilang
 			return "f32";
 		}
 		template<>
-		std::string cTypeToUnilangTypeName<int64_t>()
+		std::string cTypeToUnilangTypeName<int64_t>()	// __int64, long long, signed long long
 		{
 			return "i64";
 		}
 		template<>
-		std::string cTypeToUnilangTypeName<int32_t>()
+		std::string cTypeToUnilangTypeName<int32_t>()	// __int32, signed, signed int, int
 		{
 			return "i32";
+		}
+		template<>
+		std::string cTypeToUnilangTypeName<int16_t>()	// __int16, short, short int, signed short int
+		{
+			return "i16";
+		}
+		template<>
+		std::string cTypeToUnilangTypeName<char>()
+		{
+			return "i8";
 		}
 		template<>
 		std::string cTypeToUnilangTypeName<bool>()
@@ -54,7 +64,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		std::string getLLVMTypeName(llvm::Type * const pType)
+		std::string getLLVMTypeName(llvm::Type const * const pType)
 		{
 			std::string type_str;
 			llvm::raw_string_ostream rso(type_str);
@@ -64,7 +74,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		std::string llvmTypeToUnilangTypeName(llvm::Type * type)
+		std::string llvmTypeToUnilangTypeName(llvm::Type const * const type)
 		{
 			if(type->isDoubleTy())
 			{
@@ -74,15 +84,23 @@ namespace unilang
 			{
 				return "f32";
 			}
-			else if(type->isIntegerTy() && type->getScalarSizeInBits() == 32)
-			{
-				return "i32";
-			}
-			else if(type->isIntegerTy() && type->getScalarSizeInBits() == 64)
+			else if(type->isIntegerTy() && type->getPrimitiveSizeInBits() == 64)	// use getPrimitiveSizeInBits because LLVM is missing const for getScalarSizeInBits
 			{
 				return "i64";
 			}
-			else if(type->isIntegerTy() && type->getScalarSizeInBits() == 1)
+			else if(type->isIntegerTy() && type->getPrimitiveSizeInBits() == 32)
+			{
+				return "i32";
+			}
+			else if(type->isIntegerTy() && type->getPrimitiveSizeInBits() == 16)
+			{
+				return "i16";
+			}
+			else if(type->isIntegerTy() && type->getPrimitiveSizeInBits() == 8)
+			{
+				return "i8";
+			}
+			else if(type->isIntegerTy() && type->getPrimitiveSizeInBits() == 1)
 			{
 				return "i1";
 			}

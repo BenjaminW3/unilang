@@ -1,5 +1,11 @@
 #include "symbol_code_gen.hpp"
 
+#include "symbols.hpp"
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+
+#include <algorithm>
+
 #include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
@@ -21,63 +27,74 @@
 #pragma warning(pop)
 #endif
 
-#include <algorithm>
-
 namespace unilang
 { 
 	namespace code_generator
 	{
+		//-------------------------------------------------------------------------
+		//! Constructor
+		//-------------------------------------------------------------------------
+		symbol_code_generator::symbol_code_generator(	code_generator_errors & codeGeneratorErrors,
+														llvm_code_generator & llvmCodeGenerator )
+			:m_codeGeneratorErrors	(codeGeneratorErrors),
+			m_llvmCodeGenerator		(llvmCodeGenerator)
+		{
+		}
+
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Type* symbol_code_generator::getTypeByName(std::string sTypeName)
+		llvm::Type* symbol_code_generator::getTypeByName(std::string sTypeName) const
 		{
 			if(sTypeName=="f64")
 			{
-				return llvm::Type::getDoubleTy(getContext());
+				return llvm::Type::getDoubleTy(m_llvmCodeGenerator.getContext());
 			}
 			else if(sTypeName=="f32")
 			{
-				return llvm::Type::getFloatTy(getContext());
+				return llvm::Type::getFloatTy(m_llvmCodeGenerator.getContext());
 			}
 			else if(sTypeName=="i64")
 			{
-				return llvm::Type::getIntNTy(getContext(),64);
+				return llvm::Type::getIntNTy(m_llvmCodeGenerator.getContext(),64);
 			}
 			else if(sTypeName=="i32")
 			{
-				return llvm::Type::getIntNTy(getContext(),32);
+				return llvm::Type::getIntNTy(m_llvmCodeGenerator.getContext(),32);
+			}
+			else if(sTypeName=="i16")
+			{
+				return llvm::Type::getIntNTy(m_llvmCodeGenerator.getContext(),16);
+			}
+			else if(sTypeName=="i8")
+			{
+				return llvm::Type::getIntNTy(m_llvmCodeGenerator.getContext(),8);
 			}
 			else if(sTypeName=="i1")
 			{
-				return llvm::Type::getIntNTy(getContext(),1);
+				return llvm::Type::getIntNTy(m_llvmCodeGenerator.getContext(),1);
 			}
+			/*else if(sTypeName=="int")
+			{
+				// TODO: For now int is a hard coded 64bit integer. this has to be target architecture dependant.
+				return llvm::Type::getIntNTy(m_llvmCodeGenerator.getContext(),64);
+			}*/
 			else
 			{
-				return ErrorType("Use of unknown Type: '"+sTypeName+"'.");
+				return m_codeGeneratorErrors.ErrorType("Use of unknown Type: '"+sTypeName+"'.");
 			}
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		VarData const * const symbol_code_generator::getVarFromName( std::string const & name )
+		VarData const * const symbol_code_generator::getVarFromName( std::string const & name ) const
 		{
-			// local search first!
-			const auto itlocal = std::find_if(vLocalSymbolTable.begin(), vLocalSymbolTable.end(), 
+			const auto itlocal = std::find_if(vSymbolTable.begin(), vSymbolTable.end(), 
 				[&name](VarData const & var){ return (var.getIdentifier() == name); }
 				);
-			if(itlocal!=vLocalSymbolTable.end())
+			if(itlocal!=vSymbolTable.end())
 			{
 				return &(*itlocal);
-			}
-
-			// then global search
-			const auto itglobal = std::find_if(vGlobalSymbolTable.begin(), vGlobalSymbolTable.end(), 
-				[&name](VarData const & var){ return (var.getIdentifier() == name); }
-				);
-			if(itglobal!=vGlobalSymbolTable.end())
-			{
-				return &(*itglobal);
 			}
 			return nullptr;
 		}

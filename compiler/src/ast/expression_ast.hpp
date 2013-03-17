@@ -9,7 +9,7 @@
 #include <boost/optional.hpp>
 
 #include <ostream>
-#include <list>
+#include <vector>
 
 #ifdef TOKEN_ID
 #define OPERATOR_TYPE operators::EOperators
@@ -17,7 +17,7 @@
 #define OPERATOR_TYPE size_t
 #endif
 
-namespace unilang 
+namespace unilang
 {
 	namespace ast
 	{
@@ -34,6 +34,9 @@ namespace unilang
 																	boost::recursive_wrapper<expression>
 								>
 		{
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
 			primary_expr();
 			primary_expr(long double val);
 			primary_expr(uint64_t val);
@@ -58,16 +61,19 @@ namespace unilang
 							boost::spirit::extended_variant<	primary_expr,
 																boost::recursive_wrapper<unary_expr>,
 																boost::recursive_wrapper<function_call>,
-																boost::recursive_wrapper<variable_definition>,
-																boost::recursive_wrapper<assignment>
+																boost::recursive_wrapper<variable_definition>//,
+																//boost::recursive_wrapper<assignment>
 							>
 		{
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
 			operand();
 			operand(primary_expr const& val);
 			operand(unary_expr const& val);
 			operand(function_call const& val);
 			operand(variable_definition const& val);
-			operand(assignment const& val);
+			//operand(assignment const& val);
 			operand(operand const& rhs);
 
 			bool isPure() const override;
@@ -79,8 +85,8 @@ namespace unilang
 		//#########################################################################
 		struct unary_expr :	public ast_base
 		{
-			OPERATOR_TYPE _operator;
-			operand _operand;
+			OPERATOR_TYPE _uiOperatorID;
+			operand _opOperand;
 
 			bool isPure() const override;
 		};
@@ -91,8 +97,8 @@ namespace unilang
 		//#########################################################################
 		struct operation :	public ast_base
 		{
-			OPERATOR_TYPE _operator;
-			operand _operand;
+			OPERATOR_TYPE _uiOperatorID;
+			operand _opOperand;
 
 			bool isPure() const override;
 		};
@@ -103,20 +109,21 @@ namespace unilang
 		//#########################################################################
 		struct expression :	public ast_base
 		{
-			operand _first;
-			std::list<operation> _rest;
+			operand _firstOperand;
+			std::vector<operation> _vRestOperands;
 
 			bool isPure() const override;
 		};
 		std::ostream& operator<<(std::ostream& out, expression const& x);
+		std::ostream& operator<<(std::ostream& out, std::vector<expression> const& x);
 
 		//#########################################################################
 		//! A function call.
 		//#########################################################################
 		struct function_call :	public ast_base
 		{
-			identifier _identifier;
-			std::list<expression> _lArgumentExpressions;
+			namespaced_identifier _idfName;
+			std::vector<expression> _vArgumentExpressions;
 
 			bool isPure() const override;
 		};
@@ -127,14 +134,30 @@ namespace unilang
 		//#########################################################################
 		struct type_declaration :	public ast_base
 		{
+			//-------------------------------------------------------------------------
+			//! Constructor!
+			//-------------------------------------------------------------------------
 			type_declaration();
+			//-------------------------------------------------------------------------
+			//! Constructor!
+			//-------------------------------------------------------------------------
 			type_declaration(identifier const & type_identifier);
+			//-------------------------------------------------------------------------
+			//! Constructor!
+			//-------------------------------------------------------------------------
 			type_declaration(bool bHasMutableQualifier, identifier const & type_identifier);
 
-			bool _bHasMutableQualifier;
-			identifier _identifier;
-			
+			//-------------------------------------------------------------------------
+			//! 
+			//-------------------------------------------------------------------------
 			bool isPure() const override;
+			//-------------------------------------------------------------------------
+			//! \return Unique names for different types.
+			//-------------------------------------------------------------------------
+			std::string build_mangled_name() const;
+
+			bool _bHasMutableQualifier;
+			identifier _idfName;
 		};
 		std::ostream& operator<<(std::ostream& out, type_declaration const& x);
 
@@ -156,7 +179,7 @@ namespace unilang
 		struct variable_definition :	public ast_base
 		{
 			variable_declaration _declaration;
-			std::list<expression> _lParameterExpressions;
+			std::vector<expression> _vParameterExpressions;
 
 			bool isPure() const override;
 		};
@@ -167,11 +190,17 @@ namespace unilang
 		//#########################################################################
 		struct assignment :	public ast_base
 		{
+			//-------------------------------------------------------------------------
+			//! Constructor!
+			//-------------------------------------------------------------------------
 			assignment();
+			//-------------------------------------------------------------------------
+			//! Constructor!
+			//-------------------------------------------------------------------------
 			assignment(identifier lhs, OPERATOR_TYPE op, expression rhs);
 
 			identifier _lhs;
-			OPERATOR_TYPE _operator;
+			OPERATOR_TYPE _uiOperatorID;
 			expression _rhs;
 
 			bool isPure() const override;

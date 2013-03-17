@@ -1,0 +1,51 @@
+entrypoint: ~()->(iErrorCode:~i64{0})
+{
+	a:i64{20};
+	b:i64{10};
+	c:i64{15};
+	d:i64{5};
+
+	if( (a + b) * c / d = 90)	// ( 30 * 15 ) / 5
+	{
+		iErrorCode += 1;
+	}
+	if( ((a + b) * c) / d = 90)	// ( 30 * 15 ) / 5
+	{
+		iErrorCode += 2;
+	}
+	if( (a + b) * (c / d) = 90)	// (30) * (15/5)
+	{
+		iErrorCode += 4;
+	}
+	if( a + (b * c) / d = 50)	// 20 + (150/5)
+	{
+		iErrorCode += 8;
+	}
+
+	if(true && true || false && true = true)
+	{
+		iErrorCode += 16;
+	}
+
+	// De Morgan's law
+	x:i1{true};
+	y:i1{false};
+	if(!(x && y) = !x || !y)
+	{
+		iErrorCode += 32;
+	}
+	if(!(x || y) = !x && !y)
+	{
+		iErrorCode += 64;
+	}
+
+	if((5 > 6 || 4 > 3) && (7 > 8) = false)
+	{
+		iErrorCode += 128;
+	}
+
+	if( 5*-8 = -40)	// 5* (-8)
+	{
+		iErrorCode += 256;
+	}
+}

@@ -5,19 +5,17 @@
 namespace unilang
 { 
 	// forward declarations
-	template <typename BaseIterator, typename Iterator>
+	template <typename BaseIterator, typename LexerIterator>
 	struct error_handler;
-
-	// forward declarations
 	namespace lexer
 	{
 		template <typename BaseIterator>
 		class token_lexer;
 	}
-	// forward declarations
 	namespace ast
 	{
 		struct identifier;
+		struct namespaced_identifier;
 	}
 
 	namespace parser
@@ -27,16 +25,17 @@ namespace unilang
 		//#########################################################################
 		//!  The function grammar.
 		//#########################################################################
-		template <typename BaseIterator, typename Iterator>
-		struct identifier_grammar : boost::spirit::qi::grammar<Iterator, ast::identifier()>
+		template <typename BaseIterator, typename LexerIterator>
+		struct identifier_grammar : boost::spirit::qi::grammar<LexerIterator, ast::identifier()>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			identifier_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-								lexer::token_lexer<BaseIterator>& lexer);
+			identifier_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
+								lexer::token_lexer<BaseIterator> const & lexer);
 
-			qi::rule<Iterator, ast::identifier()> identifier;
+			qi::rule<LexerIterator, ast::identifier()> m_ruleIdentifier;
+			qi::rule<LexerIterator, ast::namespaced_identifier()> m_ruleNamespacedIdentifier;
 		};
 	}
 }

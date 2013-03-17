@@ -6,9 +6,10 @@
 
 typedef std::string::const_iterator base_iterator_type;
 template unilang::lexer::token_lexer<base_iterator_type>::token_lexer();
-template bool unilang::lexer::token_lexer<base_iterator_type>::add_(std::string const&, tokens::ETokenIDs);
-template unilang::lexer::token_lexer<base_iterator_type>::raw_token_spec unilang::lexer::token_lexer<base_iterator_type>::operator()(std::string const& kwd) const;
-template unilang::lexer::token_lexer<base_iterator_type>::token_spec unilang::lexer::token_lexer<base_iterator_type>::token(std::string const& kwd) const;
+template bool unilang::lexer::token_lexer<base_iterator_type>::internal_add(std::string const &, tokens::ETokenIDs, char const *, char const *);
+template unilang::lexer::token_lexer<base_iterator_type>::raw_token_spec unilang::lexer::token_lexer<base_iterator_type>::operator()(std::string const &) const;
+//template unilang::lexer::token_lexer<base_iterator_type>::token_spec unilang::lexer::token_lexer<base_iterator_type>::token(std::string const& kwd) const;
+template size_t unilang::lexer::token_lexer<base_iterator_type>::getCommentNestingLevel() const;
 
 /*
 #include <fstream>

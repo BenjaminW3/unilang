@@ -2,21 +2,18 @@
 
 #include "../spirit.hpp"
 
-#include <list>
+#include <vector>
 
 namespace unilang
 { 
 	// forward declarations
-	template <typename BaseIterator, typename Iterator>
+	template <typename BaseIterator, typename LexerIterator>
 	struct error_handler;
-
-	// forward declarations
 	namespace lexer
 	{
 		template <typename BaseIterator>
 		class token_lexer;
 	}
-	// forward declarations
 	namespace ast
 	{
 		struct type_declaration;
@@ -29,11 +26,11 @@ namespace unilang
 	namespace parser
 	{
 		// forward declarations
-		template <typename BaseIterator, typename Iterator>
+		template <typename BaseIterator, typename LexerIterator>
 		struct identifier_grammar;
-		template <typename BaseIterator, typename Iterator>
+		template <typename BaseIterator, typename LexerIterator>
 		struct expression_grammar;
-		template <typename BaseIterator, typename Iterator>
+		template <typename BaseIterator, typename LexerIterator>
 		struct statement_grammar;
 
 		namespace qi = boost::spirit::qi;
@@ -41,24 +38,24 @@ namespace unilang
 		//#########################################################################
 		//!  The function grammar.
 		//#########################################################################
-		template <typename BaseIterator, typename Iterator>
-		struct function_grammar : qi::grammar<Iterator, ast::function_definition() >
+		template <typename BaseIterator, typename LexerIterator>
+		struct function_grammar : qi::grammar<LexerIterator, ast::function_definition() >
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			function_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-								identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
-								expression_grammar<BaseIterator, Iterator> const & expressionGrammar, 
-								statement_grammar<BaseIterator, Iterator> const & statementGrammar, 
-								lexer::token_lexer<BaseIterator>& lexer);
+			function_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
+								identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+								expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
+								statement_grammar<BaseIterator, LexerIterator> const & statementGrammar, 
+								lexer::token_lexer<BaseIterator> const & lexer);
 			
-			qi::rule<Iterator, std::list<ast::type_declaration>()> parameterDeclarationList;
-			qi::rule<Iterator, std::list<ast::type_declaration>()> returnDeclarationList;
-			qi::rule<Iterator, ast::function_declaration()> functionDeclaration;
-			qi::rule<Iterator, std::list<ast::variable_declaration>()> parameterDefinitionList;
-			qi::rule<Iterator, std::list<ast::variable_definition>()> returnDefinitionList;
-			qi::rule<Iterator, ast::function_definition()> functionDefinition;
+			qi::rule<LexerIterator, std::vector<ast::type_declaration>()> m_ruleParameterDeclarationList;
+			qi::rule<LexerIterator, std::vector<ast::type_declaration>()> m_ruleReturnDeclarationList;
+			qi::rule<LexerIterator, ast::function_declaration()> m_ruleFunctionDeclaration;
+			qi::rule<LexerIterator, std::vector<ast::variable_declaration>()> m_ruleParameterDefinitionList;
+			qi::rule<LexerIterator, std::vector<ast::variable_definition>()> m_ruleReturnDefinitionList;
+			qi::rule<LexerIterator, ast::function_definition()> m_ruleFunctionDefinition;
 		};
 	}
 }

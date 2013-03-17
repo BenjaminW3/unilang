@@ -57,9 +57,14 @@
 #include "static_switch_lexer.hpp"
 #endif
 
+#include <boost/spirit/include/qi_uint.hpp>			// qi::uint_parser
+
 #if defined(_MSC_VER)
 #pragma warning(pop)
 #endif
+
+#include <map>
+#include <string>
 
 namespace boost
 { 
@@ -67,27 +72,50 @@ namespace boost
 	{ 
 		namespace traits
 		{
-			template <typename Iterator>
-			struct assign_to_attribute_from_iterators<uint64_t, Iterator>
+			//-----------------------------------------------------------------------------
+			//! Converts decimal string to unsigned integer.
+			//-----------------------------------------------------------------------------
+			template <typename BaseIterator>
+			struct assign_to_attribute_from_iterators<uint64_t, BaseIterator>
 			{
-				static void call(Iterator const& first, Iterator const& last, uint64_t& attr)
+				static void call(BaseIterator const & first, BaseIterator const & last, uint64_t & attr)
 				{
-					//boost::spirit::ulong_long_type uint_64_parser;
-					//uint_parser<uint64_t, 10, 1, -1> uint_64_parser;
-					//Iterator first_ = first;
-					//qi::parse(first_, last, boost::spirit::qi::ulong_long(), attr2);
-					
 					std::string s(first, last);
-					std::stringstream ss(s);
-					ss >> attr;
+
+					std::string sPrefix (s.substr(0,2));
+					if(sPrefix=="0x")
+					{
+						qi::uint_parser<uint64_t, 16, 1, -1> hex_parser;
+						boost::spirit::qi::parse(first, last, "0x" >> hex_parser, attr);
+					}
+					else if(sPrefix=="0q")
+					{
+						qi::uint_parser<uint64_t, 8, 1, -1> oct_parser;
+						boost::spirit::qi::parse(first, last, "0q" >> oct_parser, attr);
+					}
+					else if(sPrefix=="0b")
+					{
+						qi::uint_parser<uint64_t, 2, 1, -1> bin_parser;
+						boost::spirit::qi::parse(first, last, "0b" >> bin_parser, attr);
+					}
+					else
+					{
+						//uint64_t x;
+						//uint_parser<uint64_t, 10, 1, -1> uint64_parser;
+						//qi::parse(first_, last, uint64_parser, attr);
+					
+						//std::string s(first, last);
+						std::stringstream ss(s);
+						ss >> attr;
+					}
 				}
 			};
 		}
 	}
 }
 
-namespace unilang 
-{ 
+namespace unilang
+{
 	//-----------------------------------------------------------------------------
 	//! The namespace defining the lexer infrastructure.
 	//-----------------------------------------------------------------------------
@@ -101,7 +129,10 @@ namespace unilang
 		namespace detail
 		{
 			namespace lex = boost::spirit::lex;
-
+			
+			//#########################################################################
+			//! Static class holding the lexer and token types.
+			//#########################################################################
 			template <typename BaseIterator>
 			struct get_lexer_type
 			{
@@ -110,10 +141,11 @@ namespace unilang
 
 				// Using the position_token class as the token type to be returned from the lexer iterators allows to retain positional information
 				// as every token instance stores an iterator pair pointing to the matched input sequence.
+				// The third parameter says if token definitions can use the state
 #ifdef TOKEN_ID
-				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::false_, tokens::ETokenIDs > token_type;
+				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::true_, tokens::ETokenIDs > token_type;
 #else
-				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::false_ > token_type;
+				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::true_ > token_type;
 #endif
 
 #if defined LEXER_DYNAMIC_TABLES
@@ -150,13 +182,13 @@ namespace unilang
 			// get the type of any qi::raw_token(...) and qi::token(...) constructs
 			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(tokens::ETokenIDs) >::type raw_token_spec;
 
-			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(tokens::ETokenIDs) >::type token_spec;
+			//typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(tokens::ETokenIDs) >::type token_spec;
 
 			typedef std::map<std::string, tokens::ETokenIDs> keyword_map_type;
 #else
 			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(size_t) >::type raw_token_spec;
 
-			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(size_t) >::type token_spec;
+			//typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(size_t) >::type token_spec;
 
 			typedef std::map<std::string, size_t> keyword_map_type;
 #endif
@@ -171,38 +203,53 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Extract a raw_token(id) for the given registered keyword
 			//-------------------------------------------------------------------------
-			raw_token_spec operator()(std::string const& kwd) const;
+			raw_token_spec operator()(std::string const& keyword) const;
 			
 			//-------------------------------------------------------------------------
 			//! Extract a token(id) for the given registered keyword
 			//-------------------------------------------------------------------------
-			token_spec token(std::string const& kwd) const;
+			//token_spec token(std::string const& keyword) const;
+			
+			//-------------------------------------------------------------------------
+			//! \return The current comment nesting level.
+			//-------------------------------------------------------------------------
+			size_t getCommentNestingLevel() const;
 
 		private:
 			//-------------------------------------------------------------------------
 			//! Adds a keyword to the mapping table
 			//-------------------------------------------------------------------------
-			bool add_( std::string const& keyword, tokens::ETokenIDs id );
+			bool internal_add( std::string const& keyword, tokens::ETokenIDs id, char const * state = nullptr, char const * targetstate = nullptr );
 
 		public:
 #ifdef TOKEN_ID
-			lex::token_def<lex::omit, char, tokens::ETokenIDs> const _tok_whitespace;
+			lex::token_def<lex::omit, char, tokens::ETokenIDs> const m_tokWhitespace;
 			lex::token_def<lex::omit, char, tokens::ETokenIDs> const _tok_comment;
-			lex::token_def<std::string, char, tokens::ETokenIDs> const _tok_identifier;
-			lex::token_def<long double, char, tokens::ETokenIDs> const _lit_ufloat;
-			lex::token_def<uint64_t, char, tokens::ETokenIDs> const _lit_uint;
-			lex::token_def<bool, char, tokens::ETokenIDs> const _lit_boolean;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokIdentifier;
+			lex::token_def<long double, char, tokens::ETokenIDs> const m_tokLiteralUnsignedFloat;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralUnsignedInt;
+			lex::token_def<bool, char, tokens::ETokenIDs> const m_tokLiteralBoolean;
 #else
-			lex::token_def<lex::omit> const _tok_whitespace;
-			lex::token_def<lex::omit> const _tok_comment;
-			lex::token_def<std::string> const _tok_identifier;
-			lex::token_def<long double> const _lit_ufloat;
-			lex::token_def<uint64_t> const _lit_uint;
-			lex::token_def<bool> const _lit_boolean;
+			lex::token_def<lex::omit> const m_tokWhitespace;
+			lex::token_def<lex::omit> const m_tokCommentSingleLine;
+			lex::token_def<lex::omit> const m_tokCommentMultilineOpen;
+			lex::token_def<lex::omit> const m_tokCommentMultilineRecursiveOpen;
+			lex::token_def<lex::omit> const m_tokCommentSingleLineInMultiline;
+			lex::token_def<lex::omit> const m_tokCommentMultilineCharacters;
+			lex::token_def<lex::omit> const m_tokCommentMultilineClose;
+			lex::token_def<std::string> const m_tokIdentifier;
+			lex::token_def<uint64_t> const m_tokLiteralHexadecimal;
+			lex::token_def<uint64_t> const m_tokLiteralOctal;
+			lex::token_def<uint64_t> const m_tokLiteralBinary;
+			lex::token_def<long double> const m_tokLiteralUnsignedFloat;
+			lex::token_def<uint64_t> const m_tokLiteralUnsignedInt;
+			lex::token_def<bool> const m_tokLiteralBoolean;
 #endif
 
 		private:
 			keyword_map_type _keywords;
+
+			size_t _uiCommentNestingLevel;
 		};
 	}
 }

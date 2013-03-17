@@ -21,16 +21,33 @@ namespace unilang
 		{
 			switch (err)
 			{
-			case EErrorLevel::Standard: return "ERROR";
-			case EErrorLevel::Fatal: return "FATAL ERROR";
-			case EErrorLevel::Internal: return "INTERNAL ERROR";
-			default: return "UNKNOWN ERROR";
+			case EErrorLevel::Standard:	return "ERROR";
+			case EErrorLevel::Fatal:	return "FATAL ERROR";
+			case EErrorLevel::Internal:	return "INTERNAL ERROR";
+			default:					return "UNKNOWN ERROR";
 			}
+		}
+		
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		bool code_generator_errors::getErrorOccured() const
+		{
+			return m_bErrorOccured;
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Value *code_generator_errors::ErrorValue(std::string Str, EErrorLevel err )
+		llvm::AllocaInst *code_generator_errors::ErrorAllocaInst(std::string Str, EErrorLevel err ) const
+		{
+			m_bErrorOccured = true;
+			LOG(getErrorLevelString(err)+" ALLOCATION: "+Str);
+			return nullptr; 
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Value *code_generator_errors::ErrorValue(std::string Str, EErrorLevel err ) const
 		{
 			m_bErrorOccured = true;
 			LOG(getErrorLevelString(err)+" VALUE: "+Str); 
@@ -39,7 +56,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Type *code_generator_errors::ErrorType(std::string Str, EErrorLevel err )
+		llvm::Type *code_generator_errors::ErrorType(std::string Str, EErrorLevel err ) const
 		{
 			m_bErrorOccured = true;
 			LOG(getErrorLevelString(err)+" TYPE: "+Str);
@@ -48,7 +65,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Function *code_generator_errors::ErrorFunction(std::string Str, EErrorLevel err )
+		llvm::Function *code_generator_errors::ErrorFunction(std::string Str, EErrorLevel err ) const
 		{
 			m_bErrorOccured = true;
 			LOG(getErrorLevelString(err)+" FUNCTION: "+Str);
@@ -57,7 +74,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		bool code_generator_errors::ErrorBool(std::string Str, EErrorLevel err )
+		bool code_generator_errors::ErrorBool(std::string Str, EErrorLevel err ) const
 		{
 			m_bErrorOccured = true;
 			LOG(getErrorLevelString(err)+": "+Str);

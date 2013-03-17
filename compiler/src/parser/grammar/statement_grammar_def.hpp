@@ -9,7 +9,7 @@
 #include "../error_handler.hpp"
 #include "../annotation.hpp"
 
-namespace unilang 
+namespace unilang
 { 
 	namespace parser
 	{
@@ -18,112 +18,120 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//! Constructor.
 		//-----------------------------------------------------------------------------
-		template <typename BaseIterator, typename Iterator>
-		statement_grammar<BaseIterator,Iterator>::statement_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-																		//identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
-																		expression_grammar<BaseIterator, Iterator> const & expressionGrammar, 
-																		lexer::token_lexer<BaseIterator>& lexer)
-			: statement_grammar::base_type(statementList, "statement_grammar")
+		template <typename BaseIterator, typename LexerIterator>
+		statement_grammar<BaseIterator,LexerIterator>::statement_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
+																			//identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+																			expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
+																			lexer::token_lexer<BaseIterator> const & lexer)
+			: statement_grammar::base_type(m_ruleStatementList, "statement_grammar")
 		{
 			qi::_1_type _1;
 			qi::_3_type _3;
 			qi::_4_type _4;
 			qi::_val_type _val;
 
-			using qi::on_error;
-			using qi::on_success;
-			using qi::fail;
 			using boost::phoenix::function;
 
-			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
-			typedef function<unilang::annotation<Iterator> > annotation_function;
+			typedef function<unilang::error_handler<BaseIterator, LexerIterator> > error_handler_function;
+			typedef function<unilang::annotation<LexerIterator> > annotation_function;
 
-			expressionStatement =
+			// expression as a statement is needed for calling functions without storing a return value
+			m_ruleExpressionStatement =
 					expressionGrammar
 				>	lexer(";")
 				;
-			expressionStatement.name("expressionStatement");
+			m_ruleExpressionStatement.name("expressionStatement");
+			
+			m_ruleAssignmentStatement =
+					expressionGrammar.m_ruleAssignmentExpression
+				>	lexer(";")
+				;
+			m_ruleAssignmentStatement.name("assignmentStatement");
 
-			ifStatement =
+			m_ruleIfStatement =
 					lexer("if")
 				>	lexer("\\(")
 				>	expressionGrammar
 				>	lexer("\\)")
-				>	compoundStatement
+				>	m_ruleCompoundStatement
 				>	-(
 						lexer("else")
-					>	compoundStatement
+					>	m_ruleCompoundStatement
 					)
 				;
-			ifStatement.name("ifStatement");
+			m_ruleIfStatement.name("ifStatement");
 
-			/*whileStatement =
+			/*m_ruleWhileStatement =
 					lexer("while")
 				>   lexer("\\(")
 				>   expressionGrammar
 				>   lexer("\\)")
-				>	compoundStatement
+				>	m_ruleCompoundStatement
 				;
-			whileStatement.name("whileStatement");*/
+			m_ruleWhileStatement.name("whileStatement");*/
 
 
-			/*returnStatement =
+			/*m_ruleReturnStatement =
 					lexer("return") 
 				>	-expressionGrammar
 				>   lexer(";")
 				;
-			returnStatement.name("returnStatement");*/
+			m_ruleReturnStatement.name("returnStatement");*/
 
-			compoundStatement =
+			m_ruleCompoundStatement =
 					lexer("\\{")
-				>>	statementList
+				>>	m_ruleStatementList
 				>	lexer("\\}")
 				;
-			compoundStatement.name("compoundStatement");
+			m_ruleCompoundStatement.name("compoundStatement");
 
-			statement =
-					ifStatement
-			//	|   whileStatement
-			//	|   returnStatement
-				|  	expressionStatement
-				|	compoundStatement
+			m_ruleStatement =
+					m_ruleIfStatement
+			//	|   m_ruleWhileStatement
+			//	|   m_ruleReturnStatement
+				|	m_ruleAssignmentStatement
+				|  	m_ruleExpressionStatement
+				|	m_ruleCompoundStatement
 				;
-			statement.name("statement");
+			m_ruleStatement.name("statement");
 
 			// a statement list consists of statements
-			statementList =
-				*statement
+			m_ruleStatementList =
+				*m_ruleStatement
 				;
-			statementList.name("statementList");
+			m_ruleStatementList.name("statementList");
 #ifdef _DEBUG
 			// Debugging and error handling and reporting support.
 			BOOST_SPIRIT_DEBUG_NODES(
-				(expressionStatement)
-				(ifStatement)
-				//(whileStatement)
-				//(returnStatement)
-				(compoundStatement)
-				(statement)
-				(statementList)
+				(m_ruleExpressionStatement)
+				(m_ruleAssignmentStatement)
+				(m_ruleIfStatement)
+				//(m_ruleWhileStatement)
+				//(m_ruleReturnStatement)
+				(m_ruleCompoundStatement)
+				(m_ruleStatement)
+				(m_ruleStatementList)
 			);
 #endif
-			// Error handling: on error in statement_list, call error_handler.
-			on_error<fail>(expressionStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
-			on_error<fail>(ifStatement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
-			//on_error<fail>(whileStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
-			//on_error<fail>(returnStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
-			on_error<fail>(compoundStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
-			on_error<fail>(statement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
-			on_error<fail>(statementList,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			// Error handling: on error in statement_vector, call error_handler.
+			qi::on_error<qi::fail>(m_ruleExpressionStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleAssignmentStatement,	error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleIfStatement,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			//qi::on_error<qi::fail>(m_ruleWhileStatement,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			//qi::on_error<qi::fail>(m_ruleReturnStatement,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleCompoundStatement,		error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleStatement,				error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleStatementList,			error_handler_function(error_handler)( "Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			on_success(expressionStatement,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(ifStatement,				annotation_function(error_handler.iters)(_val, _1));
-			/*on_success(whileStatement,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(returnStatement,			annotation_function(error_handler.iters)(_val, _1));*/
-			on_success(compoundStatement,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(statement,				annotation_function(error_handler.iters)(_val, _1));
-			on_success(statementList,			annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(m_ruleExpressionStatement,		annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(m_ruleAssignmentStatement,		annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(m_ruleIfStatement,				annotation_function(error_handler.iters)(_val, _1));
+			/*qi::on_success(m_ruleWhileStatement,			annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(m_ruleReturnStatement,			annotation_function(error_handler.iters)(_val, _1));*/
+			qi::on_success(m_ruleCompoundStatement,			annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(m_ruleStatement,					annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(m_ruleStatementList,				annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

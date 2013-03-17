@@ -11,7 +11,7 @@ namespace llvm
 	class Type;
 }
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -34,17 +34,19 @@ namespace unilang
 		template<>
 		std::string cTypeToUnilangTypeName<int32_t>();
 		template<>
+		std::string cTypeToUnilangTypeName<char>();
+		template<>
 		std::string cTypeToUnilangTypeName<bool>();
 		
 		//-----------------------------------------------------------------------------
 		//! \return The llvm type converted to a string.
 		//-----------------------------------------------------------------------------
-		std::string getLLVMTypeName(llvm::Type * const pType);
+		std::string getLLVMTypeName(llvm::Type const * const pType);
 
 		//-----------------------------------------------------------------------------
 		//! \return The unilang type corresponding to the given llvm type.
 		//-----------------------------------------------------------------------------
-		std::string llvmTypeToUnilangTypeName(llvm::Type * type);
+		std::string llvmTypeToUnilangTypeName(llvm::Type const * const type);
 		
 		//-----------------------------------------------------------------------------
 		//!

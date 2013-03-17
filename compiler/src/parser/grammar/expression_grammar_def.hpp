@@ -12,7 +12,7 @@
 
 #include <boost/spirit/include/lex_plain_token.hpp>
 
-namespace unilang 
+namespace unilang
 {
 	namespace parser
 	{
@@ -21,11 +21,11 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//! Constructor.
 		//-----------------------------------------------------------------------------
-		template <typename BaseIterator, typename Iterator>
-		expression_grammar<BaseIterator,Iterator>::expression_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-																		identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
-																		lexer::token_lexer<BaseIterator>& lexer)
-			: expression_grammar::base_type(expression, "expression_grammar")
+		template <typename BaseIterator, typename LexerIterator>
+		expression_grammar<BaseIterator,LexerIterator>::expression_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
+																			identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+																			lexer::token_lexer<BaseIterator> const & lexer)
+			: expression_grammar::base_type(m_ruleExpression, "expression_grammar")
 		{
 			qi::_1_type _1;
 			qi::_3_type _3;
@@ -35,102 +35,103 @@ namespace unilang
 			qi::tokenid_mask_type tokenid_mask;
 			qi::matches_type matches;
 
-			using qi::on_error;
-			using qi::on_success;
-			using qi::fail;
 			using boost::phoenix::function;
 
-			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
-			typedef function<unilang::annotation<Iterator> > annotation_function;
+			typedef function<unilang::error_handler<BaseIterator, LexerIterator> > error_handler_function;
+			typedef function<unilang::annotation<LexerIterator> > annotation_function;
 
 			///////////////////////////////////////////////////////////////////////
 			// Main expression grammar
-			expression =
-					unary_expr
+			m_ruleExpression =
+					m_ruleUnaryExpression
 #ifdef TOKEN_ID
-				>>  *(tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::binaryOperation)) > unary_expr)
+				>>  *(tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::binaryOperation)) > m_ruleUnaryExpression)
 #else
-				>>  *(tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::binaryOperation)) > unary_expr)
+				>>  *(tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::binaryOperation)) > m_ruleUnaryExpression)
 #endif
 				;
-			expression.name("expression");
+			m_ruleExpression.name("expression");
 
-			unary_expr =
-					postfix_expr
+			m_ruleUnaryExpression =
+					m_rulePostfixExpression
 #ifdef TOKEN_ID
-				|   (tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::unaryOperation)) > unary_expr)
+				|   (tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::unaryOperation)) > m_ruleUnaryExpression)
 #else
-				|   (tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::unaryOperation)) > unary_expr)
+				|   (tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::unaryOperation)) > m_ruleUnaryExpression)
 #endif
 				;
-			unary_expr.name("unary_expr");
+			m_ruleUnaryExpression.name("unaryExpression");
 
-			postfix_expr =
-					functionCall
-				|	variableDefinition
-				|	assignment_expr
-				|   primary_expr
+			m_rulePostfixExpression =
+					m_ruleFunctionCall
+				|	m_ruleVariableDefinition
+				//|	m_ruleAssignmentStatement
+				|   m_rulePrimaryExpression
 				;
-			postfix_expr.name("postfix_expr");
+			m_rulePostfixExpression.name("postfix_expr");
 
-			ufloat_expr = lexer._lit_ufloat;
-			ufloat_expr.name("ufloat_expr");
-			uint_expr = lexer._lit_uint;
-			uint_expr.name("uint_expr");
-			bool_expr = lexer._lit_boolean;
-			bool_expr.name("bool_expr");
-
-			primary_expr =
-					ufloat_expr
-				|	uint_expr
-				|   bool_expr
-				|   identifierGrammar
-				|   (lexer("\\(") > expression > lexer("\\)"))
+			m_rulePrimaryExpression =
+					lexer.m_tokLiteralHexadecimal
+				|	lexer.m_tokLiteralOctal
+				|	lexer.m_tokLiteralBinary
+				|	lexer.m_tokLiteralUnsignedFloat
+				|	lexer.m_tokLiteralUnsignedInt
+				|   lexer.m_tokLiteralBoolean
+				|	identifierGrammar
+				|	(lexer("\\(") > m_ruleExpression > lexer("\\)"))
 				;
-			primary_expr.name("primary_expr");
+			m_rulePrimaryExpression.name("primaryExpression");
 
-			argumentList = -(expression % lexer(","));
-			argumentList.name("argumentList");
+			/*m_ruleLValueExpression = 
+					identifierGrammar
+				//|	m_ruleVariableDefinition	// dont! just initialize it directly!
+				|	m_ruleFunctionCall
+				|   (lexer("\\(") > m_ruleLValueExpression > lexer("\\)"))
+				;
+			m_ruleLValueExpression.name("lValueExpression");*/
 
-			functionCall =
-					identifierGrammar	
+			m_ruleArgumentList = -(m_ruleExpression % lexer(","));
+			m_ruleArgumentList.name("argumentList");
+
+			m_ruleFunctionCall =
+					identifierGrammar.m_ruleNamespacedIdentifier	
 				>>	lexer("\\(")
-				>	argumentList
+				>	m_ruleArgumentList
 				>   lexer("\\)")
 				;
-			functionCall.name("functionCall");
+			m_ruleFunctionCall.name("functionCall");
 
-			mutableQualifier = 
+			m_ruleMutableQualifier = 
 					matches[lexer("~")]
 				;
-			mutableQualifier.name("mutableQualifier");
+			m_ruleMutableQualifier.name("mutableQualifier");
 
-			typeDeclaration =
-					mutableQualifier
+			m_ruleTypeDeclaration =
+					m_ruleMutableQualifier
 				>>	identifierGrammar
 				;
-			typeDeclaration.name("typeDeclaration");
+			m_ruleTypeDeclaration.name("typeDeclaration");
 
 			// A Variable Declaration is of the form [<identifier>:][<type-qualifier>]<type>
 			// <type-qualifier> can be '~'
 			// <type> one of the predefined or user define types
 			// <identifier> can be: -empty
 			//						-a user defined identifier
-			variableDeclaration =
+			m_ruleVariableDeclaration =
 				-(
 					identifierGrammar
 					>>	lexer(":")
 				)
-				>>	typeDeclaration
+				>>	m_ruleTypeDeclaration
 				;
-			variableDeclaration.name("variableDeclaration");
+			m_ruleVariableDeclaration.name("variableDeclaration");
 
-			definitionParameterList = 
+			m_ruleDefinitionParameterList = 
 					lexer("\\{")
-				>	-(	expression % lexer(","))
+				>	-(	m_ruleExpression % lexer(","))
 				>	lexer("\\}")
 				;
-			definitionParameterList.name("definitionParameterList");
+			m_ruleDefinitionParameterList.name("definitionParameterList");
 
 			// A Variable Definition is of the form [<identifier>:][<type-qualifier>]<type><parameterList>
 			// <type-qualifier> can be '~'
@@ -139,79 +140,70 @@ namespace unilang
 			//						-a user defined identifier
 			// <parameterList> can be:	-'{}' 
 			//							-a list of expressions seperated by ',' surrounded by '{','}'
-			variableDefinition =
-					variableDeclaration
-				>>	definitionParameterList
+			m_ruleVariableDefinition =
+					m_ruleVariableDeclaration
+				>>	m_ruleDefinitionParameterList
 				;
-			variableDefinition.name("variableDefinition");
+			m_ruleVariableDefinition.name("variableDefinition");
 
-			assignment_expr =
+			m_ruleAssignmentExpression =
 					identifierGrammar
 #ifdef TOKEN_ID
 				>>	tokenid_mask(static_cast<operators::EOperators>(operators::EOperatorTypes::assignmentOperation))
 #else
 				>>	tokenid_mask(static_cast<size_t>(operators::EOperatorTypes::assignmentOperation))
 #endif
-				>>	expression
+				>>	m_ruleExpression
 				;
-			assignment_expr.name("assignment_expr");
+			m_ruleAssignmentExpression.name("assignmentExpression");
 
 			///////////////////////////////////////////////////////////////////////
 			// Debugging and error handling and reporting support.
 #ifdef _DEBUG
 			BOOST_SPIRIT_DEBUG_NODES(
-				(expression)
-				(unary_expr)
-				(postfix_expr)
-				(primary_expr)
-				(ufloat_expr)
-				(uint_expr)
-				(bool_expr)
-				(functionCall)
-				(argumentList)
-				(mutableQualifier)
-				(typeDeclaration)
-				(variableDeclaration)
-				(definitionParameterList)
-				(variableDefinition)
-				(assignment_expr)
+				(m_ruleExpression)
+				(m_ruleUnaryExpression)
+				(m_rulePostfixExpression)
+				(m_rulePrimaryExpression)
+				(m_ruleFunctionCall)
+				(m_ruleArgumentList)
+				(m_ruleMutableQualifier)
+				(m_ruleTypeDeclaration)
+				(m_ruleVariableDeclaration)
+				(m_ruleDefinitionParameterList)
+				(m_ruleVariableDefinition)
+				(m_ruleAssignmentExpression)
 			);
 #endif
 			///////////////////////////////////////////////////////////////////////
 			// Error handling: on error in expr, call error_handler.
-			on_error<fail>(	expression,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	unary_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	postfix_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	ufloat_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	uint_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	bool_expr,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	primary_expr,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	functionCall,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	argumentList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	mutableQualifier,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	typeDeclaration,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	variableDeclaration,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	definitionParameterList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(	variableDefinition,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>( assignment_expr,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleExpression,				error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleUnaryExpression,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_rulePostfixExpression,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_rulePrimaryExpression,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleFunctionCall,				error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleArgumentList,				error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleMutableQualifier,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleTypeDeclaration,			error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleVariableDeclaration,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleDefinitionParameterList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(	m_ruleVariableDefinition,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>( m_ruleAssignmentExpression,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			///////////////////////////////////////////////////////////////////////
 			// Annotation: on success, call annotation.
-			on_success(	expression,				annotation_function(error_handler.iters)(_val, _1));
-			on_success(	unary_expr,				annotation_function(error_handler.iters)(_val, _1));
-			on_success(	postfix_expr,			annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	ufloat_expr,				annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	uint_expr,				annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	bool_expr,				annotation_function(error_handler.iters)(_val, _1));
-			on_success(	primary_expr,			annotation_function(error_handler.iters)(_val, _1));
-			on_success(	functionCall,			annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	argumentList,			annotation_function(error_handler.iters)(_val, _1));
-			//on_success(	mutableQualifier,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(	typeDeclaration,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(	variableDeclaration,	annotation_function(error_handler.iters)(_val, _1));
-			on_success(	definitionParameterList,	annotation_function(error_handler.iters)(_val, _1));
-			on_success(	variableDefinition,		annotation_function(error_handler.iters)(_val, _1));
-			on_success( assignment_expr,		annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(	m_ruleExpression,					annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(	m_ruleUnaryExpression,				annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(	m_rulePostfixExpression,			annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(	m_rulePrimaryExpression,			annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(	m_ruleFunctionCall,					annotation_function(error_handler.iters)(_val, _1));
+			//qi::on_success(	m_ruleArgumentList,				annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			//qi::on_success(	m_ruleMutableQualifier,			annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			qi::on_success(	m_ruleTypeDeclaration,				annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success(	m_ruleVariableDeclaration,			annotation_function(error_handler.iters)(_val, _1));
+			//qi::on_success(	m_ruleDefinitionParameterList,	annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			qi::on_success(	m_ruleVariableDefinition,			annotation_function(error_handler.iters)(_val, _1));
+			qi::on_success( m_ruleAssignmentExpression,			annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

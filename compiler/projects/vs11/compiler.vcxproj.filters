@@ -97,6 +97,21 @@
     <Filter Include="Header Files\code_generator\constants">
       <UniqueIdentifier>{d2941f01-5adf-4f01-b4bb-3e7f6800693e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Source Files\linker">
+      <UniqueIdentifier>{8dce01d5-2aff-4f32-a864-989703796fcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\linker">
+      <UniqueIdentifier>{c32955d7-ea12-44d3-94bf-332958480354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\namespace">
+      <UniqueIdentifier>{1f11c8fc-15eb-45c1-8b58-b226d5527228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\namespace">
+      <UniqueIdentifier>{b5dd44aa-62f1-407c-931d-b23a903fe22d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\functions">
+      <UniqueIdentifier>{9e26286d-b1a7-415d-89f4-f18627575e88}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\parser\parser.cpp">
@@ -215,6 +230,15 @@
     </ClCompile>
     <ClCompile Include="..\..\src\code_generator\constants\constants_code_gen.cpp">
       <Filter>Source Files\code_generator\constants</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\linker\linker.cpp">
+      <Filter>Source Files\linker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\namespace\namespace_code_gen.cpp">
+      <Filter>Source Files\code_generator\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\src\code_generator\functions\function_code_gen.cpp">
+      <Filter>Source Files\code_generator\functions</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -352,6 +376,15 @@
     </ClInclude>
     <ClInclude Include="..\..\src\code_generator\llvm\llvm_code_gen.hpp">
       <Filter>Header Files\code_generator\llvm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\linker\linker.hpp">
+      <Filter>Header Files\linker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\namespace\namespace_code_gen.hpp">
+      <Filter>Header Files\code_generator\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\src\code_generator\functions\function_code_gen.hpp">
+      <Filter>Header Files\code_generator\functions</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

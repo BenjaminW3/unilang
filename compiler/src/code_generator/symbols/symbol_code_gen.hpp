@@ -1,14 +1,13 @@
 #pragma once
 
-#include "../llvm/llvm_code_gen.hpp"
-
-#include "symbols.hpp"
-#include "../errors.hpp"
-
 #include <string>
-#include <vector>
 
+// base classes
 #include <boost/noncopyable.hpp>
+
+// members
+#include <vector>
+#include "symbols.hpp"
 
 // forward declarations
 namespace llvm
@@ -16,33 +15,44 @@ namespace llvm
 	class Type;
 }
 
-namespace unilang 
+namespace unilang
 { 
 	//-----------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
 	//-----------------------------------------------------------------------------
 	namespace code_generator
 	{
+		// forward declarations
+		class code_generator_errors;
+		class llvm_code_generator;
+
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class symbol_code_generator :	public virtual code_generator_errors,
-										public virtual llvm_code_generator,
-										virtual boost::noncopyable
+		class symbol_code_generator :	virtual boost::noncopyable
 		{
-		protected:
-			//-----------------------------------------------------------------------------
-			//! \return The type corresponding to the given Typename
-			//-----------------------------------------------------------------------------
-			llvm::Type* getTypeByName(std::string sTypeName);
-			
-			//-----------------------------------------------------------------------------
-			//! \return The Variable with the given name in the current scope.
-			//-----------------------------------------------------------------------------
-			VarData const * const getVarFromName( std::string const & name );
+		public:
+			//-------------------------------------------------------------------------
+			//! Constructor
+			//-------------------------------------------------------------------------
+			symbol_code_generator(	code_generator_errors & codeGeneratorErrors,
+									llvm_code_generator & llvmCodeGenerator );
 
-			std::vector<VarData> vLocalSymbolTable;
-			std::vector<VarData> vGlobalSymbolTable;
+			//-------------------------------------------------------------------------
+			//! \return The type corresponding to the given Typename
+			//-------------------------------------------------------------------------
+			llvm::Type* getTypeByName(std::string sTypeName) const;
+			//-------------------------------------------------------------------------
+			//! \return The Variable with the given name in the current scope.
+			//-------------------------------------------------------------------------
+			VarData const * const getVarFromName( std::string const & name ) const;
+
+			// FIXME: private
+			std::vector<VarData> vSymbolTable;
+
+		private:
+			code_generator_errors & m_codeGeneratorErrors;
+			llvm_code_generator & m_llvmCodeGenerator;
 		};
 	}
 }

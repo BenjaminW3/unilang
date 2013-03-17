@@ -1,6 +1,9 @@
 #include "exp_code_gen.hpp"
 
 #include "../types.hpp"
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../namespace/namespace_code_gen.hpp"
 
 #include "../../ast/function_ast.hpp"
 
@@ -24,7 +27,7 @@
 #pragma warning(push)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -37,56 +40,55 @@ namespace unilang
 			LOG(x);
 
 			ast::function_declaration funcDecl;
-			funcDecl._identifier = x._identifier;
+			funcDecl._idfName = x._idfName.getMangledName();
 
 			// argument types
 			std::vector<llvm::Value*> ArgsV;
-			for(ast::expression const & ex : x._lArgumentExpressions)
+			for(ast::expression const & ex : x._vArgumentExpressions)
 			{
 				ArgsV.push_back((*this)(ex));
 				if(!ArgsV.back())
 				{
 					std::stringstream sstr;
 					sstr << ex;
-					return ErrorValue("Invalid argument returned from '" +sstr.str()+ "'.");
+					return m_codeGeneratorErrors.ErrorValue("Invalid argument returned from '" +sstr.str()+ "'.");
 				}
 
 				ast::type_declaration ty;
-				ty._identifier = llvmTypeToUnilangTypeName(ArgsV.back()->getType());
+				ty._idfName = llvmTypeToUnilangTypeName(ArgsV.back()->getType());
 
-				funcDecl._parameter_types.push_back(ty);
+				funcDecl._vParameterTypes.push_back(ty);
 			}
 			// Look up the mangled name in the global module table.
-			std::string const mangledName (funcDecl.build_mangled_name());
-
-			llvm::Function * const pCalledFunction (getModule()->getFunction(mangledName));
+			std::string const sMangledName (funcDecl.build_mangled_name());
+			llvm::Function * const pCalledFunction (m_llvmCodeGenerator.getFunctionFromNameInNamespaceHierarchy(sMangledName, m_namespaceCodeGenerator.getCurrentNamespaceHierarchy()));
 			if (!pCalledFunction)
 			{
-				return ErrorValue("Unknown function '"+mangledName+"' referenced.");
+				return m_codeGeneratorErrors.ErrorValue("Unknown function '"+sMangledName+"' referenced.");
 			}
   
 			// If argument number mismatch error.
-			/*if (CalleeF->arg_size() != x._lArgumentExpressions.size())
+			/*if (CalleeF->arg_size() != x._vArgumentExpressions.size())
 			{
 				std::stringstream sstr;
-				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x._lArgumentExpressions.size() << " are given.";
-				return ErrorValue("Incorrect number of arguments passed to '"+x._identifier._name+"' ! "+sstr.str());
+				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x._vArgumentExpressions.size() << " are given.";
+				return ErrorValue("Incorrect number of arguments passed to '"+x._idfName._name+"' ! "+sstr.str());
 			}
 
 			// argument type match?
 			auto itArg = CalleeF->arg_begin();
-			for(ast::expression const & ex: x._lArgumentExpressions)
+			for(ast::expression const & ex: x._vArgumentExpressions)
 			{
 				if(ArgsV.back()->getType()!=(*itArg).getType())
 				{
 					std::stringstream sstr;
-					sstr << "Trying to call function '" << x._identifier._name << "' with argument number " << (*itArg).getArgNo();
+					sstr << "Trying to call function '" << x._idfName._name << "' with argument number " << (*itArg).getArgNo();
 					return ErrorValue("Argument type mismatch! "+sstr.str()+" with type '"+getLLVMTypeName(ArgsV.back()->getType())+"' but function expects a value of type '"+getLLVMTypeName((*itArg).getType())+"'.");
 				}
 				++itArg;
 			}*/
   
-			return getBuilder()->CreateCall(pCalledFunction, ArgsV, "call");
+			return m_llvmCodeGenerator.getBuilder()->CreateCall(pCalledFunction, ArgsV, "call");
 		}
 		/*
 		if (printf == null) {

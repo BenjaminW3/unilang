@@ -1,7 +1,8 @@
 #include "constants_code_gen.hpp"
 
-#include "../../log/log.hpp"
+#include "../llvm/llvm_code_gen.hpp"
 
+#include "../../log/log.hpp"
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -24,34 +25,42 @@ namespace unilang
 { 
 	namespace code_generator
 	{
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		constants_code_generator::constants_code_generator( llvm_code_generator & llvmCodeGenerator )
+			:m_llvmCodeGenerator(llvmCodeGenerator)
+		{
+		}
+
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Constant * constants_code_generator::operator()(long double const & x)
 		{
 			// FIXME: downcast from long double -> double
-			return llvm::ConstantFP::get(getContext(), llvm::APFloat(double(x)));
+			return llvm::ConstantFP::get(m_llvmCodeGenerator.getContext(), llvm::APFloat(double(x)));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Constant * constants_code_generator::operator()(double const & x)
 		{
-			return llvm::ConstantFP::get(getContext(), llvm::APFloat(x));
+			return llvm::ConstantFP::get(m_llvmCodeGenerator.getContext(), llvm::APFloat(x));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Constant * constants_code_generator::operator()(float const & x)
 		{
-			return llvm::ConstantFP::get(getContext(), llvm::APFloat(double(x)));
+			return llvm::ConstantFP::get(m_llvmCodeGenerator.getContext(), llvm::APFloat(double(x)));
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Constant * constants_code_generator::operator()(uint64_t const & x)
 		{
-			return llvm::ConstantInt::get(getContext(), llvm::APInt(unsigned int(64), x, false));
+			return llvm::ConstantInt::get(m_llvmCodeGenerator.getContext(), llvm::APInt(unsigned int(64), x, false));
 		}
 		//-----------------------------------------------------------------------------
 		//
@@ -60,7 +69,7 @@ namespace unilang
 		{
 			if(x<0)
 			{
-				return llvm::ConstantInt::get(getContext(), llvm::APInt(unsigned int(64), uint64_t(std::abs(x)), true));
+				return llvm::ConstantInt::get(m_llvmCodeGenerator.getContext(), llvm::APInt(unsigned int(64), uint64_t(std::abs(x)), true));
 			}
 			else
 			{
@@ -72,7 +81,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Constant * constants_code_generator::operator()(uint32_t const & x)
 		{
-			return llvm::ConstantInt::get(getContext(), llvm::APInt(unsigned int(32), uint64_t(x), false));
+			return llvm::ConstantInt::get(m_llvmCodeGenerator.getContext(), llvm::APInt(unsigned int(32), uint64_t(x), false));
 		}
 		//-----------------------------------------------------------------------------
 		//
@@ -81,7 +90,7 @@ namespace unilang
 		{
 			if(x<0)
 			{
-				return llvm::ConstantInt::get(getContext(), llvm::APInt(unsigned int(32), uint64_t(std::abs(x)), true));
+				return llvm::ConstantInt::get(m_llvmCodeGenerator.getContext(), llvm::APInt(unsigned int(32), uint64_t(std::abs(x)), true));
 			}
 			else
 			{
@@ -93,7 +102,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Constant * constants_code_generator::operator()(bool const & x)
 		{
-			return llvm::ConstantInt::get(getContext(), llvm::APInt(unsigned int(1), uint64_t(x), false));
+			return llvm::ConstantInt::get(m_llvmCodeGenerator.getContext(), llvm::APInt(unsigned int(1), uint64_t(x), false));
 		}
 	}
 }

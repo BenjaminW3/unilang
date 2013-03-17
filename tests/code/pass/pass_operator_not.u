@@ -6,7 +6,7 @@ entrypoint: ~()->(iErrorCode:~i64{0})
 		iErrorCode += 1;
 	}
 
-	i=12;
+	i:=12;
 	if(i>0)
 	{
 		++iErrorCode;

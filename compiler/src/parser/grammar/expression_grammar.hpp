@@ -2,21 +2,18 @@
 
 #include "../spirit.hpp"
 
-#include <list>
+#include <vector>
 
-namespace unilang 
+namespace unilang
 {
 	// forward declarations
-	template <typename BaseIterator, typename Iterator>
+	template <typename BaseIterator, typename LexerIterator>
 	struct error_handler;
-
-	// forward declarations
 	namespace lexer
 	{
 		template <typename BaseIterator>
 		class token_lexer;
 	}
-	// forward declarations
 	namespace ast
 	{
 		struct primary_expr;
@@ -32,7 +29,7 @@ namespace unilang
 	namespace parser
 	{
 		// forward declarations
-		template <typename BaseIterator, typename Iterator>
+		template <typename BaseIterator, typename LexerIterator>
 		struct identifier_grammar;
 
 		namespace qi = boost::spirit::qi;
@@ -40,34 +37,31 @@ namespace unilang
 		//#########################################################################
 		//!  The expression grammar.
 		//#########################################################################
-		template <typename BaseIterator, typename Iterator>
-		struct expression_grammar : qi::grammar<Iterator, ast::expression()>
+		template <typename BaseIterator, typename LexerIterator>
+		struct expression_grammar : qi::grammar<LexerIterator, ast::expression()>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			expression_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-								identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
-								lexer::token_lexer<BaseIterator>& lexer);
+			expression_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
+								identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+								lexer::token_lexer<BaseIterator> const & lexer);
 			
-			qi::rule<Iterator, long double()> ufloat_expr;
-			qi::rule<Iterator, uint64_t()> uint_expr;
-			qi::rule<Iterator, bool()> bool_expr;
-			qi::rule<Iterator, ast::primary_expr()> primary_expr;
-			qi::rule<Iterator, ast::operand()>unary_expr, postfix_expr;
-			qi::rule<Iterator, ast::expression()> expression;
+			qi::rule<LexerIterator, ast::primary_expr()> m_rulePrimaryExpression;
+			qi::rule<LexerIterator, ast::operand()> m_ruleUnaryExpression, m_rulePostfixExpression;
+			qi::rule<LexerIterator, ast::expression()> m_ruleExpression;
 
-			qi::rule<Iterator, std::list<ast::expression>()> argumentList;
-			qi::rule<Iterator, ast::function_call()> functionCall;
+			qi::rule<LexerIterator, std::vector<ast::expression>()> m_ruleArgumentList;
+			qi::rule<LexerIterator, ast::function_call()> m_ruleFunctionCall;
 			
-			qi::rule<Iterator, bool()> mutableQualifier;
-			qi::rule<Iterator, ast::type_declaration()> typeDeclaration;
+			qi::rule<LexerIterator, bool()> m_ruleMutableQualifier;
+			qi::rule<LexerIterator, ast::type_declaration()> m_ruleTypeDeclaration;
 			
-			qi::rule<Iterator, ast::variable_declaration()> variableDeclaration;
-			qi::rule<Iterator, std::list<ast::expression>()> definitionParameterList;
-			qi::rule<Iterator, ast::variable_definition()> variableDefinition;
+			qi::rule<LexerIterator, ast::variable_declaration()> m_ruleVariableDeclaration;
+			qi::rule<LexerIterator, std::vector<ast::expression>()> m_ruleDefinitionParameterList;
+			qi::rule<LexerIterator, ast::variable_definition()> m_ruleVariableDefinition;
 
-			qi::rule<Iterator, ast::assignment()> assignment_expr;
+			qi::rule<LexerIterator, ast::assignment()> m_ruleAssignmentExpression;	// this is only reachable inside an assignment statement. This is no standard expression!
 		};
 	}
 }

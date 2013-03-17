@@ -21,10 +21,32 @@
 #pragma warning(pop)
 #endif
 
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../constants/constants_code_gen.hpp"
+#include "../allocation/alloc_code_gen.hpp"
+
 namespace unilang
 { 
 	namespace code_generator
 	{
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		expression_code_generator::expression_code_generator(	code_generator_errors & codeGeneratorErrors,
+																namespace_code_generator & namespaceCodeGenerator,
+																llvm_code_generator & llvmCodeGenerator,
+																constants_code_generator & constantsCodeGenerator,
+																symbol_code_generator & symbolCodeGenerator,
+																allocation_code_generator & allocationCodeGenerator )
+			:m_codeGeneratorErrors		(codeGeneratorErrors),
+			m_namespaceCodeGenerator	(namespaceCodeGenerator),
+			m_llvmCodeGenerator			(llvmCodeGenerator),
+			m_constantsCodeGenerator	(constantsCodeGenerator),
+			m_symbolCodeGenerator		(symbolCodeGenerator),
+			m_allocationCodeGenerator	(allocationCodeGenerator)
+		{
+		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
@@ -46,7 +68,7 @@ namespace unilang
 			if(x.var.type()==typeid(ast::variable_definition))
 			{
 				llvm::AllocaInst * pDeclAlloca = (llvm::AllocaInst *) pRetVal;
-				pRetVal = getBuilder()->CreateLoad(pDeclAlloca, "loadDefVal");
+				pRetVal = m_llvmCodeGenerator.getBuilder()->CreateLoad(pDeclAlloca, "load.var_def.alloca");
 			}
 
 			return pRetVal;
@@ -59,16 +81,16 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
-			llvm::AllocaInst * pDeclAlloca ((*dynamic_cast<allocation_code_generator*>(this))(x));
+			llvm::AllocaInst * pDeclAlloca (m_allocationCodeGenerator(x));
 			if(!pDeclAlloca)
 			{
-				return ErrorValue("Unable to load variable definition value from invalid allocation.");
+				return m_codeGeneratorErrors.ErrorValue("Unable to load variable definition value from invalid allocation.");
 			}
 
-			llvm::Value * pRetVal (getBuilder()->CreateLoad(pDeclAlloca, "loadDefVal"));
+			llvm::Value * pRetVal (m_llvmCodeGenerator.getBuilder()->CreateLoad(pDeclAlloca, "load.var_def.alloca"));
 			if(!pRetVal)
 			{
-				return ErrorValue("Unable to load variable definition value.");
+				return m_codeGeneratorErrors.ErrorValue("Unable to load variable definition value.");
 			}
 
 			return pRetVal;
@@ -78,56 +100,56 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(long double const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(double const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(float const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(uint64_t const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(int64_t const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(uint32_t const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(int32_t const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(bool const & x)
 		{
-			return (*dynamic_cast<constants_code_generator*>(this))(x);
+			return m_constantsCodeGenerator(x);
 		}
 	}
 }

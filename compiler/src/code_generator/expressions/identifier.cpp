@@ -1,5 +1,9 @@
 #include "exp_code_gen.hpp"
 
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../symbols/symbol_code_gen.hpp"
+
 #include "../../ast/identifier_ast.hpp"
 
 #include "../../log/log.hpp"
@@ -21,7 +25,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -33,20 +37,20 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			VarData const * const V (getVarFromName(x._name));
-			if(!getVarFromName(x._name))
+			VarData const * const pVariable (m_symbolCodeGenerator.getVarFromName(x._name));
+			if(!pVariable)
 			{
-				return ErrorValue("Undeclared variable name: '"+x._name+"' !");
+				return m_codeGeneratorErrors.ErrorValue("Undeclared variable name: '"+x._name+"' !");
 			}
 			else
 			{
-				if(!V->getAllocaInst())
+				if(!pVariable->getAllocaInst())
 				{
-					return ErrorValue("Variable is not allocated: '"+x._name+"' !", EErrorLevel::Internal);
+					return m_codeGeneratorErrors.ErrorValue("Variable is not allocated: '"+x._name+"' !", EErrorLevel::Internal);
 				}
 				else
 				{
-					return getBuilder()->CreateLoad(V->getAllocaInst(), x._name.c_str());
+					return m_llvmCodeGenerator.getBuilder()->CreateLoad(pVariable->getAllocaInst(), x._name.c_str());
 				}
 			}
 		}

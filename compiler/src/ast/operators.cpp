@@ -75,7 +75,7 @@ namespace unilang
 		{
 			switch(x)
 			{
-				case EOperators::equal:				out << "=="; break;
+				case EOperators::equal:				out << "="; break;
 				case EOperators::not_equal:			out << "!="; break;
 				case EOperators::less:				out << "<"; break;
 				case EOperators::less_equal:		out << "<="; break;
@@ -102,7 +102,7 @@ namespace unilang
 				case EOperators::plus_plus:			out << "++"; break;
 				case EOperators::minus_minus:		out << "--"; break;
 
-				case EOperators::assign:			out << "="; break;
+				case EOperators::assign:			out << ":="; break;
 				case EOperators::bit_or_assign:		out << "|="; break;
 				case EOperators::bit_xor_assign:	out << "#="; break;
 				case EOperators::bit_and_assign:	out << "&="; break;

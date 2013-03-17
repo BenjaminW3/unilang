@@ -4,7 +4,7 @@ entrypoint: ~()->(iErrorCode:~i64{1})
 	bar:~i64{1};
 	baz:~i64{2};
 	
-	foo = bar = baz = 65;
+	foo := bar := baz := 65;
 	
-	iErrorCode = foo;
+	iErrorCode := foo;
 }

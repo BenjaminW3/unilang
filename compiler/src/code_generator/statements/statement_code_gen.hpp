@@ -1,22 +1,18 @@
 #pragma once
 
-#include "../llvm/llvm_code_gen.hpp"
-#include "../symbols/symbol_code_gen.hpp"
-#include "../expressions/exp_code_gen.hpp"
-#include "../allocation/alloc_code_gen.hpp"
-#include "../errors.hpp"
-
+// base classes
 #include <boost/noncopyable.hpp>
 
-namespace unilang 
+namespace unilang
 { 
 	// forward declarations
 	namespace ast
 	{
-		struct statement_list;
 		struct statement;
-		struct expression;
 		struct if_statement;
+		struct assignment;
+		struct expression;
+		struct statement_vector;
 		//struct while_statement;
 		//struct return_statement;
 	}
@@ -26,31 +22,40 @@ namespace unilang
 	//-----------------------------------------------------------------------------
 	namespace code_generator
 	{
+		// forward declarations
+		class code_generator_errors;
+		class llvm_code_generator;
+		class expression_code_generator;
+
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class statement_code_generator :	public virtual code_generator_errors,
-											public virtual llvm_code_generator,
-											public virtual symbol_code_generator,
-											public virtual expression_code_generator,
-											public virtual allocation_code_generator,
-											//public boost::static_visitor<bool>,
+		class statement_code_generator :	//public boost::static_visitor<bool>,
 											virtual boost::noncopyable
 		{
 		public:
-			statement_code_generator()
-				:allocation_code_generator(*this)
-			{};
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
+			statement_code_generator(	code_generator_errors & codeGeneratorErrors,
+										llvm_code_generator & llvmCodeGenerator,
+										expression_code_generator & expressionCodeGenerator );
 
 		public:
 			typedef bool result_type;
 
-			bool operator()(ast::statement_list const & x);
 			bool operator()(ast::statement const & x);
-			bool operator()(ast::expression const & x);
 			bool operator()(ast::if_statement const & x);
 			//bool operator()(ast::while_statement const & x);
 			//bool operator()(ast::return_statement const & x);
+			bool operator()(ast::assignment const & x);
+			bool operator()(ast::expression const & x);
+			bool operator()(ast::statement_vector const & x);
+
+		private:
+			code_generator_errors & m_codeGeneratorErrors;
+			llvm_code_generator & m_llvmCodeGenerator;
+			expression_code_generator & m_expressionCodeGenerator;
 		};
 	}
 }

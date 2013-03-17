@@ -1,6 +1,6 @@
 #include "ast.hpp"
 
-namespace unilang 
+namespace unilang
 {
 	namespace ast
 	{

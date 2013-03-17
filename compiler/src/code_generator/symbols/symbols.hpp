@@ -1,5 +1,6 @@
 #pragma once
 
+// members
 #include <string>
 
 // forward declarations
@@ -11,7 +12,7 @@ namespace llvm
 }
 //#include <boost/noncopyable.hpp>
 
-namespace unilang 
+namespace unilang
 { 
 	//-----------------------------------------------------------------------------
 	//! The namespace defining the code_generator.

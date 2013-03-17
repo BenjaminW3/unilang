@@ -4,23 +4,48 @@
 
 #include <ostream>
 #include <string>
+#include <vector>
 
-namespace unilang 
+namespace unilang
 {
 	namespace ast
 	{
 		//#########################################################################
-		//! An Identifier.
+		//! An identifier.
 		//#########################################################################
 		struct identifier :	public ast_base
 		{
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
 			identifier();
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
 			identifier(std::string const & name);
 
-			std::string _name;
-
 			bool isPure() const override;
+
+			std::string _name;
 		};
 		std::ostream& operator<<(std::ostream& out, identifier const& x);
+		//#########################################################################
+		//! A namespaced identifier.
+		//#########################################################################
+		struct namespaced_identifier :	public ast_base
+		{
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
+			namespaced_identifier();
+
+			bool isPure() const override;
+
+			std::string getMangledName() const;
+
+			bool m_bGlobalNamespace;
+			std::vector<std::string> m_sNames;
+		};
+		std::ostream& operator<<(std::ostream& out, namespaced_identifier const& x);
 	}
 }

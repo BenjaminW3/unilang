@@ -7,7 +7,7 @@ entrypoint : () -> ( iErrorCode:i64{0} )
 	usl::print(l);
 	
 	/*Test if two lists are the same*/
-	b : bool{k==l};
+	b : bool{k=l};
 	/*Test printing of bool*/
 	usl::print(b);
 	

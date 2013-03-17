@@ -4,5 +4,5 @@ entrypoint: ~()->(i64{1})
 	bar:~f64{1};
 	baz:~i64{2};
 	
-	foo = bar = baz = 0;
+	foo := bar := baz := 0;
 }

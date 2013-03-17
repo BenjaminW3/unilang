@@ -1,6 +1,9 @@
 #include "alloc_code_gen.hpp"
 
 #include "../types.hpp"
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../symbols/symbol_code_gen.hpp"
 #include "../../ast/expression_ast.hpp"
 
 #include "../../log/log.hpp"
@@ -22,7 +25,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -41,41 +44,41 @@ namespace unilang
 			// redeclaration?
 			if(bHasName)
 			{
-				VarData const * const existantVar	(getVarFromName(sName));
+				VarData const * const existantVar (m_symbolCodeGenerator.getVarFromName(sName));
 				if(existantVar)
 				{
-					return ErrorAllocaInst("Variable with the name '"+sName+"' has already been declared with type '"+getLLVMTypeName(existantVar->getAllocaInst()->getAllocatedType())+"'.");
+					return m_codeGeneratorErrors.ErrorAllocaInst("Variable with the name '"+sName+"' has already been declared with type '"+getLLVMTypeName(existantVar->getAllocaInst()->getAllocatedType())+"'.");
 				}
 			}
-			// TODO: really needed? We already cant have typenames equal to variable names
+			// TODO: really needed? Can we have typenames equal to variable/reserved names?
 			// shadowing keyword?
-			if(bHasName && (sName == "if" || sName == "else" || sName == "while" || sName == "return"))
+			if(bHasName && (sName == "if" || sName == "else" || sName == "while" || sName == "return"|| sName == "namespace"))
 			{
-				return ErrorAllocaInst("Variable with the name '"+sName+"' is shadowing the keyword with same identifier.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Variable with the name '"+sName+"' is shadowing the keyword with same identifier.");
 			}
 
-			llvm::Function * TheFunction	(getBuilder()->GetInsertBlock()->getParent());
+			llvm::Function * TheFunction (m_llvmCodeGenerator.getBuilder()->GetInsertBlock()->getParent());
 			if(!TheFunction)
 			{
-				return ErrorAllocaInst("Unable to get the allocation insert point function for variable '"+sName+"'.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get the allocation insert point function for variable '"+sName+"'.");
 			}
 
 			// allocate in function head
-			llvm::Type * const pType	(getTypeByName(x._type._identifier._name));
+			llvm::Type * const pType	(m_symbolCodeGenerator.getTypeByName(x._type._idfName._name));
 			if(!pType)
 			{
-				return ErrorAllocaInst("Unable to get type of variable '"+sName+"'.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get type of variable '"+sName+"'.");
 			}
 			llvm::AllocaInst * Alloca	(createEntryBlockAlloca(TheFunction, pType, sName));
 			if(!Alloca)
 			{
-				return ErrorAllocaInst("Unable to allocate variable '"+sName+"'.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to allocate variable '"+sName+"'.");
 			}
 
 			// remember this variable in symbol table
 			if(bHasName)
 			{
-				vLocalSymbolTable.push_back(VarData(sName, Alloca, x._type._bHasMutableQualifier));
+				m_symbolCodeGenerator.vSymbolTable.push_back(VarData(sName, Alloca, x._type._bHasMutableQualifier));
 			}
 
 			return Alloca;

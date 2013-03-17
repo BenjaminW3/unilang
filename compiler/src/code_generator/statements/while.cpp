@@ -2,7 +2,7 @@
 
 #include "../../log/log.hpp"
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -16,7 +16,7 @@ namespace unilang
 			getBuilder()->
 			BOOST_ASSERT(current != 0);
 			std::size_t loop = current->size();         // mark our position
-			if (!(*this)(x._condition))
+			if (!(*this)(x._expCondition))
 				return false;
 			current->op(op_jump_if, 0);                 // we shall fill this (0) in later
 			std::size_t exit = current->size()-1;       // mark its position
@@ -37,10 +37,10 @@ namespace unilang
 
 		branch(cond_block);
 		set_insert_point(cond_block);
-		value _condition = (*this)(x._condition);
-		if (!_condition.is_valid())
+		value _expCondition = (*this)(x._expCondition);
+		if (!_expCondition.is_valid())
 			return false;
-		conditional_branch(_condition, body_block, exit_block);
+		conditional_branch(_expCondition, body_block, exit_block);
 		f.add(body_block);
 		set_insert_point(body_block);
 

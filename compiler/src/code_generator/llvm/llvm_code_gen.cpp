@@ -39,6 +39,9 @@
 #pragma warning(pop)
 #endif
 
+#include "../errors.hpp"
+#include "../namespace/namespace_code_gen.hpp"
+
 #include "../../log/log.hpp"
 
 #include <iostream>
@@ -66,28 +69,85 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> llvm_code_generator::getModule() const
 		{
-			return module;
+			return llvmModule;
 		}
+
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::Function * llvm_code_generator::getFunctionFromName( std::string const & name )
+		llvm::Function * llvm_code_generator::getFunctionFromNameInNamespaceHierarchy( std::string const & sMangledName, std::vector<std::string> vsNamespaceHierarchy )
 		{
-			llvm::Function* callee (getModule()->getFunction(name));
-			if (!callee)
+			std::string const sMangledNamespaceName (m_namespaceCodeGenerator.buildMangledNamespaceName(vsNamespaceHierarchy));
+			// if this is said to be searched for only in global namespace
+			if(sMangledName.substr(0,2)=="::")
 			{
-				return ErrorFunction("Function '"+name+"' has not been decalred.");
+				std::string const sMangledFunctionName (sMangledName.substr(2));
+				return getFunctionFromMangledName(sMangledFunctionName);
+			}
+			// reverse search through the namespaces
+			else
+			{
+				for(;;)
+				{
+					std::string const sMangledFunctionName (sMangledNamespaceName+sMangledName);
+					// if we retreive directly we would set the error flag
+					if(hasFunctionFromMangledName(sMangledFunctionName))
+					{
+						// can the availability change in betweeen?
+						return getFunctionFromMangledName(sMangledFunctionName);
+					}
+
+					if(!vsNamespaceHierarchy.empty())
+					{
+						vsNamespaceHierarchy.pop_back();
+					}
+					else
+					{
+						break;
+					}
+				}
 			}
 
-			return callee;
+			// if we would have using statements now they would be used to look into
+			// we would have to look through all of them
+			// using namespace Foo;
+			// using namespace Goo;
+			// cout << DoSomething(4, 3) << endl;
+			// error C2668: 'DoSomething' : ambiguous call to overloaded function
+
+			return m_codeGeneratorErrors.ErrorFunction("Function '"+sMangledName+"' has not been decalred.");
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		bool llvm_code_generator::hasFunctionFromMangledName( std::string const & sMangledName ) const
+		{
+			llvm::Function* pFunction (getModule()->getFunction(sMangledName));
+			return (pFunction!=nullptr);
+		}
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		llvm::Function * llvm_code_generator::getFunctionFromMangledName( std::string const & sMangledName )
+		{
+			llvm::Function* pFunction (getModule()->getFunction(sMangledName));
+			if (!pFunction)
+			{
+				return m_codeGeneratorErrors.ErrorFunction("Function '"+sMangledName+"' has not been decalred.");
+			}
+
+			return pFunction;
 		}
 
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm_code_generator::llvm_code_generator()
-			:builder(std::make_shared<IRBuilderType>(getContext())),
-			module(new llvm::Module("unilang-JIT", getContext()))
+		llvm_code_generator::llvm_code_generator(	code_generator_errors & codeGeneratorErrors,
+													namespace_code_generator & namespaceCodeGenerator )
+			:builder					(std::make_shared<IRBuilderType>(getContext())),
+			llvmModule					(std::make_shared<llvm::Module>("unilang-llvm", getContext())),
+			m_codeGeneratorErrors		(codeGeneratorErrors),
+			m_namespaceCodeGenerator	(namespaceCodeGenerator)
 		{
 			LOG_SCOPE_DEBUG;
 
@@ -97,7 +157,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		// http://llvm.1065342.n5.nabble.com/how-to-get-TargetData-td21590.html
 		//-----------------------------------------------------------------------------
-		void llvm_code_generator::optimize() const
+		void llvm_code_generator::optimizeModule() const
 		{
 			LOG_SCOPE_DEBUG;
 
@@ -159,9 +219,9 @@ namespace unilang
 
 			// otimize functions
 			// use some basic passes like : http://llvm.org/docs/tutorial/LangImpl4.html
-			for ( auto functionListIterator(module->getFunctionList().begin()); functionListIterator != module->getFunctionList().end(); ++functionListIterator)
+			for ( auto functionListIterator(llvmModule->getFunctionList().begin()); functionListIterator != llvmModule->getFunctionList().end(); ++functionListIterator)
 			{
-				llvm::FunctionPassManager OurFPM(module.get());
+				llvm::FunctionPassManager OurFPM(llvmModule.get());
 				
 				// Set up the optimizer pipeline.  Start with registering info about how the target lays out data structures.
 				OurFPM.add(new llvm::DataLayout(*targetData));
@@ -255,7 +315,7 @@ namespace unilang
 			// eliminate unreachable internal globals (functions or global variables)
 			OurPM.add(llvm::createGlobalDCEPass());
 
-			OurPM.run(*module.get());
+			OurPM.run(*llvmModule.get());
 			
 #ifdef _DEBUG
 			std::string type_str;
@@ -268,10 +328,10 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		void llvm_code_generator::verify_module() const
+		void llvm_code_generator::verifyModule() const
 		{
 			std::string ErrStr;
-			if(llvm::verifyModule(*module.get(), llvm::VerifierFailureAction::ReturnStatusAction, &ErrStr))
+			if(llvm::verifyModule(*llvmModule.get(), llvm::VerifierFailureAction::ReturnStatusAction, &ErrStr))
 			{
 				throw std::runtime_error("verifyModule failure! "+ErrStr);
 			}
@@ -279,11 +339,11 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		void llvm_code_generator::print_bytecode() const
+		void llvm_code_generator::printModuleBytecode() const
 		{
 			LOG_SCOPE_DEBUG;
 
-			module->dump();
+			llvmModule->dump();
 		}
 	}
 }

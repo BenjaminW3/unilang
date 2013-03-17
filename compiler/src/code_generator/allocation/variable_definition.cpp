@@ -1,6 +1,10 @@
 #include "alloc_code_gen.hpp"
 
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../symbols/symbol_code_gen.hpp"
 #include "../expressions/exp_code_gen.hpp"
+
 #include "../../ast/expression_ast.hpp"
 
 #include "../../log/log.hpp"
@@ -23,7 +27,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -38,12 +42,12 @@ namespace unilang
 			bool const bHasName		(x._declaration._optionalIdentifier.is_initialized());
 			
 			// TODO: hard coded types
-			std::string const sTypeName		(x._declaration._type._identifier._name);
-			llvm::Type * const pDeclType	(getTypeByName(sTypeName));
+			std::string const sTypeName		(x._declaration._type._idfName._name);
+			llvm::Type * const pDeclType	(m_symbolCodeGenerator.getTypeByName(sTypeName));
 			if(!pDeclType)
 			{
 				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
-				return ErrorAllocaInst("Unable to get type of variable '"+sVarName+"'.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get type of variable '"+sVarName+"'.");
 			}
 
 			// Emit the initializer before adding the variable to scope, this prevents the initializer from referencing the variable itself
@@ -51,27 +55,27 @@ namespace unilang
 
 			if(pDeclType->isIntegerTy() || pDeclType->isFloatingPointTy())
 			{
-				if(x._lParameterExpressions.size()==0)
+				if(x._vParameterExpressions.size()==0)
 				{
 					pInitVal = llvm::Constant::getNullValue(pDeclType);
 					if (!pInitVal)
 					{
 						std::stringstream sstr;
-						sstr << *x._lParameterExpressions.begin();
+						sstr << *x._vParameterExpressions.begin();
 						auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
-						return ErrorAllocaInst("Initial null value for variable '"+sVarName+"' of type '"+sTypeName+"' could not be generated.");
+						return m_codeGeneratorErrors.ErrorAllocaInst("Initial null value for variable '"+sVarName+"' of type '"+sTypeName+"' could not be generated.");
 					}
 				}
-				else if(x._lParameterExpressions.size()==1)
+				else if(x._vParameterExpressions.size()==1)
 				{
-					pInitVal = _exp_code_gen(*x._lParameterExpressions.begin());
+					pInitVal = m_expressionCodeGenerator(*x._vParameterExpressions.begin());
 					if (!pInitVal)
 					{
 						std::stringstream sstr;
-						sstr << *x._lParameterExpressions.begin();
+						sstr << *x._vParameterExpressions.begin();
 						auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
 						// TODO: output real parameter number
-						return ErrorAllocaInst("Invalid 1. initialisation parameter '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+sTypeName+"'");
+						return m_codeGeneratorErrors.ErrorAllocaInst("Invalid 1. initialisation parameter '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+sTypeName+"'");
 					}
 					else if(pInitVal->getType() != pDeclType)
 					{
@@ -79,22 +83,22 @@ namespace unilang
 						if(!pInitVal)
 						{
 							std::stringstream sstr;
-							sstr << *x._lParameterExpressions.begin();
+							sstr << *x._vParameterExpressions.begin();
 							auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
-							return ErrorAllocaInst("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+sTypeName+"' can not be cast.");
+							return m_codeGeneratorErrors.ErrorAllocaInst("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+sTypeName+"' can not be cast.");
 						}
 					}
 				}
 				else
 				{
 					std::stringstream sstr;
-					sstr << x._lParameterExpressions.size();
-					return ErrorAllocaInst("Variable of type '"+sTypeName+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
+					sstr << x._vParameterExpressions.size();
+					return m_codeGeneratorErrors.ErrorAllocaInst("Variable of type '"+sTypeName+"' can not be initialized with more then 1 parameters ("+sstr.str()+" given).");
 				}
 			}
 			else
 			{
-				return ErrorAllocaInst("Unknown type '"+sTypeName+"' in variable definition.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unknown type '"+sTypeName+"' in variable definition.");
 			}
 
 			// build declaration (allocation, etc.)
@@ -102,10 +106,10 @@ namespace unilang
 			if(!pDeclAlloc)
 			{
 				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
-				return ErrorAllocaInst("Unable to declare variable '"+sVarName+"' of type '"+sTypeName+"'.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to declare variable '"+sVarName+"' of type '"+sTypeName+"'.");
 			}
 
-			getBuilder()->CreateStore(pInitVal, pDeclAlloc);
+			m_llvmCodeGenerator.getBuilder()->CreateStore(pInitVal, pDeclAlloc);
 
 			return pDeclAlloc;
 		}

@@ -22,26 +22,35 @@
 
 #include "../types.hpp"
 
-namespace unilang 
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+//#include "../constants/constants_code_gen.hpp"
+#include "../symbols/symbol_code_gen.hpp"
+
+namespace unilang
 { 
 	namespace code_generator
 	{
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::AllocaInst *allocation_code_generator::ErrorAllocaInst(std::string Str, EErrorLevel err )
+		allocation_code_generator::allocation_code_generator(	code_generator_errors & codeGeneratorErrors,
+																llvm_code_generator & llvmCodeGenerator,
+																symbol_code_generator & symbolCodeGenerator,
+																expression_code_generator & expressionCodeGenerator )
+			:m_codeGeneratorErrors		(codeGeneratorErrors),
+			m_llvmCodeGenerator			(llvmCodeGenerator),
+			m_symbolCodeGenerator		(symbolCodeGenerator),
+			m_expressionCodeGenerator	(expressionCodeGenerator)
 		{
-			m_bErrorOccured = true;
-			LOG(getErrorLevelString(err)+" ALLOCATION: "+Str);
-			return nullptr; 
 		}
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		llvm::AllocaInst * allocation_code_generator::createEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & VarName)
+		llvm::AllocaInst * allocation_code_generator::createEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & sVarName)
 		{
 			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
-			std::string const sTempName = "EntryBlockAlloca_" + VarName;
+			std::string const sTempName = "EntryBlockAlloca_" + sVarName;
 			return TmpB.CreateAlloca(pType, 0,  sTempName.c_str());
 		}
 		//-----------------------------------------------------------------------------
@@ -51,11 +60,11 @@ namespace unilang
 		{
 			if(!pVal)
 			{
-				return ErrorValue("Invalid pInitVal for cast.", EErrorLevel::Internal);
+				return m_codeGeneratorErrors.ErrorValue("Invalid pInitVal for cast.", EErrorLevel::Internal);
 			}
 			if(!pDestinationType)
 			{
-				return ErrorValue("Invalid pDestinationType for cast.", EErrorLevel::Internal);
+				return m_codeGeneratorErrors.ErrorValue("Invalid pDestinationType for cast.", EErrorLevel::Internal);
 			}
 
 			llvm::Type * const pInitType (pVal->getType());
@@ -81,15 +90,15 @@ namespace unilang
 						// if it is a fp type first convert it to int
 						if(pVal->getType()->isFloatingPointTy())
 						{	
-							pVal = getBuilder()->CreateFPToSI(pVal, pDestinationType, "FPtoSI");
+							pVal = m_llvmCodeGenerator.getBuilder()->CreateFPToSI(pVal, pDestinationType, "FPtoSI");
 							if(!pVal)
 							{
-								return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
+								return m_codeGeneratorErrors.ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
 							}
 						}
 						else
 						{
-							return ErrorValue("Can not cast value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.");
+							return m_codeGeneratorErrors.ErrorValue("Can not cast value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.");
 						}
 					}
 
@@ -104,17 +113,17 @@ namespace unilang
 						if(pVal->getType()->getScalarSizeInBits()==1) // boolean is unsigned
 						{
 							// We cannot have a truncation here because we are casting from bool to int
-							pVal = getBuilder()->CreateZExt(pVal, (llvm::IntegerType*) pDestinationType, "cast.bool.int");
+							pVal = m_llvmCodeGenerator.getBuilder()->CreateZExt(pVal, (llvm::IntegerType*) pDestinationType, "cast.bool.int");
 						}
 						else
 						{
-							pVal = getBuilder()->CreateSExtOrTrunc(pVal, (llvm::IntegerType*) pDestinationType, "cast.int.int");
+							pVal = m_llvmCodeGenerator.getBuilder()->CreateSExtOrTrunc(pVal, (llvm::IntegerType*) pDestinationType, "cast.int.int");
 						}
 
 						if(!pVal)
 						{
 							std::string const strIntermediateCast ((pInitType != pInitIntegerType) ? (" during intermediate cast from '"+getLLVMTypeName(pInitIntegerType)+"' to type '"+getLLVMTypeName(pInitType))+"'" : "");
-							return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'"+strIntermediateCast+".", EErrorLevel::Internal);
+							return m_codeGeneratorErrors.ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'"+strIntermediateCast+".", EErrorLevel::Internal);
 						}
 					}
 				}
@@ -127,21 +136,21 @@ namespace unilang
 						{	
 							if(pVal->getType()->getScalarSizeInBits()==1) // boolean is unsigned
 							{
-								pVal = getBuilder()->CreateUIToFP(pVal, pDestinationType, "SItoFP");
+								pVal = m_llvmCodeGenerator.getBuilder()->CreateUIToFP(pVal, pDestinationType, "SItoFP");
 							}
 							else
 							{
-								pVal = getBuilder()->CreateSIToFP(pVal, pDestinationType, "SItoFP");
+								pVal = m_llvmCodeGenerator.getBuilder()->CreateSIToFP(pVal, pDestinationType, "SItoFP");
 							}
 
 							if(!pVal)
 							{
-								return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
+								return m_codeGeneratorErrors.ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.", EErrorLevel::Internal);
 							}
 						}
 						else
 						{
-							return ErrorValue("Can not cast value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.");
+							return m_codeGeneratorErrors.ErrorValue("Can not cast value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.");
 						}
 					}
 
@@ -153,17 +162,17 @@ namespace unilang
 						llvm::Type * const pInitIntegerType (pVal->getType());
 						// could use getScalarSizeInBits() that returns bit size for scalars directly and element bit size for vector types
 						// we could use CreateSExtOrTrunc instead but we want to generate extra downcast warnings.
-						pVal = getBuilder()->CreateFPCast(pVal, pDestinationType, "FloatCast");
+						pVal = m_llvmCodeGenerator.getBuilder()->CreateFPCast(pVal, pDestinationType, "FloatCast");
 						if(!pVal)
 						{
 							std::string const strIntermediateCast ((pInitType != pInitIntegerType) ? (" during intermediate cast from '"+getLLVMTypeName(pInitIntegerType)+"' to type '"+getLLVMTypeName(pInitType))+"'" : "");
-							return ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'"+strIntermediateCast+".", EErrorLevel::Internal);
+							return m_codeGeneratorErrors.ErrorValue("Failure during cast of value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'"+strIntermediateCast+".", EErrorLevel::Internal);
 						}
 					}
 				}
 				else
 				{
-					return ErrorValue("Can not cast value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.");
+					return m_codeGeneratorErrors.ErrorValue("Can not cast value of type '"+getLLVMTypeName(pInitType)+"' to type '"+ getLLVMTypeName(pDestinationType) +"'.");
 				}
 			}
 			return pVal;

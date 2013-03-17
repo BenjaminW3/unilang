@@ -1,7 +1,7 @@
 entrypoint : ()->( iErrorCode:~i64{0} )
 {
 	iFib10:i64{fib(10)};
-	iErrorCode = iFib10;
+	iErrorCode := iFib10;
 	/*usl::print(iFib10);*/
 }
 

@@ -1,6 +1,6 @@
 #include "symbols.hpp"
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{

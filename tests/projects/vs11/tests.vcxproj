@@ -25,7 +25,7 @@
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v120_CTP_Nov2012</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -161,50 +161,62 @@
     <ClCompile Include="..\..\src\main.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="..\..\code\fail_accessing_non_existant_function.u" />
-    <None Include="..\..\code\fail_accessing_non_existant_local_variable.u" />
-    <None Include="..\..\code\fail_duplicate_function_name.u" />
-    <None Include="..\..\code\fail_duplicate_parameter_name.u" />
-    <None Include="..\..\code\fail_duplicate_variable_name.u" />
-    <None Include="..\..\code\fail_higherorder_function_type_mismatch.u" />
-    <None Include="..\..\code\fail_int_initialization_list_too_long.u" />
-    <None Include="..\..\code\fail_literal_float_parameter_type_mismatch.u" />
-    <None Include="..\..\code\fail_literal_int_parameter_type_mismatch.u" />
-    <None Include="..\..\code\fail_mismatch_chained_assignment.u" />
-    <None Include="..\..\code\fail_missing_function_identifier.u" />
-    <None Include="..\..\code\fail_missing_variable_definition_type.u" />
-    <None Include="..\..\code\fail_use_of_variable_before_its_definition.u" />
-    <None Include="..\..\code\fail_variable_shadowing_function.u" />
-    <None Include="..\..\code\fail_variable_shadowing_keyword.u" />
-    <None Include="..\..\code\fail_variable_shadowing_variable_different_type.u" />
-    <None Include="..\..\code\fail_variable_shadowing_variable_same_type.u" />
-    <None Include="..\..\code\fail_write_to_non_mutable_variable.u" />
-    <None Include="..\..\code\pass_boolean_type.u" />
-    <None Include="..\..\code\pass_chained_assignment.u" />
-    <None Include="..\..\code\pass_int_empty_initialization_list_const.u" />
-    <None Include="..\..\code\pass_int_empty_initialization_list_nonconst.u" />
-    <None Include="..\..\code\pass_int_initialization_list_const.u" />
-    <None Include="..\..\code\pass_int_initialization_list_nonconst.u" />
-    <None Include="..\..\code\pass_missing_return_variable_name.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_addition.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_bit_and.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_bit_or.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_bit_xor.u" />
-    <None Include="..\..\code\pass_operator_compl.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_division.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_mod.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_multiplication.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_shift_left.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_shift_right.u" />
-    <None Include="..\..\code\pass_operator_combined_assignment_subtraction.u" />
-    <None Include="..\..\code\pass_operator_decrement.u" />
-    <None Include="..\..\code\pass_operator_increment.u" />
-    <None Include="..\..\code\pass_operator_not.u" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\..\compiler\projects\vs11\compiler.vcxproj">
       <Project>{90276707-7a3a-0fc8-01e1-b1d81bfe164b}</Project>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\code\fail\fail_accessing_non_existant_function.u" />
+    <None Include="..\..\code\fail\fail_accessing_non_existant_local_variable.u" />
+    <None Include="..\..\code\fail\fail_assignment_expression.u" />
+    <None Include="..\..\code\fail\fail_chained_assignment.u" />
+    <None Include="..\..\code\fail\fail_duplicate_function_name.u" />
+    <None Include="..\..\code\fail\fail_duplicate_parameter_name.u" />
+    <None Include="..\..\code\fail\fail_duplicate_variable_name.u" />
+    <None Include="..\..\code\fail\fail_entrypoint_namespace.u" />
+    <None Include="..\..\code\fail\fail_higherorder_function_type_mismatch.u" />
+    <None Include="..\..\code\fail\fail_int_initialization_list_too_long.u" />
+    <None Include="..\..\code\fail\fail_literal_float_parameter_type_mismatch.u" />
+    <None Include="..\..\code\fail\fail_literal_int_parameter_type_mismatch.u" />
+    <None Include="..\..\code\fail\fail_literal_uint_parameter_type_mismatch.u" />
+    <None Include="..\..\code\fail\fail_mismatch_chained_assignment.u" />
+    <None Include="..\..\code\fail\fail_missing_function_identifier.u" />
+    <None Include="..\..\code\fail\fail_missing_variable_definition_type.u" />
+    <None Include="..\..\code\fail\fail_multiline_comment_unclosed.u" />
+    <None Include="..\..\code\fail\fail_use_of_variable_before_its_definition.u" />
+    <None Include="..\..\code\fail\fail_variable_shadowing_function.u" />
+    <None Include="..\..\code\fail\fail_variable_shadowing_keyword.u" />
+    <None Include="..\..\code\fail\fail_variable_shadowing_variable_different_type.u" />
+    <None Include="..\..\code\fail\fail_variable_shadowing_variable_same_type.u" />
+    <None Include="..\..\code\fail\fail_write_to_non_mutable_variable.u" />
+    <None Include="..\..\code\pass\pass_assignment.u" />
+    <None Include="..\..\code\pass\pass_boolean_type.u" />
+    <None Include="..\..\code\pass\pass_int_empty_initialization_list_const.u" />
+    <None Include="..\..\code\pass\pass_int_empty_initialization_list_nonconst.u" />
+    <None Include="..\..\code\pass\pass_int_initialization_list_const.u" />
+    <None Include="..\..\code\pass\pass_int_initialization_list_nonconst.u" />
+    <None Include="..\..\code\pass\pass_int_literals.u" />
+    <None Include="..\..\code\pass\pass_int_rounding.u" />
+    <None Include="..\..\code\pass\pass_int_types.u" />
+    <None Include="..\..\code\pass\pass_missing_return_variable_name.u" />
+    <None Include="..\..\code\pass\pass_multiline_comment.u" />
+    <None Include="..\..\code\pass\pass_namespace_functions.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_addition.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_bit_and.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_bit_or.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_bit_xor.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_division.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_mod.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_multiplication.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_shift_left.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_shift_right.u" />
+    <None Include="..\..\code\pass\pass_operator_combined_assignment_subtraction.u" />
+    <None Include="..\..\code\pass\pass_operator_compl.u" />
+    <None Include="..\..\code\pass\pass_operator_decrement.u" />
+    <None Include="..\..\code\pass\pass_operator_increment.u" />
+    <None Include="..\..\code\pass\pass_operator_not.u" />
+    <None Include="..\..\code\pass\pass_operator_precedence.u" />
+    <None Include="..\..\code\pass\pass_singleline_comment.u" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

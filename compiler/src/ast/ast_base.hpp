@@ -14,8 +14,6 @@ namespace unilang
 			//! Constructor.
 			//-------------------------------------------------------------------------
 			ast_base();
-
-			size_t _id;
 			
 			//-------------------------------------------------------------------------
 			//! Base mathode that can be overwritten.
@@ -26,6 +24,8 @@ namespace unilang
 			{
 				return false;
 			}
+
+			size_t _id;
 		};
 	}
 }

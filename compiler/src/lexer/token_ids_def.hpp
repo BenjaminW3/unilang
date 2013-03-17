@@ -21,9 +21,14 @@ namespace unilang
 
 				// misc tags
 				identifier          = 1,
-				comment,
+				comment_singleline,
+				comment_multiline_open,
+				comment_multiline_recursive_open,
+				comment_multiline_characters,
+				comment_multiline_close,
 				whitespace,
 				comma,
+				double_colon,
 				colon,
 				semicolon,
 				tilde,
@@ -39,6 +44,7 @@ namespace unilang
 				else_,
 				//while_,
 				//return_,
+				namespace_,
 
 				equal               = operators::EOperators::equal,	// from here on the the values should match op_type
 				not_equal,

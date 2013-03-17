@@ -1,5 +1,9 @@
 #include "statement_code_gen.hpp"
 
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../expressions/exp_code_gen.hpp"
+
 #include "../../ast/statement_ast.hpp"
 
 #include "../../log/log.hpp"
@@ -23,7 +27,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -35,86 +39,86 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 
 			// generate condition value
-			llvm::Value *CondV = (*static_cast<expression_code_generator*>(this))(x._condition);
+			llvm::Value * const CondV (m_expressionCodeGenerator(x._expCondition));
 			if (!CondV)
 			{
 				std::stringstream sstr;
-				sstr << "Unable to generate condition: '" << x._condition << "' in if_statement '" << x << "'.";
-				return ErrorBool( sstr.str() );
+				sstr << "Unable to generate condition: '" << x._expCondition << "' in if_statement '" << x << "'.";
+				return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 			}
   
 			// Convert condition to a bool by comparing equal to 0.0.
 			//CondV = getBuilder()->CreateFCmpONE(CondV, (*this)(long double(0.0)), "if.cond");
 
-			llvm::Function *TheFunction = getBuilder()->GetInsertBlock()->getParent();
+			llvm::Function *TheFunction (m_llvmCodeGenerator.getBuilder()->GetInsertBlock()->getParent());
 			if(!TheFunction)
 			{
 				std::stringstream sstr;
 				sstr << "Unable to get parent function for if_statement '" << x << "'.";
-				return ErrorBool( sstr.str() );
+				return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 			}
   
 			// Create blocks for the then and else cases.
-			llvm::BasicBlock * ThenBB	(llvm::BasicBlock::Create(getContext(), "if.then", TheFunction));
-			llvm::BasicBlock * MergeBB	(llvm::BasicBlock::Create(getContext(), "if.merge"));
-			llvm::BasicBlock * ElseBB	(x._else.is_initialized() ? llvm::BasicBlock::Create(getContext(), "if.else") : MergeBB);
+			llvm::BasicBlock * ThenBB	(llvm::BasicBlock::Create(m_llvmCodeGenerator.getContext(), "if.then", TheFunction));
+			llvm::BasicBlock * MergeBB	(llvm::BasicBlock::Create(m_llvmCodeGenerator.getContext(), "if.merge"));
+			llvm::BasicBlock * ElseBB	(x._elseOptionalStatementList.is_initialized() ? llvm::BasicBlock::Create(m_llvmCodeGenerator.getContext(), "if.else") : MergeBB);
 
-			llvm::BranchInst * condBranch = getBuilder()->CreateCondBr(CondV, ThenBB, ElseBB);
+			llvm::BranchInst * condBranch = m_llvmCodeGenerator.getBuilder()->CreateCondBr(CondV, ThenBB, ElseBB);
 			if(!condBranch)
 			{
 				std::stringstream sstr;
 				sstr << "Unable to generate condBranch in if_statement '" << x << "'.";
-				return ErrorBool( sstr.str() );
+				return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 			}
 
-			getBuilder()->SetInsertPoint(ThenBB);		// Emit then value.
+			m_llvmCodeGenerator.getBuilder()->SetInsertPoint(ThenBB);		// Emit then value.
 
-			if (!(*this)(x._then))
+			if (!(*this)(x._thenStatementList))
 			{
 				std::stringstream sstr;
-				sstr << "Unable to generate then block: '" << x._then << "' in if_statement '" << x << "'.";
+				sstr << "Unable to generate then block: '" << x._thenStatementList << "' in if_statement '" << x << "'.";
 				condBranch->eraseFromParent();
 				ThenBB->eraseFromParent();
-				//if(x._else.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
+				//if(x._elseOptionalStatementList.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
 				//MergeBB->eraseFromParent();									// not attached here
-				return ErrorBool( sstr.str() );
+				return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 			}
   
 			// create branch to the merge block
-			llvm::BranchInst * thenMergeBranch	(getBuilder()->CreateBr(MergeBB));
+			llvm::BranchInst * thenMergeBranch	(m_llvmCodeGenerator.getBuilder()->CreateBr(MergeBB));
 			if(!thenMergeBranch)
 			{
 				condBranch->eraseFromParent();
 				ThenBB->eraseFromParent();
-				//if(x._else.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
+				//if(x._elseOptionalStatementList.is_initialized()){ElseBB->eraseFromParent();}		// not attached here
 				//MergeBB->eraseFromParent();									// not attached here
 				std::stringstream sstr;
 				sstr << "Unable to generate thenMergeBranch in if_statement '" << x << "'.";
-				return ErrorBool( sstr.str() );
+				return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 			}
 
-			ThenBB = getBuilder()->GetInsertBlock();		// Codegen of 'Then' can change the current block.
+			ThenBB = m_llvmCodeGenerator.getBuilder()->GetInsertBlock();		// Codegen of 'Then' can change the current block.
 
-			if(x._else.is_initialized())
+			if(x._elseOptionalStatementList.is_initialized())
 			{
 				// Emit else block.
 				TheFunction->getBasicBlockList().push_back(ElseBB);
-				getBuilder()->SetInsertPoint(ElseBB);
+				m_llvmCodeGenerator.getBuilder()->SetInsertPoint(ElseBB);
   
-				if (!(*this)(x._else.get()))
+				if (!(*this)(x._elseOptionalStatementList.get()))
 				{
 					std::stringstream sstr;
-					sstr << "Unable to generate else block: '" << x._else << "' in if_statement '" << x << "'.";
+					sstr << "Unable to generate else block: '" << x._elseOptionalStatementList << "' in if_statement '" << x << "'.";
 					condBranch->eraseFromParent();
 					ThenBB->eraseFromParent();
 					thenMergeBranch->eraseFromParent();
 					ElseBB->eraseFromParent();
 					//MergeBB->eraseFromParent();								// not attached here
-					return ErrorBool( sstr.str() );
+					return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 				}
   
 				// create branch to the merge block
-				llvm::BranchInst * elseMergeBranch	(getBuilder()->CreateBr(MergeBB));
+				llvm::BranchInst * elseMergeBranch	(m_llvmCodeGenerator.getBuilder()->CreateBr(MergeBB));
 				if(!elseMergeBranch)
 				{
 					condBranch->eraseFromParent();
@@ -124,16 +128,16 @@ namespace unilang
 					//MergeBB->eraseFromParent();								// not attached here
 					std::stringstream sstr;
 					sstr << "Unable to generate elseMergeBranch in if_statement '" << x << "'.";
-					return ErrorBool( sstr.str() );
+					return m_codeGeneratorErrors.ErrorBool( sstr.str() );
 				}
-				ElseBB = getBuilder()->GetInsertBlock();	// Codegen of 'Else' can change the current block
+				ElseBB = m_llvmCodeGenerator.getBuilder()->GetInsertBlock();	// Codegen of 'Else' can change the current block
 			}
 
 			// Emit merge basic block.
 			TheFunction->getBasicBlockList().push_back(MergeBB);
 
 			// following code is inserted after the merge block
-			getBuilder()->SetInsertPoint(MergeBB);
+			m_llvmCodeGenerator.getBuilder()->SetInsertPoint(MergeBB);
 
 			return true;
 		}

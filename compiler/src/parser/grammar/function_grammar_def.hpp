@@ -22,102 +22,99 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//! Constructor.
 		//-----------------------------------------------------------------------------
-		template <typename BaseIterator, typename Iterator>
-		function_grammar<BaseIterator,Iterator>::function_grammar(	error_handler<BaseIterator, Iterator>& error_handler, 
-																	identifier_grammar<BaseIterator, Iterator> const & identifierGrammar, 
-																	expression_grammar<BaseIterator, Iterator> const & expressionGrammar, 
-																	statement_grammar<BaseIterator, Iterator> const & statementGrammar, 
-																	lexer::token_lexer<BaseIterator>& lexer)
-			: function_grammar::base_type(functionDefinition, "function_grammar")
+		template <typename BaseIterator, typename LexerIterator>
+		function_grammar<BaseIterator,LexerIterator>::function_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
+																	identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+																	expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
+																	statement_grammar<BaseIterator, LexerIterator> const & statementGrammar, 
+																	lexer::token_lexer<BaseIterator> const & lexer)
+			: function_grammar::base_type(m_ruleFunctionDefinition, "function_grammar")
 		{
 			qi::_1_type _1;
 			qi::_3_type _3;
 			qi::_4_type _4;
 			qi::_val_type _val;
 
-			using qi::on_error;
-			using qi::on_success;
-			using qi::fail;
 			using boost::phoenix::function;
 
-			typedef function<unilang::error_handler<BaseIterator, Iterator> > error_handler_function;
-			typedef function<unilang::annotation<Iterator> > annotation_function;
+			typedef function<unilang::error_handler<BaseIterator, LexerIterator> > error_handler_function;
+			typedef function<unilang::annotation<LexerIterator> > annotation_function;
 
-			parameterDeclarationList =
+			m_ruleParameterDeclarationList =
 					lexer("\\(")
-				>	-( expressionGrammar.typeDeclaration % lexer(","))
+				>	-( expressionGrammar.m_ruleTypeDeclaration % lexer(","))
 				>	lexer("\\)")
 				;
-			parameterDeclarationList.name("parameterDeclarationList");
+			m_ruleParameterDeclarationList.name("parameterDeclarationList");
 
-			returnDeclarationList =
+			m_ruleReturnDeclarationList =
 					lexer("\\(")
-				>	-( expressionGrammar.typeDeclaration % lexer(","))
+				>	-( expressionGrammar.m_ruleTypeDeclaration % lexer(","))
 				>	lexer("\\)")
 				;
-			returnDeclarationList.name("returnDeclarationList");
+			m_ruleReturnDeclarationList.name("returnDeclarationList");
 
-			functionDeclaration =
+			m_ruleFunctionDeclaration =
 					lexer("\\?")
 				>	identifierGrammar
 				>	lexer(":")
-				>	expressionGrammar.mutableQualifier
-				>	parameterDeclarationList
+				>	expressionGrammar.m_ruleMutableQualifier
+				>	m_ruleParameterDeclarationList
 				>	lexer("->")
-				>	returnDeclarationList
+				>	m_ruleReturnDeclarationList
 				;
-			functionDeclaration.name("functionDeclaration");
+			m_ruleFunctionDeclaration.name("functionDeclaration");
 
-			parameterDefinitionList =
+			m_ruleParameterDefinitionList =
 					lexer("\\(")
-				>	-( expressionGrammar.variableDeclaration % lexer(","))
+				>	-( expressionGrammar.m_ruleVariableDeclaration % lexer(","))
 				>	lexer("\\)")
 				;
-			parameterDefinitionList.name("parameterDefinitionList");
+			m_ruleParameterDefinitionList.name("parameterDefinitionList");
 
-			returnDefinitionList =
+			m_ruleReturnDefinitionList =
 					lexer("\\(")
-				>	-( expressionGrammar.variableDefinition % lexer(","))
+				>	-( expressionGrammar.m_ruleVariableDefinition % lexer(","))
 				>	lexer("\\)")
 				;
-			returnDefinitionList.name("returnDefinitionList");
+			m_ruleReturnDefinitionList.name("returnDefinitionList");
 
-			functionDefinition =
+			m_ruleFunctionDefinition =
 					identifierGrammar
 				>	lexer(":")
-				>	expressionGrammar.mutableQualifier
-				>	parameterDefinitionList
+				>	expressionGrammar.m_ruleMutableQualifier
+				>	m_ruleParameterDefinitionList
 				>	lexer("->")
-				>	returnDefinitionList
-				>	-statementGrammar.compoundStatement
+				>	m_ruleReturnDefinitionList
+				>	-statementGrammar.m_ruleCompoundStatement
 				;
-			functionDefinition.name("functionDefinition");
+			m_ruleFunctionDefinition.name("functionDefinition");
 #ifdef _DEBUG
 			// Debugging and error handling and reporting support.
 			BOOST_SPIRIT_DEBUG_NODES(
-				(parameterDeclarationList)
-				(returnDeclarationList)
-				(functionDeclaration)
-				(parameterDefinitionList)
-				(returnDefinitionList)
-				(functionDefinition)
+				(m_ruleParameterDeclarationList)
+				(m_ruleReturnDeclarationList)
+				(m_ruleFunctionDeclaration)
+				(m_ruleParameterDefinitionList)
+				(m_ruleReturnDefinitionList)
+				(m_ruleFunctionDefinition)
 			);
 #endif
 			// Error handling: on error in start, call error_handler.
-			on_error<fail>(parameterDeclarationList,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(returnDeclarationList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(functionDeclaration,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(parameterDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(returnDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			on_error<fail>(functionDefinition,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleParameterDeclarationList,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleReturnDeclarationList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleFunctionDeclaration,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleParameterDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleReturnDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleFunctionDefinition,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.
-			//on_success(parameterDeclarationList,	annotation_function(error_handler.iters)(_val, _1));
-			//on_success(returnDeclarationList,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(functionDeclaration,			annotation_function(error_handler.iters)(_val, _1));
-			//on_success(parameterDefinitionList,		annotation_function(error_handler.iters)(_val, _1));
-			//on_success(returnDefinitionList,		annotation_function(error_handler.iters)(_val, _1));
-			on_success(functionDefinition,			annotation_function(error_handler.iters)(_val, _1));
+			//qi::on_success(m_ruleParameterDeclarationList,	annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			//qi::on_success(m_ruleReturnDeclarationList,		annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			qi::on_success(m_ruleFunctionDeclaration,			annotation_function(error_handler.iters)(_val, _1));
+			//qi::on_success(m_ruleParameterDefinitionList,		annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			//qi::on_success(m_ruleReturnDefinitionList,		annotation_function(error_handler.iters)(_val, _1));	// no success, this is no ast element
+			qi::on_success(m_ruleFunctionDefinition,			annotation_function(error_handler.iters)(_val, _1));
 		}
 	}
 }

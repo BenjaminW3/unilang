@@ -7,9 +7,10 @@
 #include <boost/variant/recursive_variant.hpp>
 #include <boost/optional.hpp>
 
+#include <vector>
 #include <ostream>
 
-namespace unilang 
+namespace unilang
 {
 	namespace ast
 	{
@@ -17,7 +18,7 @@ namespace unilang
 		struct if_statement;
 		//struct while_statement;
 		//struct return_statement;
-		struct statement_list;
+		struct statement_vector;
 
 		//#########################################################################
 		//! A statement.
@@ -26,16 +27,21 @@ namespace unilang
 							boost::spirit::extended_variant<	boost::recursive_wrapper<if_statement>,
 																//boost::recursive_wrapper<while_statement>,
 																//boost::recursive_wrapper<return_statement>,
+																assignment,
 																expression,
-																boost::recursive_wrapper<statement_list>
+																boost::recursive_wrapper<statement_vector>
 								>
 		{
+			//-------------------------------------------------------------------------
+			//! Constructor.
+			//-------------------------------------------------------------------------
 			statement();
 			statement(if_statement const& val);
 			//statement(while_statement const& val);
 			//statement(return_statement const& val);
+			statement(assignment const& val);
 			statement(expression const& val);
-			statement(statement_list const& val);
+			statement(statement_vector const& val);
 
 			inline bool isPure() const override;
 		};
@@ -44,21 +50,21 @@ namespace unilang
 		//#########################################################################
 		//! A statement list of multiple statements.
 		//#########################################################################
-		struct statement_list :	std::list<statement>,
+		struct statement_vector :	std::vector<statement>,
 								public ast_base
 		{
 			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, statement_list const& x);
+		std::ostream& operator<<(std::ostream& out, statement_vector const& x);
 
 		//#########################################################################
 		//! If-statement.
 		//#########################################################################
 		struct if_statement :	public ast_base
 		{
-			expression _condition;
-			statement_list _then;
-			boost::optional<statement_list> _else;
+			expression _expCondition;
+			statement_vector _thenStatementList;
+			boost::optional<statement_vector> _elseOptionalStatementList;
 
 			bool isPure() const override;
 		};
@@ -69,7 +75,7 @@ namespace unilang
 		//#########################################################################
 		/*struct while_statement :	public ast_base
 		{
-			expression _condition;
+			expression _expCondition;
 			statement _body;
 		};*/
 

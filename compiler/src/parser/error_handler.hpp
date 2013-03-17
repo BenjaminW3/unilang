@@ -9,7 +9,7 @@ namespace unilang
 	//#########################################################################
 	// ! The error handler.
 	//#########################################################################
-	template <typename BaseIterator, typename Iterator>
+	template <typename BaseIterator, typename LexerIterator>
 	struct error_handler
 	{
 		template <typename, typename, typename>
@@ -27,16 +27,15 @@ namespace unilang
 		//! Prints out the error Message, the error reason and the position the error occured.
 		//-----------------------------------------------------------------------------
 		template <typename Message, typename What>
-		void operator()(
-			Message const& message,
-			What const& what,
-			Iterator err_pos) const
+		void operator()(	Message const& message,
+							What const& what,
+							LexerIterator err_pos) const
 		{
 			// retrieve underlying iterator from current token, err_pos points to the last validly matched token, so we use its end iterator as the error position
-			BaseIterator err_pos_base = err_pos->matched().end();
+			BaseIterator err_pos_base (err_pos->matched().end());
 
 			unsigned int uiLine;
-			BaseIterator line_start = get_pos(err_pos_base, uiLine);
+			BaseIterator line_start (get_pos(err_pos_base, uiLine));
 			if (err_pos_base != last)
 			{
 				std::cout << message << what << " line " << uiLine << ':' << std::endl;
@@ -60,11 +59,11 @@ namespace unilang
 		BaseIterator get_pos(BaseIterator err_pos, unsigned int & uiLine) const
 		{
 			uiLine = 1;
-			BaseIterator i = first;
-			BaseIterator line_start = first;
+			BaseIterator i (first);
+			BaseIterator line_start (first);
 			while (i != err_pos)
 			{
-				bool eol = false;
+				bool eol (false);
 				if (i != err_pos && *i == '\r') // CR
 				{
 					eol = true;
@@ -88,7 +87,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		std::string get_line(BaseIterator err_pos) const
 		{
-			BaseIterator i = err_pos;
+			BaseIterator i (err_pos);
 			// position i to the next EOL
 			while (i != last && (*i != '\r' && *i != '\n'))
 				++i;
@@ -97,6 +96,6 @@ namespace unilang
 
 		BaseIterator first;
 		BaseIterator last;
-		std::vector<Iterator> iters;
+		std::vector<LexerIterator> iters;
 	};
 }

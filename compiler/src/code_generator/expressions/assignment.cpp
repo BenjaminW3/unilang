@@ -1,7 +1,12 @@
 #include "exp_code_gen.hpp"
 
 #include "../types.hpp"
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
+#include "../symbols/symbol_code_gen.hpp"
+#include "../symbols/symbols.hpp"
 
+#include "../../ast/operators.hpp"
 #include "../../ast/expression_ast.hpp"
 #include "../../ast/operators_def.hpp"
 
@@ -25,7 +30,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -38,23 +43,23 @@ namespace unilang
 			LOG(x);
 
 			// Look up the name.
-			VarData const * const V = getVarFromName(x._lhs._name);
-			if(!V)
+			VarData const * const pVariable (m_symbolCodeGenerator.getVarFromName(x._lhs._name));
+			if(!pVariable)
 			{
-				return ErrorValue("Undefined variable name '"+x._lhs._name+"' !");
+				return m_codeGeneratorErrors.ErrorValue("Undefined variable name '"+x._lhs._name+"' !");
 			}
 			else
 			{
-				if(!V->isMutable())
+				if(!pVariable->isMutable())
 				{
-					return ErrorValue("Assignment to const (non-mutable) variable '"+x._lhs._name+"' is impossible!");
+					return m_codeGeneratorErrors.ErrorValue("Assignment to const (non-mutable) variable '"+x._lhs._name+"' is impossible!");
 				}
 				else
 				{
-					llvm::AllocaInst *lhsAlloca = V->getAllocaInst();
+					llvm::AllocaInst * lhsAlloca (pVariable->getAllocaInst());
 					if(!lhsAlloca)
 					{
-						return ErrorValue("Variable '"+x._lhs._name+"' is not allocated!", EErrorLevel::Internal);
+						return m_codeGeneratorErrors.ErrorValue("Variable '"+x._lhs._name+"' is not allocated!", EErrorLevel::Internal);
 					}
 					else
 					{
@@ -62,43 +67,43 @@ namespace unilang
 						llvm::Value *rhsVal = (*this)(x._rhs);
 						if(!rhsVal)
 						{
-							return ErrorValue("Invalid right hand side of an assignment!");
+							return m_codeGeneratorErrors.ErrorValue("Invalid right hand side of an assignment!");
 						}
 						if(rhsVal->getType()!=lhsAlloca->getType()->getElementType())
 						{
-							return ErrorValue("Assignment type mismatch! Trying to assign a value of type '" +getLLVMTypeName(rhsVal->getType())+ 
+							return m_codeGeneratorErrors.ErrorValue("Assignment type mismatch! Trying to assign a value of type '" +getLLVMTypeName(rhsVal->getType())+ 
 												"' to a value of type '"+getLLVMTypeName(lhsAlloca->getType())+"'.");
 						}
 						else
 						{
 							if(
 #ifdef TOKEN_ID
-				x._operator
+				x._uiOperatorID
 #else
-				static_cast<operators::EOperators>(x._operator)
+				static_cast<operators::EOperators>(x._uiOperatorID)
 #endif
 								== operators::EOperators::assign)
 							{
-								/*return */getBuilder()->CreateStore(rhsVal, lhsAlloca);
+								/*return */m_llvmCodeGenerator.getBuilder()->CreateStore(rhsVal, lhsAlloca);
 								return rhsVal;
 							}
-							else // more _then just an assignment
+							else // more _thenStatementList just an assignment
 							{
-								llvm::Value * pVal (getBuilder()->CreateLoad(lhsAlloca, "loadAssignLHSVal"));
+								llvm::Value * pVal (m_llvmCodeGenerator.getBuilder()->CreateLoad(lhsAlloca, "load.assign.lhs.val"));
 								if(!pVal)
 								{
-									return ErrorValue("Unable to load LHS variable value in combined assignment.");
+									return m_codeGeneratorErrors.ErrorValue("Unable to load LHS variable value in combined assignment.");
 								}
 
 								// remove all possible flags to get the pure operation
 								size_t const opRemoveFlags(~static_cast<size_t>(operators::EOperatorTypes::assignmentOperation));
-								operators::EOperators const opType = static_cast<operators::EOperators>(static_cast<size_t>(x._operator) & opRemoveFlags);
+								operators::EOperators const opType = static_cast<operators::EOperators>(static_cast<size_t>(x._uiOperatorID) & opRemoveFlags);
 								llvm::Value *CalcVal = CreateBinaryOperation(pVal, rhsVal, opType);
 								if(!CalcVal)
 								{
-									return ErrorValue("Unable to compute result of operation prior to assignment!");
+									return m_codeGeneratorErrors.ErrorValue("Unable to compute result of operation prior to assignment!");
 								}
-								/*return */getBuilder()->CreateStore(CalcVal, lhsAlloca);
+								/*return */m_llvmCodeGenerator.getBuilder()->CreateStore(CalcVal, lhsAlloca);
 								return CalcVal;
 							}
 						}

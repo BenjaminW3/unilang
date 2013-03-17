@@ -32,19 +32,19 @@ namespace unilang
 			ast::module ast;
 
 			// Take the time
-			const auto timePointBefore = std::chrono::system_clock::now();
+			const auto timePointBefore (std::chrono::system_clock::now());
 
 			// get the std::string iterators
 			typedef std::string::const_iterator base_iterator_type;
-			base_iterator_type cIterStringBegin = sSourceCode.cbegin();
-			base_iterator_type cIterStringEnd = sSourceCode.cend();
+			base_iterator_type cIterStringBegin	(sSourceCode.cbegin());
+			base_iterator_type cIterStringEnd	(sSourceCode.cend());
 
 			// calculate the lexer iterators used for parsing
 			typedef unilang::lexer::token_lexer<base_iterator_type> lexer_type;
 			lexer_type lexer;
 			typedef lexer_type::iterator_type lexer_iterator_type;
-			lexer_iterator_type cIterBegin = lexer.begin(cIterStringBegin, cIterStringEnd);
-			lexer_iterator_type cIterEnd = lexer.end();
+			lexer_iterator_type cIterBegin	(lexer.begin(cIterStringBegin, cIterStringEnd));
+			lexer_iterator_type cIterEnd	(lexer.end());
 
 			// create error handler
 			error_handler<base_iterator_type, lexer_iterator_type> error_handler(sSourceCode.cbegin(), sSourceCode.cend());
@@ -53,17 +53,24 @@ namespace unilang
 			global_grammar<base_iterator_type, lexer_iterator_type> parser(error_handler, lexer);
 			
 			// actually parse it now
-			const bool success = boost::spirit::qi::parse(cIterBegin, cIterEnd, parser, ast);
+			const bool bSuccess (boost::spirit::qi::parse(cIterBegin, cIterEnd, parser, ast));
 
-			const auto timePointAfter = std::chrono::system_clock::now();
-			const long long diff = std::chrono::duration_cast<std::chrono::duration<long, std::ratio<1, 1000>>>(timePointAfter - timePointBefore).count();
+			const auto timePointAfter (std::chrono::system_clock::now());
+			const long long diff (std::chrono::duration_cast<std::chrono::duration<long, std::ratio<1, 1000>>>(timePointAfter - timePointBefore).count());
 			std::cout << "Parsing duration: " << diff << " ms" << std::endl;
 
 			// return the ast only if it was successfull
-			if (success && cIterBegin == cIterEnd)
+			if (bSuccess && (cIterBegin == cIterEnd))
 			{
-				std::cout << "############################" << std::endl << std::endl;
-				return ast;
+				if (lexer.getCommentNestingLevel() != 0)
+				{
+					throw std::runtime_error("Parsing failed! Reached the end of the source but there are open multi-line-comments!");
+				}
+				else
+				{
+					std::cout << "############################" << std::endl << std::endl;
+					return ast;
+				}
 			}
 			else
 			{

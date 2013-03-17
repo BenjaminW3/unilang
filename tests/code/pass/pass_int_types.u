@@ -1,0 +1,4 @@
+entrypoint: ~()->(iErrorCode:~i64{1})
+{
+	i16{i8{0b10000000}}	// variables can have type names
+}

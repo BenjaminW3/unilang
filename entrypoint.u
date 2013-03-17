@@ -1,18 +1,18 @@
-?add : (i64,i64)->(i64)						// predeclaration of pure function
-?add : (i32,i32)->(i32)						// predeclaration of pure function
+?add : (i64,i64)->(i64)						// forward declaration of pure function
+?add : (i32,i32)->(i32)						// forward declaration of pure function
 
-entrypoint : ~()->(iErrorCode:~i64{1})		// define entry-point, initialize iErrorCode with 1
+entrypoint : ~()->(iErrorCode:~i64{0xFF})		// define entry-point, initialize iErrorCode with 1
 {
-	//iErrorCode = add(-1, 5+-4/*+2*/);		// assign the result of -1+5-4/*+2*/ to iErrorCode
+	//iErrorCode := add(-1, 5+-4/*+2*/);		// assign the result of -1+5-4/*+2*/ to iErrorCode
 
-	iErrorCode = i64{add(i32{-54}, i32{2})};
-	++iErrorCode;
+	//iErrorCode := i64{add(i32{-54}, i32{2})};
+	//++iErrorCode;
 	//--iErrorCode;
-	//iErrorCode+=3;
-	//iErrorCode+=3.14;
-	//iErrorCode-=3.14;
-	//iErrorCode = 3 + int{3.14} -5;	//	3+3-5=1
+	iErrorCode:=0x0F;
+	//iErrorCode += 3.14;
+	//iErrorCode -= 3.14;
+	//iErrorCode := 3 + int{3.14} -5;	//	3+3-5=1
 }
 
-add : (i1:i64, i2:i64)->(i64{i1+i2}) 		// definition of predeclared pure function
-add : (i1:i32, i2:i32)->(i32{i1+i2}) 		// definition of predeclared pure function
+add : (i1:i64, i2:i64)->(i64{i1+i2}) 		// definition of forward declared pure function
+add : (i1:i32, i2:i32)->(i32{i1+i2}) 		// definition of forward declared pure function

@@ -1,7 +1,10 @@
 #include "exp_code_gen.hpp"
 
 #include "../types.hpp"
+#include "../errors.hpp"
+#include "../llvm/llvm_code_gen.hpp"
 
+#include "../../ast/operators.hpp"
 #include "../../ast/expression_ast.hpp"
 #include "../../ast/operators_def.hpp"
 
@@ -25,7 +28,7 @@
 #pragma warning(pop)
 #endif
 
-namespace unilang 
+namespace unilang
 { 
 	namespace code_generator
 	{
@@ -37,63 +40,63 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value * const pVal (x._operand.apply_visitor(*this));
+			llvm::Value * const pVal (x._opOperand.apply_visitor(*this));
 			if(!pVal)
 			{
 				std::stringstream sstr;
-				sstr << x._operand;
-				return ErrorValue("Invalid value returned from '"+sstr.str()+"'");
+				sstr << x._opOperand;
+				return m_codeGeneratorErrors.ErrorValue("Invalid value returned from '"+sstr.str()+"'");
 			}
 
 			switch (
 #ifdef TOKEN_ID
-				x._operator
+				x._uiOperatorID
 #else
-				static_cast<operators::EOperators>(x._operator)
+				static_cast<operators::EOperators>(x._uiOperatorID)
 #endif
 				)
 			{
 			case operators::EOperators::minus:
 				{
-					return getBuilder()->CreateNeg(pVal, "neg");
+					return m_llvmCodeGenerator.getBuilder()->CreateNeg(pVal, "neg");
 				}
 			case operators::EOperators::not_:
 				{
-					return getBuilder()->CreateNot(pVal, "not");
+					return m_llvmCodeGenerator.getBuilder()->CreateNot(pVal, "not");
 				}
 			case operators::EOperators::compl:
 				{
 					llvm::Value * pValAllOnes = llvm::Constant::getAllOnesValue(pVal->getType());
 					if(!pValAllOnes)
 					{
-						return ErrorValue("Unable to generate value with all bits set inside of complement!", EErrorLevel::Internal);
+						return m_codeGeneratorErrors.ErrorValue("Unable to generate value with all bits set inside of complement!", EErrorLevel::Internal);
 					}
-					return getBuilder()->CreateXor(pVal, pValAllOnes, "compl.xor");
+					return m_llvmCodeGenerator.getBuilder()->CreateXor(pVal, pValAllOnes, "compl.xor");
 				}
 			case operators::EOperators::plus_plus:
 				{
-					if(	x._operand.var.type()==typeid(ast::primary_expr) && 
-						boost::get<ast::primary_expr>(x._operand.var).var.type()==typeid(ast::identifier))
+					if(	x._opOperand.var.type()==typeid(ast::primary_expr) && 
+						boost::get<ast::primary_expr>(x._opOperand.var).var.type()==typeid(ast::identifier))
 					{
 						ast::expression rightEx;
 						if(pVal->getType()->isIntegerTy() || pVal->getType()->isFloatingPointTy())
 						{
 							// create the one as primary expression
 							ast::expression ex;
-							ex._first = ast::operand(ast::primary_expr(size_t(1)));
+							ex._firstOperand = ast::operand(ast::primary_expr(size_t(1)));
 							// cast it to the type needed
 							ast::variable_definition varDef;
-							varDef._declaration._type._identifier = llvmTypeToUnilangTypeName(pVal->getType());
+							varDef._declaration._type._idfName = llvmTypeToUnilangTypeName(pVal->getType());
 							varDef._declaration._type._bHasMutableQualifier = false;
-							varDef._lParameterExpressions.push_back(ex);
-							rightEx._first = ast::operand(varDef);
+							varDef._vParameterExpressions.push_back(ex);
+							rightEx._firstOperand = ast::operand(varDef);
 						}
 						else
 						{
-							return ErrorValue("Operator '++' is not available for value of type '"+getLLVMTypeName(pVal->getType())+"' !", EErrorLevel::Fatal);
+							return m_codeGeneratorErrors.ErrorValue("Operator '++' is not available for value of type '"+getLLVMTypeName(pVal->getType())+"' !", EErrorLevel::Fatal);
 						}
 
-						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._operand.var).var));
+						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._opOperand.var).var));
 
 						ast::assignment assign	(idf,				
 #ifdef TOKEN_ID
@@ -108,33 +111,33 @@ namespace unilang
 					}
 					else
 					{
-						return ErrorValue("Operator '++' is only applicaple to identifiers.", EErrorLevel::Fatal);
+						return m_codeGeneratorErrors.ErrorValue("Operator '++' is only applicaple to identifiers.", EErrorLevel::Fatal);
 					}
 				}
 			case operators::EOperators::minus_minus:
 				{
-					if(	x._operand.var.type()==typeid(ast::primary_expr) && 
-						boost::get<ast::primary_expr>(x._operand.var).var.type()==typeid(ast::identifier))
+					if(	x._opOperand.var.type()==typeid(ast::primary_expr) && 
+						boost::get<ast::primary_expr>(x._opOperand.var).var.type()==typeid(ast::identifier))
 					{
 						ast::expression rightEx;
 						if(pVal->getType()->isIntegerTy() || pVal->getType()->isFloatingPointTy())
 						{
 							// create the one as primary expression
 							ast::expression ex;
-							ex._first = ast::operand(ast::primary_expr(size_t(1)));
+							ex._firstOperand = ast::operand(ast::primary_expr(size_t(1)));
 							// cast it to the type needed
 							ast::variable_definition varDef;
-							varDef._declaration._type._identifier = llvmTypeToUnilangTypeName(pVal->getType());
+							varDef._declaration._type._idfName = llvmTypeToUnilangTypeName(pVal->getType());
 							varDef._declaration._type._bHasMutableQualifier = false;
-							varDef._lParameterExpressions.push_back(ex);
-							rightEx._first = ast::operand(varDef);
+							varDef._vParameterExpressions.push_back(ex);
+							rightEx._firstOperand = ast::operand(varDef);
 						}
 						else
 						{
-							return ErrorValue("Operator '--' is not available for value of type '"+getLLVMTypeName(pVal->getType())+ "' !", EErrorLevel::Fatal);
+							return m_codeGeneratorErrors.ErrorValue("Operator '--' is not available for value of type '"+getLLVMTypeName(pVal->getType())+ "' !", EErrorLevel::Fatal);
 						}
 
-						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._operand.var).var));
+						auto const idf (boost::get<ast::identifier>(boost::get<ast::primary_expr>(x._opOperand.var).var));
 
 						ast::assignment assign	(idf,				
 #ifdef TOKEN_ID
@@ -149,7 +152,7 @@ namespace unilang
 					}
 					else
 					{
-						return ErrorValue("Operator '--' is only applicaple to identifiers.", EErrorLevel::Fatal);
+						return m_codeGeneratorErrors.ErrorValue("Operator '--' is only applicaple to identifiers.", EErrorLevel::Fatal);
 					}
 				}
 			case operators::EOperators::plus:
@@ -164,34 +167,34 @@ namespace unilang
 					if(pVal->getType()->isDoubleTy())
 					{
 						// convert to int
-						llvm::Value *pUi = getBuilder()->CreateFPToUI(pVal, llvm::IntegerType::get(getContext(), 8), "FpToUiTmp");
+						llvm::Value * const pUi (m_llvmCodeGenerator.getBuilder()->CreateFPToUI(pVal, llvm::IntegerType::get(m_llvmCodeGenerator.getContext(), 8), "FpToUiTmp"));
 						if(!pUi)
 						{
-							return ErrorValue("CreateFPToUI returned invalid value!", EErrorLevel::Internal);
+							return m_codeGeneratorErrors.ErrorValue("CreateFPToUI returned invalid value!", EErrorLevel::Internal);
 						}
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = getBuilder()->CreateURem(pUi, (*this)(uint64_t(10)), "URemTmp");
+						llvm::Value * const pPosLastDigit (m_llvmCodeGenerator.getBuilder()->CreateURem(pUi, (*this)(uint64_t(10)), "URemTmp"));
 						if(!pPosLastDigit)
 						{
-							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
+							return m_codeGeneratorErrors.ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
-						return getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
+						return m_llvmCodeGenerator.getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
 					else if(pVal->getType()->isIntegerTy())
 					{
 						// get last digit through reminder
-						llvm::Value *pPosLastDigit = getBuilder()->CreateURem(pVal, (*this)(uint64_t(10)), "URemTmp");
+						llvm::Value * const pPosLastDigit (m_llvmCodeGenerator.getBuilder()->CreateURem(pVal, (*this)(uint64_t(10)), "URemTmp"));
 						if(!pPosLastDigit)
 						{
-							return ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
+							return m_codeGeneratorErrors.ErrorValue("CreateURem returned invalid value!", EErrorLevel::Internal);
 						}
 						// ascii
-						return getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
+						return m_llvmCodeGenerator.getBuilder()->CreateAdd(pPosLastDigit, (*this)(uint64_t(3*16)), "AddTmp");
 					}
 					else
 					{
-						return ErrorValue("String conversion for type '"+getLLVMTypeName(pVal->getType())+"' is not implemented!", EErrorLevel::Fatal);
+						return m_codeGeneratorErrors.ErrorValue("String conversion for type '"+getLLVMTypeName(pVal->getType())+"' is not implemented!", EErrorLevel::Fatal);
 					}
 					/*return getBuilder()->CreateGlobalString(L, "stringifytmp");*/
 				}
@@ -200,12 +203,12 @@ namespace unilang
 					std::stringstream sstr;
 					sstr << 
 #ifdef TOKEN_ID
-					x._operator
+					x._uiOperatorID
 #else
-					static_cast<operators::EOperators>(x._operator)
+					static_cast<operators::EOperators>(x._uiOperatorID)
 #endif
 					;
-					return ErrorValue("Unknown operation '"+sstr.str()+"'!", EErrorLevel::Fatal);
+					return m_codeGeneratorErrors.ErrorValue("Unknown operation '"+sstr.str()+"'!", EErrorLevel::Fatal);
 				}
 			}
 		}

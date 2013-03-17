@@ -1,5 +1,5 @@
 entrypoint: ~()->(i64{1})
 {
-	foo = 42;
+	foo := 42;
 	foo:i64{0};
 }

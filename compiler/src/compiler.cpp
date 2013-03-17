@@ -16,7 +16,7 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> compile_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output )
+		std::string read_source_from_file( std::string const & sSourceCodeFilePath )
 		{
 			std::tr2::sys::path const pInPath(sSourceCodeFilePath);
 			if(!std::tr2::sys::is_regular_file(pInPath))
@@ -43,34 +43,65 @@ namespace unilang
 						std::back_inserter(sSourceCode));
 			ifs.close();
 
-			if((EDebugOutputOptions::SourceCode & output) == EDebugOutputOptions::SourceCode)
+			return sSourceCode;
+		}
+
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		std::shared_ptr<llvm::Module> compile_source( std::string const & sSourceCode, EDebugOutputOptions const output )
+		{
+			/*if((EDebugOutputOptions::SourceCode & output) == EDebugOutputOptions::SourceCode)
 			{
 				std::cout << std::endl << "#########SourceCode#########" << std::endl;
 				std::cout << sSourceCode << std::endl;
 				std::cout << "############################" << std::endl << std::endl;
-			}
+			}*/
 
-			unilang::ast::module AST = unilang::parser::parse_code( sSourceCode );
+			unilang::ast::module AST (unilang::parser::parse_code( sSourceCode ));
 			
 			unilang::code_generator::code_generator gen( AST );
 
 			if((EDebugOutputOptions::Unoptimized & output) == EDebugOutputOptions::Unoptimized)
 			{
 				std::cout << std::endl << "########unoptimized#########" << std::endl;
-				gen.print_bytecode();
+				gen.getllvmCodeGenerator().printModuleBytecode();
 				std::cout << "############################" << std::endl << std::endl;
 			}
 
-			gen.optimize();
+			gen.getllvmCodeGenerator().optimizeModule();
 
 			if((EDebugOutputOptions::Optimized & output) == EDebugOutputOptions::Optimized)
 			{
 				std::cout << std::endl << "#########optimized##########" << std::endl;
-				gen.print_bytecode();
+				gen.getllvmCodeGenerator().printModuleBytecode();
 				std::cout << "############################" << std::endl << std::endl;
 			}
 
-			return gen.getModule();
+			return gen.getllvmCodeGenerator().getModule();
+		}
+
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		std::shared_ptr<llvm::Module> compile_source_from_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output )
+		{
+			return compile_source(read_source_from_file(sSourceCodeFilePath), output);
+		}
+		
+		//-----------------------------------------------------------------------------
+		//
+		//-----------------------------------------------------------------------------
+		std::vector<std::shared_ptr<llvm::Module>> compile_source_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output )
+		{
+			std::vector<std::shared_ptr<llvm::Module>> vspModules;
+			
+			for(auto const & sSourceFilePath : vsSourceCodeFilePaths)
+			{
+				vspModules.push_back(compile_source_from_file(sSourceFilePath, output));
+			}
+
+			return vspModules;
 		}
 	}
 }
