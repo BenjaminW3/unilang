@@ -21,18 +21,19 @@
 //! There are no braceless forms of if, for, etc. Due to this rule the <tt>{}</tt> have to be given explicitly.
 //! Variable definition has to be done via <tt>var:i32{50};</tt>. You can not initialize a variable with normal paranthesis to prevent the 'most vexing parse' http://en.wikipedia.org/wiki/Most_vexing_parse problem of c++.
 //! Assignments are done via <tt>var := 51;</tt>. Assignments are statements so they do not return a value. Comparisons are done via <tt>if(a=b)</tt>. This solves the "if (a=b)" (assignment instead of comparison) problem that other languages have.
-//! Integer literals can be written in multiple bases. Standard decimal ('28'), hexadecimal ('0x1C'), binary ('0b11100') or octal ('0q34'). The prefix q is used instead of c to avoid the prefix o being mistaken for a zero.
+//! Integer literals can be written in multiple bases. Standard decimal ('28'), hexadecimal ('0x1C'), binary ('0b11100') or octal ('0q34'). The prefix q is used instead of o to avoid the prefix o being mistaken for a zero.
 //! 
 //! \subsection lang2 Comments
 //! There are two types of comments available. 
 //! On the one hand there are C++ style comments <tt>// commented text</tt>. Those comment out everything from the two slashes to the end of the line.
 //! On the other hand you can use C-style comments <tt>/* commented text*/</tt>. They can be used in a line and also over multiple lines e.g. <tt>iErrorCode = /*3 +*/ 4;</tt>.
 //! Those comments can also be nested like <tt>iErrorCode = /*3 /*+ 8*/ +*/ 4;</tt>.
-//! Comments can be used everywhere except inside an identifier. E.g. the code <tt>iErr/*rr*/orCode = 4;</tt> will not compile because now iErr and orCode would be two different identifiers.
+//! Comments can be used everywhere except inside a literal token. E.g. the code <tt>iErr/*rr*/orCode = 4;</tt> will not compile because now 'iErr' and 'orCode' are two different identifiers. 
+//! The same rule applies to <tt>iErrorCode = 1/*0*/0;</tt> because '1' and '0' are two different numbers and there is no connecting operator between them.
 //!
 //! \subsection lang3 Types
 //! Unilang defines a few fundamental types. There is only the differentation between floating point and integer types of different precision.
-// TODO: The basic integer type is the arget depenadant int.
+// TODO: The basic integer type is the target dependant int.
 //! Size dependant integer types implemented are i64, i32, i16, i8 and i1 commonly known as boolean type.
 //! Floating point types supported are f64 and f32.
 //!
@@ -70,14 +71,15 @@
 //! \subsection lang7 namespaces
 //! Namespaces add the possibility to disambiguate between functions with the same identifier.
 //! Unnamed namespaces are not supported. '::' is used as the scope resolution operator. 
+//! Namespaces can be defined as follows: <tt>namespace:namespace_name1 { /* code */ }</tt>.
+//! Namespaces can be nested where you can define one namespace inside another namespace as follows: <tt>namespace:namespace_name1 { /* code1 */ namespace:namespace_name2 { /* code2 */ } }</tt>.
 //! You can access members of nested namespaces by using the resultion operator as follows: <tt>namespace_name1::namespace_name2::function();</tt>.
-//! Scope resolution is by default done from the current namespace to the global namespace. If you are in the nested namespace <tt>nest1::nest2</tt> and you try to call the method of the last example then the search for the function will be made in three steps.
+//! Scope resolution is by default done from the current namespace to the global namespace. If you are in the nested namespace <tt>nest1::nest2</tt> and you try to call a function of the last example then the search for the function will be made in three steps.
 //! At first in the current namespace <tt>nest1::nest2::namespace_name1::namespace_name2::function</tt> then for <tt>nest1::namespace_name1::namespace_name2::function</tt> and then <tt>namespace_name1::namespace_name2::function</tt>.
 //! If the scope resolution operator is used as the namespace prefix the name(space) following it is said to be found from global namespace. E.g.: <tt>::nest1::namespace_name2::function();</tt> is searched for only once in the global namespace directly under the given scopes.
 //! Discontiguous Namespaces are also allowd. A namespace can be defined in several parts and so a namespace is made up of the sum of its separately defined parts. The separate parts of a namespace can be spread over multiple files.
-//! Namespaces can be nested where you can define one namespace inside another name space as follows: <tt>namespace:namespace_name1 { /* code1 */ namespace:namespace_name2 { /* code2 */ } }</tt>.
-//! Multiple namespaces in different hierarchies can have the same name so <tt>namespace:math { /* code1 */ namespace:math { /* code2 */ } }</tt> and <tt>namespace:math { /* code1 */ namespace:const { /* code2 */ } } namespace:math { /* code3 */ }</tt> are both valid.
-//! You can not define members externally into different namespaces like void <tt>namespace:B {} namespace:A { B::f()->() }</tt>
+//! Multiple namespaces in different hierarchies can have the same name so <tt>namespace:math { /* code1 */ namespace:math { /* code2 */ } }</tt> and <tt>namespace:math { /* code1 */ namespace:const { /* code2 */ } } namespace:const { /* code3 */ }</tt> are both valid.
+//! You can not define members externally into different namespaces like: <tt>namespace:B {} namespace:A { B::f()->() }</tt>
 //! 
 // $ - The stringify operator
 // if you write $ in front of a variable or expression its content is converted to a string. This can be used for Debug purposes.

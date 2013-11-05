@@ -20,8 +20,8 @@
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include <llvm/Module.h>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/Module.h>
+#include <llvm/IR/IRBuilder.h>
 
 #if defined(_MSC_VER)
 #pragma warning(push)

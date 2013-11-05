@@ -12,19 +12,19 @@
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include <llvm/LLVMContext.h>
-#include <llvm/IRBuilder.h>
+#include <llvm/IR/LLVMContext.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/DataLayout.h>
+#include <llvm/IR/Module.h>
 #include <llvm/Support/TargetSelect.h>
 //#include <llvm/ExecutionEngine/ExecutionEngine.h>
 //#include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/PassManager.h>
 #include <llvm/Analysis/Verifier.h>
 #include <llvm/Analysis/Passes.h>
-#include <llvm/DataLayout.h>
 #include <llvm/Transforms/Scalar.h>
 #include "llvm/Transforms/IPO.h"		// createDeadArgEliminationPass, ...
 #include "llvm/Transforms/Vectorize.h"	// createLoopVectorizePass
-#include <llvm/Module.h>
 
 #include <llvm/Support/TargetRegistry.h>
 #include <llvm/Target/TargetMachine.h>
@@ -232,6 +232,8 @@ namespace unilang
 				OurFPM.add(llvm::createTypeBasedAliasAnalysisPass());
 				// Provide basic AliasAnalysis support for GVN.
 				OurFPM.add(llvm::createBasicAliasAnalysisPass());
+				// Optimize loops first.
+				OurFPM.add(llvm::createLoopStrengthReducePass());
 				// Do simple "peephole" optimizations and bit-twiddling optzns. Reassociate expressions.
 				OurFPM.add(llvm::createReassociatePass());
 				// deletes stores that are post-dominated by must-aliased stores and are not loaded used between the stores.
@@ -274,7 +276,7 @@ namespace unilang
 				// Simplify the control flow graph (deleting unreachable blocks, etc).
 				OurFPM.add(llvm::createCFGSimplificationPass());
 				// BlockPlacement
-				OurFPM.add(llvm::createBlockPlacementPass());
+				//OurFPM.add(llvm::createBlockPlacementPass());	// deprecated???
 
 				OurFPM.add(llvm::createEarlyCSEPass());
 

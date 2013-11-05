@@ -21,8 +21,8 @@
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include <llvm/IRBuilder.h>
-#include <llvm/Type.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Type.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)

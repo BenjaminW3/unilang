@@ -17,7 +17,7 @@
 #include <llvm/ExecutionEngine/ExecutionEngine.h>
 #include <llvm/ExecutionEngine/JIT.h>	// needed to do JIT
 #include <llvm/Support/TargetSelect.h>	// InitializeNativeTarget
-#include <llvm/Module.h>
+#include <llvm/IR/Module.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -52,7 +52,7 @@ namespace unilang
 			
 			std::string const entrypointName(funcDecl.build_mangled_name());
 			llvm::Function * const func (ee->FindFunctionNamed(entrypointName.c_str()));
-			if(ee==nullptr || func->isNullValue())
+			if(func==nullptr || func->isNullValue())
 			{
 				throw std::runtime_error("'"+entrypointName+"' not found!");
 			}

@@ -4,9 +4,10 @@
 #pragma warning(push)
 #pragma warning(disable: 4267)		// conversion from 'size_t' to 'unsigned int', possible loss of data
 #pragma warning(disable: 4512)		// assignment operator could not be generated
+#pragma warning(disable: 4244)		// 'initializing' : conversion from 'llvm::Twine::NodeKind' to 'unsigned char', possible loss of data
 #endif
 
-#include <llvm/Type.h>
+#include <llvm/IR/Type.h>
 #include <llvm/Support/raw_ostream.h>
 
 #if defined(_MSC_VER)

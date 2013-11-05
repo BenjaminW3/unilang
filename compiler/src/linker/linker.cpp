@@ -14,13 +14,13 @@
 #pragma warning(disable: 4800)		// 'unsigned int' : forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include <llvm/Module.h>
+#include <llvm/IR/Module.h>
 
 // Bitcode
 #include <llvm/Support/MemoryBuffer.h>	// MemoryBuffer
 #include <llvm/Support/system_error.h>
 #include <llvm/Bitcode/ReaderWriter.h>	// ParseBitcodeFile
-#include <llvm/LLVMContext.h>			// getGlobalContext
+#include <llvm/IR/LLVMContext.h>		// getGlobalContext
 #include <llvm/Support/raw_ostream.h>
 
 //Linker
@@ -101,13 +101,13 @@ namespace unilang
 		std::shared_ptr<llvm::Module> link_modules( std::vector<std::shared_ptr<llvm::Module>> vModules )
 		{
 			std::shared_ptr<llvm::Module> newModule (std::make_shared<llvm::Module>("unilang-module", llvm::getGlobalContext()));
-			llvm::Linker linker ("unilang-linker", newModule.get(), llvm::Linker::QuietWarnings | llvm::Linker::QuietErrors  /*| llvm::Linker::PreserveSource*/);	// no Verbose output because we output errors ourselves
+			llvm::Linker linker (newModule.get());
 
 			bool bErrorOccured (false);
 			for(auto const & module : vModules)
 			{
 				std::string sError;
-				if(linker.LinkInModule(module.get(), &sError))
+				if(linker.linkInModule(module.get(), &sError))
 				{
 					bErrorOccured = true;
 					std::cout << "Linker Error: '" + module->getModuleIdentifier() + "' :" + sError;
@@ -117,8 +117,6 @@ namespace unilang
 					std::cout << "Linker Warning: '" + module->getModuleIdentifier() + "' :" + sError;
 				}
 			}
-
-			linker.releaseModule();
 
 			return bErrorOccured ? nullptr : newModule;
 		}

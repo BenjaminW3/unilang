@@ -19,9 +19,9 @@
 #pragma warning(disable: 4800)		// forcing value to bool 'true' or 'false' (performance warning)
 #endif
 
-#include <llvm/IRBuilder.h>
-#include <llvm/Function.h>
-#include <llvm/Type.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Type.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -108,7 +108,7 @@ namespace unilang
 				if (!(*this)(x._elseOptionalStatementList.get()))
 				{
 					std::stringstream sstr;
-					sstr << "Unable to generate else block: '" << x._elseOptionalStatementList << "' in if_statement '" << x << "'.";
+					sstr << "Unable to generate else block: '" << x._elseOptionalStatementList.get() << "' in if_statement '" << x << "'.";
 					condBranch->eraseFromParent();
 					ThenBB->eraseFromParent();
 					thenMergeBranch->eraseFromParent();

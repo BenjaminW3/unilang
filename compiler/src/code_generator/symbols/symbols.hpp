@@ -28,7 +28,7 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor
 			//-------------------------------------------------------------------------
-			VarData(std::string identifier, llvm::AllocaInst* pMem, bool bMutableQualifier);
+			VarData(std::string m_ruleIdentifier, llvm::AllocaInst* pMem, bool bMutableQualifier);
 
 			std::string const & getIdentifier() const;
 			llvm::AllocaInst* getAllocaInst() const;

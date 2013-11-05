@@ -23,9 +23,9 @@
 #endif
 
 #include <llvm/Analysis/Verifier.h>
-#include <llvm/IRBuilder.h>
-#include <llvm/Function.h>
-#include <llvm/Type.h>
+#include <llvm/IR/IRBuilder.h>
+#include <llvm/IR/Function.h>
+#include <llvm/IR/Type.h>
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -175,7 +175,7 @@ namespace unilang
 #include <llvm/Support/MemoryBuffer.h>
 #include <llvm/Linker.h>*/
 
-#include <llvm/Module.h>
+#include <llvm/IR/Module.h>
 
 #include <llvm/Support/DynamicLibrary.h>
 //#include <llvm/System/DynamicLibrary.h>
