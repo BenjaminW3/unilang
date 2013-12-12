@@ -1,0 +1,390 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Source Files\parser">
+      <UniqueIdentifier>{659a67e5-9d39-4a46-b5bf-e5360eadbb8b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\parser">
+      <UniqueIdentifier>{e6e42224-c903-4eb7-b05b-4e72684774c1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator">
+      <UniqueIdentifier>{387486bc-e23d-4bd2-ba00-8a5e06243638}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator">
+      <UniqueIdentifier>{5bb0e2d7-f6ea-407e-90e0-7e0e972c7411}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\parser\grammar">
+      <UniqueIdentifier>{1063f36e-2773-4a14-9d66-95b84052e5eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\parser\grammar">
+      <UniqueIdentifier>{db27c86c-b512-4808-ba37-1f6c4fe1ae4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\log">
+      <UniqueIdentifier>{3cccf860-330c-499d-afd0-a5f9ac9a2f8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\log">
+      <UniqueIdentifier>{20f255e8-8b44-4494-ab37-f07ef4a6bb52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ast">
+      <UniqueIdentifier>{dc0ee6fa-4300-41b5-b0f1-b8c72c27ed89}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\ast">
+      <UniqueIdentifier>{586ed543-07ff-499a-8f63-d32b83276ac5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\statements">
+      <UniqueIdentifier>{0f74d492-21c9-4c90-8c21-4e8f6b887cae}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\expressions">
+      <UniqueIdentifier>{26a76f87-f39a-4d3a-893a-4ec32cf15e88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\functions">
+      <UniqueIdentifier>{eb57754a-34e2-407a-944e-267230a7b812}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\lexer">
+      <UniqueIdentifier>{18430320-9369-47c0-ab09-580b7b68a97a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\lexer">
+      <UniqueIdentifier>{cc3bb155-a44f-4662-a8bf-05542b6e24b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\execution_engine">
+      <UniqueIdentifier>{8cf21717-3315-49b3-b032-eac911afca14}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\execution_engine">
+      <UniqueIdentifier>{c8dcf504-d55d-469a-bd00-189bee9534e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\ast\fusion_adapt">
+      <UniqueIdentifier>{b633697b-0373-48cb-b638-bb4c018cb462}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\allocation">
+      <UniqueIdentifier>{ddc6ed94-f9a4-46d5-b426-38ab9f0b2a2e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\symbols">
+      <UniqueIdentifier>{b91db9cf-fb2f-4aab-b863-b19fbd0c2361}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\symbols">
+      <UniqueIdentifier>{be500f15-d8e8-4a6a-b553-339cc5ad9a3a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\allocation">
+      <UniqueIdentifier>{6c747db5-b803-4e5b-acef-a34e9ac76867}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\llvm">
+      <UniqueIdentifier>{8dfb392e-2cfc-4eb2-b933-1cf741920b13}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\llvm">
+      <UniqueIdentifier>{96dcff49-a244-4e12-b6ac-f96ca3f49564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\statements">
+      <UniqueIdentifier>{ea496253-d49f-49df-9b22-25d846ae8241}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\expressions">
+      <UniqueIdentifier>{34d7c4b7-0800-4245-a243-931739c820e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\constants">
+      <UniqueIdentifier>{472e192c-4c2b-4f9e-8919-285ced0d20b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\constants">
+      <UniqueIdentifier>{d2941f01-5adf-4f01-b4bb-3e7f6800693e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\linker">
+      <UniqueIdentifier>{8dce01d5-2aff-4f32-a864-989703796fcc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\linker">
+      <UniqueIdentifier>{c32955d7-ea12-44d3-94bf-332958480354}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\code_generator\namespace">
+      <UniqueIdentifier>{1f11c8fc-15eb-45c1-8b58-b226d5527228}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\namespace">
+      <UniqueIdentifier>{b5dd44aa-62f1-407c-931d-b23a903fe22d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\code_generator\functions">
+      <UniqueIdentifier>{9e26286d-b1a7-415d-89f4-f18627575e88}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\compiler\parser\parser.cpp">
+      <Filter>Source Files\parser</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\code_generator.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\log\log.cpp">
+      <Filter>Source Files\log</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\function_call.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\expression.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\unary.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\identifier.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_declaration.cpp">
+      <Filter>Source Files\code_generator\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_definition.cpp">
+      <Filter>Source Files\code_generator\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\statement_ast .cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\identifier_ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\function_ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\expression_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\function_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\identifier_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\statement_grammar.cpp">
+      <Filter>Source Files\parser\grammar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\lexer\lexer.cpp">
+      <Filter>Source Files\lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\expression_ast.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\compiler.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\execution_engine\execution_engine.cpp">
+      <Filter>Source Files\execution_engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\assignment.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\lexer\token_ids.cpp">
+      <Filter>Source Files\lexer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\operators.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\types.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\ast_base.cpp">
+      <Filter>Source Files\ast</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\variable_declaration.cpp">
+      <Filter>Source Files\code_generator\allocation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\variable_definition.cpp">
+      <Filter>Source Files\code_generator\allocation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\symbols\symbols.cpp">
+      <Filter>Source Files\code_generator\symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\alloc_code_gen.cpp">
+      <Filter>Source Files\code_generator\allocation</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\llvm\llvm_code_gen.cpp">
+      <Filter>Source Files\code_generator\llvm</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\symbols\symbol_code_gen.cpp">
+      <Filter>Source Files\code_generator\symbols</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\exp_code_gen.cpp">
+      <Filter>Source Files\code_generator\expressions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\errors.cpp">
+      <Filter>Source Files\code_generator</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\statements\statement_code_gen.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\constants\constants_code_gen.cpp">
+      <Filter>Source Files\code_generator\constants</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\linker\linker.cpp">
+      <Filter>Source Files\linker</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\namespace\namespace_code_gen.cpp">
+      <Filter>Source Files\code_generator\namespace</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_code_gen.cpp">
+      <Filter>Source Files\code_generator\functions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\statements\if_code_gen.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\code_generator\statements\while_code_gen.cpp">
+      <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\parser.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\annotation.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\error_handler.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\code_generator.hpp">
+      <Filter>Header Files\code_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\function_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\identifier_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\statement_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\expression_grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\spirit.hpp">
+      <Filter>Header Files\parser</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\log\log.hpp">
+      <Filter>Header Files\log</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\expression_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\identifier_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\function_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\statement_ast.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\grammar.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\ast_base.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\lexer.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\expression_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\function_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\identifier_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\statement_grammar_def.hpp">
+      <Filter>Header Files\parser\grammar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\lexer_def.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\compiler.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\execution_engine\execution_engine.hpp">
+      <Filter>Header Files\execution_engine</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\export.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\token_ids.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\token_ids_def.hpp">
+      <Filter>Header Files\lexer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\operators.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\operators_def.hpp">
+      <Filter>Header Files\ast</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\expression_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\function_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\identifier_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\statement_ast.hpp">
+      <Filter>Header Files\ast\fusion_adapt</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\types.hpp">
+      <Filter>Header Files\code_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\symbols\symbols.hpp">
+      <Filter>Header Files\code_generator\symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\allocation\alloc_code_gen.hpp">
+      <Filter>Header Files\code_generator\allocation</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\symbols\symbol_code_gen.hpp">
+      <Filter>Header Files\code_generator\symbols</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\expressions\exp_code_gen.hpp">
+      <Filter>Header Files\code_generator\expressions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\errors.hpp">
+      <Filter>Header Files\code_generator</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\statements\statement_code_gen.hpp">
+      <Filter>Header Files\code_generator\statements</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\constants\constants_code_gen.hpp">
+      <Filter>Header Files\code_generator\constants</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\llvm\llvm_code_gen.hpp">
+      <Filter>Header Files\code_generator\llvm</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\linker\linker.hpp">
+      <Filter>Header Files\linker</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\namespace\namespace_code_gen.hpp">
+      <Filter>Header Files\code_generator\namespace</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\functions\function_code_gen.hpp">
+      <Filter>Header Files\code_generator\functions</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

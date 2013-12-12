@@ -1,6 +1,0 @@
-func:(v:i64)->(i64{v})
-
-entrypoint: ~()->(iErrorCode:~i64{1})
-{
-	iErrorCode := func(77);
-}

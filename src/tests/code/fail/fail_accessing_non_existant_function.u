@@ -1,0 +1,4 @@
+entrypoint: ~()->(i64{1})
+{
+	bogus(42);
+}

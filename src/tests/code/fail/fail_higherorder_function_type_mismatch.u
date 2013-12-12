@@ -1,0 +1,9 @@
+apply : ( func:(i64)->(i64), v:i64 )->( i64{func(v)} )
+
+broken: ( x:f64 )->( i64{x} )
+
+entrypoint: ~()->(iErrorCode:i64{1})
+{
+	apply(broken, 42);
+}
+

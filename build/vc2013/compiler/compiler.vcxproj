@@ -1,0 +1,131 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{90276707-7A3A-0FC8-01E1-B1D81BFE164B}</ProjectGuid>
+    <RootNamespace>compiler</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+    <ConfigurationType>DynamicLibrary</ConfigurationType>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\unilang.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\Boost.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\LLVM.Cpp.user.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)'=='Release'">
+    <Import Project="..\..\..\..\global\Cpp.Release.props" />
+  </ImportGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <PreprocessorDefinitions>UNILANG_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\compiler\ast\ast.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\ast_base.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\expression_ast.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\function_ast.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\identifier_ast.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\operators.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\statement_ast .cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\alloc_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\variable_declaration.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\variable_definition.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\code_generator.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\constants\constants_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\errors.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\assignment.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\expression.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\exp_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\function_call.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\identifier.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\expressions\unary.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_declaration.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_definition.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\llvm\llvm_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\namespace\namespace_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\statements\if_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\statements\statement_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\statements\while_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\symbols\symbols.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\symbols\symbol_code_gen.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\code_generator\types.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\compiler.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\execution_engine\execution_engine.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\lexer\lexer.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\lexer\token_ids.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\linker\linker.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\log\log.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\expression_grammar.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\function_grammar.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\grammar.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\identifier_grammar.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\parser\grammar\statement_grammar.cpp" />
+    <ClCompile Include="..\..\..\src\compiler\parser\parser.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\ast_base.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\expression_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\function_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\expression_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\function_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\identifier_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\fusion_adapt\statement_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\identifier_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\operators.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\operators_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\ast\statement_ast.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\allocation\alloc_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\code_generator.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\constants\constants_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\errors.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\expressions\exp_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\functions\function_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\llvm\llvm_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\namespace\namespace_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\statements\statement_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\symbols\symbols.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\symbols\symbol_code_gen.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\code_generator\types.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\compiler.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\execution_engine\execution_engine.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\export.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\lexer.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\lexer_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\token_ids.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\lexer\token_ids_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\linker\linker.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\log\log.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\annotation.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\error_handler.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\expression_grammar.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\expression_grammar_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\function_grammar.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\function_grammar_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\grammar.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\grammar_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\identifier_grammar.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\identifier_grammar_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\statement_grammar.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\grammar\statement_grammar_def.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\parser.hpp" />
+    <ClInclude Include="..\..\..\include\unilang\compiler\parser\spirit.hpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+</Project>

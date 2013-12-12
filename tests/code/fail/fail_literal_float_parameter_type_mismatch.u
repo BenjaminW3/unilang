@@ -1,6 +1,0 @@
-increment:(x:~i64)->(i64{++x})
-
-entrypoint: ~()->(iErrorCode:~i64{1})
-{
-	iErrorCode := increment(3.14);
-}

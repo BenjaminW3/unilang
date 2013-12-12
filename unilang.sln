@@ -1,7 +1,11 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "compiler\build\vc2013\compiler.vcxproj", "{90276707-7A3A-0FC8-01E1-B1D81BFE164B}"
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "compiler", "build\vc2013\compiler\compiler.vcxproj", "{90276707-7A3A-0FC8-01E1-B1D81BFE164B}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "command_line", "build\vc2013\command_line\command_line.vcxproj", "{3897CDBE-D11C-487E-BE76-5D37505E2B77}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "build\vc2013\tests\tests.vcxproj", "{8D5845CB-371E-49B1-B9D5-24A505BC76FD}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{9BF2B88D-034B-472C-A4DD-2E75FE67CFB7}"
 	ProjectSection(SolutionItems) = preProject
@@ -19,10 +23,6 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "test_programs", "test_progr
 		higherorderfunctions.u = higherorderfunctions.u
 		sort.u = sort.u
 	EndProjectSection
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "tests", "tests\build\vc2013\tests.vcxproj", "{8D5845CB-371E-49B1-B9D5-24A505BC76FD}"
-EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "command_line", "command_line\build\vc2013\command_line.vcxproj", "{3897CDBE-D11C-487E-BE76-5D37505E2B77}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

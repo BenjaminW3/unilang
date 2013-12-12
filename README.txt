@@ -6,7 +6,7 @@ LLVM as a backend is used to JIT-compile programs to fast native code.
 
 Supported Systems
 
-The unilang compiler should be supported by all systems supperted by boost::spirit and llvm 3.2.
+The unilang compiler should be supported by all systems supperted by boost::spirit and llvm 3.4.
 
 
 License

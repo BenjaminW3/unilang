@@ -1,0 +1,6 @@
+decrement:(x:~i64)->(i64{--x})
+
+entrypoint: ~()->(i64{1})
+{
+	decrement:i64{42};
+}

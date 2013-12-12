@@ -1,0 +1,8 @@
+entrypoint: ~()->(i64{1})
+{
+	foo:~i64{42};
+	bar:~f64{1};
+	baz:~i64{2};
+	
+	foo := bar := baz := 0;
+}

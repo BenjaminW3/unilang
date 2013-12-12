@@ -1,4 +1,0 @@
-entrypoint: ~()->(iErrorCode:~i64{63})
-{
-	iErrorCode%=5;
-}

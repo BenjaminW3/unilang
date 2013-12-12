@@ -1,6 +1,0 @@
-entrypoint: ~()->(iErrorCode:~i64{1})
-{
-	foo:~f64{6.28};
-	foo -=4.28;
-	iErrorCode += 14 + i64{foo};
-}

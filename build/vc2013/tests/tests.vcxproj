@@ -1,0 +1,108 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{8D5845CB-371E-49B1-B9D5-24A505BC76FD}</ProjectGuid>
+    <RootNamespace>tests</RootNamespace>
+  </PropertyGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  
+  <PropertyGroup>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Debug'" Label="Configuration">
+    <WholeProgramOptimization>false</WholeProgramOptimization>
+    <UseDebugLibraries>true</UseDebugLibraries>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)'=='Release'" Label="Configuration">
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <UseDebugLibraries>false</UseDebugLibraries>
+  </PropertyGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  
+  <ImportGroup Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\unilang.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\Boost.Cpp.user.props" />
+    <Import Project="..\..\..\..\global\LLVM.Cpp.user.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)'=='Release'">
+    <Import Project="..\..\..\..\global\Cpp.Release.props" />
+  </ImportGroup>
+  
+  <ItemDefinitionGroup>
+    <Link>
+      <SubSystem>Console</SubSystem>
+    </Link>
+  </ItemDefinitionGroup>
+  
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\tests\main.cpp" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_function.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_local_variable.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_assignment_expression.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_chained_assignment.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_function_name.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_parameter_name.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_variable_name.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_entrypoint_namespace.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_higherorder_function_type_mismatch.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_int_initialization_list_too_long.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_literal_float_parameter_type_mismatch.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_literal_int_parameter_type_mismatch.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_literal_uint_parameter_type_mismatch.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_mismatch_chained_assignment.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_missing_function_identifier.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_missing_variable_definition_type.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_multiline_comment_unclosed.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_use_of_variable_before_its_definition.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_function.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_keyword.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_variable_different_type.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_variable_same_type.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_write_to_non_mutable_variable.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_assignment.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_boolean_type.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_empty_initialization_list_const.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_empty_initialization_list_nonconst.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_initialization_list_const.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_initialization_list_nonconst.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_literals.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_rounding.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_int_types.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_missing_return_variable_name.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_multiline_comment.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_namespace_functions.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_addition.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_bit_and.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_bit_or.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_bit_xor.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_division.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_mod.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_multiplication.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_shift_left.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_shift_right.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_subtraction.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_compl.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_decrement.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_increment.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_not.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_precedence.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_singleline_comment.u" />
+  </ItemGroup>
+  
+  <ItemGroup>
+    <ProjectReference Include="..\compiler\compiler.vcxproj">
+      <Project>{90276707-7a3a-0fc8-01e1-b1d81bfe164b}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  
+</Project>
