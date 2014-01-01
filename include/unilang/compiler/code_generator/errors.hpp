@@ -35,7 +35,8 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class code_generator_errors :	virtual boost::noncopyable
+		class code_generator_errors :
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------

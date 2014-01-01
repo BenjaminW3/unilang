@@ -166,14 +166,8 @@ namespace unilang
 	}
 }
 /*#include <llvm/CallingConv.h>
-#include <llvm/PassManager.h>
 #include <llvm/Support/CallSite.h>
-#include <llvm/Transforms/Utils/BasicBlockUtils.h>
-
-#include <llvm/ExecutionEngine/JIT.h>
-#include <llvm/Bitcode/ReaderWriter.h>
-#include <llvm/Support/MemoryBuffer.h>
-#include <llvm/Linker.h>*/
+*/
 
 #include <llvm/IR/Module.h>
 

@@ -37,12 +37,15 @@
 
 #if defined(_MSC_VER)
 #pragma warning(push)
-//#pragma warning(disable: 4717)		// function 'boost::spirit::lex::action<Subject,Action> boost::proto::transform<PrimitiveTransform>::operator ()<Expr&,const State&,Data&>(const boost::proto::exprns_::expr<Tag,Args,Arity>,const boost::fusion::nil,boost::spirit::unused_type) const' marked as __forceinline not inlined
+// TODO: Some of the disabled warnings form lexer.cpp could be moved to here?
 #endif
 
 #ifdef _DEBUG
 #define BOOST_SPIRIT_LEXERTL_DEBUG 
 #endif
+
+#define BOOST_SPIRIT_NO_PREDEFINED_TERMINALS
+#define BOOST_PHOENIX_NO_PREDEFINED_TERMINALS
 
 #include <boost/spirit/include/lex_lexertl.hpp>
 #include <boost/spirit/include/lex_lexertl_position_token.hpp>
@@ -174,8 +177,9 @@ namespace unilang
 		//! The Lexer tokenizing the input stream for use by the parser.
 		//#########################################################################
 		template <typename BaseIterator>
-		class token_lexer final :	public lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>,
-									boost::noncopyable
+		class token_lexer final :
+			public lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>,
+			boost::noncopyable
 		{
 		private:
 #ifdef TOKEN_ID

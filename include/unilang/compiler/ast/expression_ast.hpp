@@ -26,13 +26,14 @@ namespace unilang
 		//#########################################################################
 		//! A primary expression.
 		//#########################################################################
-		struct primary_expr :	public ast_base,
-								boost::spirit::extended_variant<	long double,
-																	uint64_t,
-																	bool,
-																	identifier,
-																	boost::recursive_wrapper<expression>
-								>
+		struct primary_expr :
+			public ast_base,
+			boost::spirit::extended_variant<	long double,
+												uint64_t,
+												bool,
+												identifier,
+												boost::recursive_wrapper<expression>
+											>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -57,13 +58,14 @@ namespace unilang
 		//#########################################################################
 		//! A operand.
 		//#########################################################################
-		struct operand :	public ast_base,
-							boost::spirit::extended_variant<	primary_expr,
-																boost::recursive_wrapper<unary_expr>,
-																boost::recursive_wrapper<function_call>,
-																boost::recursive_wrapper<variable_definition>//,
-																//boost::recursive_wrapper<assignment>
-							>
+		struct operand :
+			public ast_base,
+			boost::spirit::extended_variant<	primary_expr,
+												boost::recursive_wrapper<unary_expr>,
+												boost::recursive_wrapper<function_call>,
+												boost::recursive_wrapper<variable_definition>//,
+												//boost::recursive_wrapper<assignment>
+											>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -83,7 +85,8 @@ namespace unilang
 		//#########################################################################
 		//! A unary expression.
 		//#########################################################################
-		struct unary_expr :	public ast_base
+		struct unary_expr :
+			public ast_base
 		{
 			OPERATOR_TYPE _uiOperatorID;
 			operand _opOperand;
@@ -95,7 +98,8 @@ namespace unilang
 		//#########################################################################
 		//! A operation.
 		//#########################################################################
-		struct operation :	public ast_base
+		struct operation :
+			public ast_base
 		{
 			OPERATOR_TYPE _uiOperatorID;
 			operand _opOperand;
@@ -107,7 +111,8 @@ namespace unilang
 		//#########################################################################
 		//! An expression.
 		//#########################################################################
-		struct expression :	public ast_base
+		struct expression :
+			public ast_base
 		{
 			operand _firstOperand;
 			std::vector<operation> _vRestOperands;
@@ -120,9 +125,11 @@ namespace unilang
 		//#########################################################################
 		//! A function call.
 		//#########################################################################
-		struct function_call :	public ast_base
+		struct function_call :
+			public ast_base
 		{
 			namespaced_identifier _idfName;
+			bool _bHasUnpureQualifier;
 			std::vector<expression> _vArgumentExpressions;
 
 			bool isPure() const override;
@@ -132,7 +139,8 @@ namespace unilang
 		//#########################################################################
 		//! A type declaration.
 		//#########################################################################
-		struct type_declaration :	public ast_base
+		struct type_declaration :
+			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor!
@@ -164,7 +172,8 @@ namespace unilang
 		//#########################################################################
 		//! A variable declaration.
 		//#########################################################################
-		struct variable_declaration :	public ast_base
+		struct variable_declaration :
+			public ast_base
 		{
 			boost::optional<identifier> _optionalIdentifier;
 			type_declaration _type;
@@ -176,7 +185,8 @@ namespace unilang
 		//#########################################################################
 		//! A variable definition.
 		//#########################################################################
-		struct variable_definition :	public ast_base
+		struct variable_definition :
+			public ast_base
 		{
 			variable_declaration _declaration;
 			std::vector<expression> _vParameterExpressions;
@@ -188,7 +198,8 @@ namespace unilang
 		//#########################################################################
 		//! Assignment consists of a identifier, the operator and an expression.
 		//#########################################################################
-		struct assignment :	public ast_base
+		struct assignment :
+			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor!

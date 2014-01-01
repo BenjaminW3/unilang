@@ -13,7 +13,8 @@ namespace unilang
 		//#########################################################################
 		//! An identifier.
 		//#########################################################################
-		struct identifier :	public ast_base
+		struct identifier :
+			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -32,7 +33,8 @@ namespace unilang
 		//#########################################################################
 		//! A namespaced identifier.
 		//#########################################################################
-		struct namespaced_identifier :	public ast_base
+		struct namespaced_identifier :
+			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.

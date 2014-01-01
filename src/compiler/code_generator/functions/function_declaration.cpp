@@ -44,7 +44,7 @@ namespace unilang
 
 			std::string const sMangledName (m_namespaceCodeGenerator.getCurrentMangledNamespaceName()+x.build_mangled_name());
 
-			// create list of parameter types
+			// Create list of parameter types.
 			std::vector<llvm::Type*> vpParameterTypes;
 			for( ast::type_declaration const & typeDecl : x._vParameterTypes)
 			{
@@ -53,11 +53,11 @@ namespace unilang
 				{
 					return m_codeGeneratorErrors.ErrorFunction("Function parameter type '"+typeDecl._idfName._name+"' in function '"+sMangledName+"' is not valid.");
 				}
-				//FIXME: mutable state for function parameters not saved.
+				//FIXME: mutable state for function parameters is not stored along with the llvm::Type.
 				vpParameterTypes.push_back(pType);
 			}
 			
-			// create return type
+			// Create the return types.
 			llvm::Type* pReturnType (nullptr);
 			if(x._vReturnTypes.size()==0)
 			{

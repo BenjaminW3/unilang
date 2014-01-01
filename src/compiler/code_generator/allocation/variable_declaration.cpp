@@ -37,45 +37,50 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			// has name?
-			const bool bHasName		(x._optionalIdentifier.is_initialized());
+			// Is this a named allocation?
+			bool const bHasName		(x._optionalIdentifier.is_initialized());
 			std::string const sName (bHasName ? x._optionalIdentifier.get()._name : "");
 
-			// redeclaration?
+			// If it has a name...
 			if(bHasName)
 			{
+				// ... is this a redeclaration?
 				VarData const * const existantVar (m_symbolCodeGenerator.getVarFromName(sName));
 				if(existantVar)
 				{
 					return m_codeGeneratorErrors.ErrorAllocaInst("Variable with the name '"+sName+"' has already been declared with type '"+getLLVMTypeName(existantVar->getAllocaInst()->getAllocatedType())+"'.");
 				}
-			}
-			// TODO: really needed? Can we have typenames equal to variable/reserved names?
-			// shadowing keyword?
-			if(bHasName && (sName == "if" || sName == "else" || sName == "while" || sName == "return"|| sName == "namespace"))
-			{
-				return m_codeGeneratorErrors.ErrorAllocaInst("Variable with the name '"+sName+"' is shadowing the keyword with same identifier.");
+
+				// TODO: really needed? Can we have variable names equal to reserved names?
+				// ... is it Shadowing a keyword?
+				if(sName == "if" || sName == "else" /*|| sName == "while" || sName == "return"*/ || sName == "namespace")
+				{
+					return m_codeGeneratorErrors.ErrorAllocaInst("Variable with the name '"+sName+"' is shadowing the keyword with same identifier.");
+				}
+
+				// TODO: Can we have variable names equal to type names?
 			}
 
-			llvm::Function * TheFunction (m_llvmCodeGenerator.getBuilder()->GetInsertBlock()->getParent());
-			if(!TheFunction)
+			// Get the current function.
+			llvm::Function * const pCurrentFunction(m_llvmCodeGenerator.getBuilder()->GetInsertBlock()->getParent());
+			if(!pCurrentFunction)
 			{
-				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get the allocation insert point function for variable '"+sName+"'.");
+				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get the function the allocation for variable '"+sName+"' should be inserted into.");
 			}
-
-			// allocate in function head
-			llvm::Type * const pType	(m_symbolCodeGenerator.getTypeByName(x._type._idfName._name));
+			// Get the variable type.
+			llvm::Type * const pType(m_symbolCodeGenerator.getTypeByName(x._type._idfName._name));
 			if(!pType)
 			{
 				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get type of variable '"+sName+"'.");
 			}
-			llvm::AllocaInst * Alloca	(createEntryBlockAlloca(TheFunction, pType, sName));
+			// Allocate the variable in the function head.
+			llvm::AllocaInst * const Alloca(createEntryBlockAlloca(pCurrentFunction, pType, sName));
 			if(!Alloca)
 			{
 				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to allocate variable '"+sName+"'.");
 			}
 
-			// remember this variable in symbol table
+			// Remember this variable in symbol table.
 			if(bHasName)
 			{
 				m_symbolCodeGenerator.vSymbolTable.push_back(VarData(sName, Alloca, x._type._bHasMutableQualifier));

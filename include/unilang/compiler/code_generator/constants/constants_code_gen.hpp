@@ -24,8 +24,9 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class constants_code_generator :	//public boost::static_visitor<llvm::Constant*>,
-											virtual boost::noncopyable
+		class constants_code_generator :
+			//public boost::static_visitor<llvm::Constant*>,
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------

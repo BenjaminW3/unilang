@@ -7,6 +7,7 @@
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::function_call,
 	(unilang::ast::namespaced_identifier, _idfName)
+	(bool, _bHasUnpureQualifier)
 	(std::vector<unilang::ast::expression>, _vArgumentExpressions)
 )
 

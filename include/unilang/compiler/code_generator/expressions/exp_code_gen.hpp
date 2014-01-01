@@ -49,8 +49,9 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class expression_code_generator :	//public boost::static_visitor<llvm::Value*>,
-											virtual boost::noncopyable
+		class expression_code_generator :
+			//public boost::static_visitor<llvm::Value*>,
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------

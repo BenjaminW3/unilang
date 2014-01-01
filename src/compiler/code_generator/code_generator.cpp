@@ -37,8 +37,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		//
 		//-----------------------------------------------------------------------------
-		code_generator::code_generator(ast::module const & AST)
-			:m_codeGeneratorErrors		(),
+		code_generator::code_generator(ast::module const & AST) :
+			m_codeGeneratorErrors		(),
 			m_namespaceCodeGenerator	(m_codeGeneratorErrors, m_functionCodeGenerator),
 			m_llvmCodeGenerator			(m_codeGeneratorErrors, m_namespaceCodeGenerator),
 			m_constantsCodeGenerator	(m_llvmCodeGenerator),

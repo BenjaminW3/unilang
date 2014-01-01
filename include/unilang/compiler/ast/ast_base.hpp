@@ -8,7 +8,7 @@ namespace unilang
 		//! The base class for all ast objects.
 		//! It holds the id for annotations.
 		//#########################################################################
-		struct ast_base abstract
+		struct ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.

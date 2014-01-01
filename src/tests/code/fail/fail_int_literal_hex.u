@@ -1,0 +1,4 @@
+entrypoint: ~()->(iErrorCode:~i64{1})
+{
+	iErrorCode :=	0xFG;	// Character G is invalid in a hexadecimal integer.
+}

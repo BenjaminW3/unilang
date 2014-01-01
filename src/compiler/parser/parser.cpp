@@ -5,6 +5,7 @@
 #pragma warning(disable: 4127)		// warning C4127: conditional expression is constant
 #pragma warning(disable: 4512)		// warning C4512: assignment operator could not be generated
 #pragma warning(disable: 4100)		// warning C4100: 'x' : unreferenced formal parameter
+#pragma warning(disable: 4714)		// warning C4714: function 'boost::proto::exprns_::basic_expr<boost::proto::tagns_::tag::terminal,boost::proto::argsns_::term<unilang::error_handler<BaseIterator,LexerIterator>>,0> boost::proto::detail::as_expr<T,boost::proto::basic_default_generator,true>::operator ()(T &) const' marked as __forceinline not inlined
 #pragma warning(disable: 4913)		// warning C4913: user defined binary operator ',' exists but no overload could convert all operands, default built-in binary operator ',' used (..\..\src\parser\parser.cpp)
 #pragma warning(disable: 4996)		// 'std::_Copy_impl': Function call with parameters that may be unsafe - this call relies on the caller to check that the passed values are correct.
 #endif
@@ -53,7 +54,7 @@ namespace unilang
 			global_grammar<base_iterator_type, lexer_iterator_type> parser(error_handler, lexer);
 			
 			// actually parse it now
-			const bool bSuccess (boost::spirit::qi::parse(cIterBegin, cIterEnd, parser, ast));
+			bool const bSuccess (boost::spirit::qi::parse(cIterBegin, cIterEnd, parser, ast));
 
 			const auto timePointAfter (std::chrono::system_clock::now());
 			const long long diff (std::chrono::duration_cast<std::chrono::duration<long, std::ratio<1, 1000>>>(timePointAfter - timePointBefore).count());

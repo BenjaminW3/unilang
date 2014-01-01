@@ -179,5 +179,20 @@
     <None Include="..\..\..\src\tests\code\pass\pass_singleline_comment.u">
       <Filter>Resource Files\pass</Filter>
     </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_namespace_using.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_namespace_using_ambigous.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_hex.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_bin.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_oct.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
   </ItemGroup>
 </Project>

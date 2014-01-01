@@ -116,7 +116,8 @@ namespace unilang
 			//#############################################################################
 			//! Used To log the Creation inside the Scope until leaving of the scope.
 			//#############################################################################
-			class ScopeLogger sealed : boost::noncopyable
+			class ScopeLogger final :
+				boost::noncopyable
 			{
 			public:
 				ScopeLogger( log_level const & level, std::string const & sFct );
@@ -132,15 +133,16 @@ namespace unilang
 			//! at destruction the collected messages are send to the desired output
 			//#############################################################################
 			template<class OutputPolicy>
-			class logstream abstract :	public std::ostringstream,
-										boost::noncopyable
+			class logstream :
+				public std::ostringstream,
+				boost::noncopyable
 			{
 			public:
 				//-----------------------------------------------------------------------------
 				//! Constructor.
 				//-----------------------------------------------------------------------------
-				logstream()
-					:m_log_level(all),	// TODO: make changeable
+				logstream() :
+					m_log_level(all),	// TODO: make changeable
 					m_current_level(none)
 				{
 				}
@@ -259,7 +261,7 @@ namespace unilang
 			//#############################################################################
 			//! No logging at all.
 			//#############################################################################
-			class no_output sealed
+			class no_output final
 			{
 			private:
 				struct null_buffer
@@ -285,7 +287,7 @@ namespace unilang
 			//#############################################################################
 			//! Log to File
 			//#############################################################################
-			class output_to_file sealed
+			class output_to_file final
 			{
 			private:
 				// extend the file
@@ -313,7 +315,7 @@ namespace unilang
 			//! If there are any of the following strings in the log message, the corresponding lines will be highlighted in special colors:
 			//! [ERROR] [WARNING] [DEBUG] [ADDITIONAL] [DIAGNOSTIC] 
 			//#############################################################################
-			class output_to_html_file sealed
+			class output_to_html_file final
 			{
 			private:
 				// extend the file with html surroundings
@@ -345,7 +347,7 @@ namespace unilang
 			//#############################################################################
 			//! Standard logging to cout.
 			//#############################################################################
-			class output_to_clog sealed
+			class output_to_clog final
 			{
 			public:
 				void operator()( logstream<output_to_clog> const & s );
@@ -360,7 +362,8 @@ namespace unilang
 		//! logging::log() << "this is a test" << 1234 << "testing";
 		//! Note the lack of a '\n' and std::endl since it's implicit. The contents are buffered and then atomically output using the template specified policy.
 		//#############################################################################
-		class log sealed: public detail::logstream<detail::LOG_TYPE>
+		class log final : 
+			public detail::logstream<detail::LOG_TYPE>
 		{
 		};
 	}

@@ -17,7 +17,8 @@ namespace unilang
 		//#########################################################################
 		//! A Function declaration.
 		//#########################################################################
-		struct function_declaration :	public ast_base
+		struct function_declaration :
+			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -58,7 +59,8 @@ namespace unilang
 		//#########################################################################
 		//! A function consisting of its declaration and its body.
 		//#########################################################################
-		struct function_definition :	public ast_base
+		struct function_definition :
+			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! 

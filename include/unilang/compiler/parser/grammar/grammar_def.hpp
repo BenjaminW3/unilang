@@ -22,8 +22,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		template <typename BaseIterator, typename LexerIterator>
 		global_grammar<BaseIterator,LexerIterator>::global_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-																	lexer::token_lexer<BaseIterator> const & lexer)
-			: global_grammar::base_type(m_ruleModule, "global_grammar"),
+																	lexer::token_lexer<BaseIterator> const & lexer) :
+			global_grammar::base_type(m_ruleModule, "global_grammar"),
 			identifierGrammar(error_handler, lexer),
 			expressionGrammar(error_handler, identifierGrammar, lexer),
 			statementGrammar(error_handler, /*identifierGrammar,*/ expressionGrammar, lexer),

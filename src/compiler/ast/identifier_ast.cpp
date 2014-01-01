@@ -7,15 +7,15 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		identifier::identifier()
-			:_name(/*"unnamed-identifier"*/)
+		identifier::identifier() :
+			_name(/*"unnamed-identifier"*/)
 		{
 		}
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		identifier::identifier(std::string const & name)
-			:_name(name)
+		identifier::identifier(std::string const & name) :
+			_name(name)
 		{
 		}
 		//-------------------------------------------------------------------------
@@ -37,8 +37,8 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		namespaced_identifier::namespaced_identifier()
-			:m_bGlobalNamespace	(false),
+		namespaced_identifier::namespaced_identifier() :
+			m_bGlobalNamespace	(false),
 			m_sNames			()
 		{
 		}
@@ -56,7 +56,7 @@ namespace unilang
 		std::string namespaced_identifier::getMangledName() const
 		{
 			std::string sMangledName;
-			if(m_bGlobalNamespace)	/*// the mangled name is always without starting double colon*/
+			if(m_bGlobalNamespace)	// the mangled name is always without starting double colon
 			{
 				sMangledName += "::";
 			}

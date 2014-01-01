@@ -162,7 +162,10 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		bool function_call::isPure() const
 		{
-			// FIXME: pure test for function itself
+			if(_bHasUnpureQualifier)
+			{
+				return false;
+			}
 
 			// all parameters have to be pure
 			for(ast::expression const & ex : _vArgumentExpressions)
@@ -174,31 +177,36 @@ namespace unilang
 		}
 		std::ostream& operator<<(std::ostream& out, function_call const& x)
 		{
-			out << x._idfName << "(" << x._vArgumentExpressions << ")";
+			out << x._idfName;
+			if(x._bHasUnpureQualifier)
+			{
+				out << "~";
+			}
+			out << "(" << x._vArgumentExpressions << ")";
 			return out;
 		}
 
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
-		type_declaration::type_declaration()
-			:_bHasMutableQualifier(false),
+		type_declaration::type_declaration() :
+			_bHasMutableQualifier(false),
 			_idfName(/*"unnamed-type"*/)
 		{
 		}
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		type_declaration::type_declaration(identifier const & type_identifier)
-			:_bHasMutableQualifier(false),
+		type_declaration::type_declaration(identifier const & type_identifier) :
+			_bHasMutableQualifier(false),
 			_idfName(type_identifier)
 		{
 		}
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		type_declaration::type_declaration(bool bHasMutableQualifier, identifier const & type_identifier)
-			:_bHasMutableQualifier(bHasMutableQualifier),
+		type_declaration::type_declaration(bool bHasMutableQualifier, identifier const & type_identifier) :
+			_bHasMutableQualifier(bHasMutableQualifier),
 			_idfName(type_identifier)
 		{
 		}
@@ -278,14 +286,14 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
-		assignment::assignment()
-			:_lhs(/*"unnamed-identifier"*/),
+		assignment::assignment() :
+			_lhs(/*"unnamed-identifier"*/),
 			_uiOperatorID(static_cast<OPERATOR_TYPE>(operators::EOperators::assign)),
 			_rhs()
 		{
 		}
-		assignment::assignment(identifier lhs, OPERATOR_TYPE op, expression rhs)
-			:_lhs(lhs),
+		assignment::assignment(identifier lhs, OPERATOR_TYPE op, expression rhs) :
+			_lhs(lhs),
 			_uiOperatorID(op),
 			_rhs(rhs)
 		{

@@ -26,8 +26,8 @@ namespace unilang
 		statement_grammar<BaseIterator,LexerIterator>::statement_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
 																			//identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
 																			expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
-																			lexer::token_lexer<BaseIterator> const & lexer)
-			: statement_grammar::base_type(m_ruleStatementList, "statement_grammar")
+																			lexer::token_lexer<BaseIterator> const & lexer) :
+			statement_grammar::base_type(m_ruleStatementList, "statement_grammar")
 		{
 			qi::_1_type _1;
 			qi::_3_type _3;

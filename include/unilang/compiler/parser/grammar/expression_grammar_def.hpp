@@ -28,8 +28,8 @@ namespace unilang
 		template <typename BaseIterator, typename LexerIterator>
 		expression_grammar<BaseIterator,LexerIterator>::expression_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
 																			identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
-																			lexer::token_lexer<BaseIterator> const & lexer)
-			: expression_grammar::base_type(m_ruleExpression, "expression_grammar")
+																			lexer::token_lexer<BaseIterator> const & lexer) : 
+			expression_grammar::base_type(m_ruleExpression, "expression_grammar")
 		{
 			qi::_1_type _1;
 			qi::_3_type _3;
@@ -81,7 +81,7 @@ namespace unilang
 				|	lexer.m_tokLiteralUnsignedFloat
 				|	lexer.m_tokLiteralUnsignedInt
 				|   lexer.m_tokLiteralBoolean
-				|	identifierGrammar
+				|	identifierGrammar	// TODO: support .m_ruleNamespacedIdentifier
 				|	(lexer("\\(") > m_ruleExpression > lexer("\\)"))
 				;
 			m_rulePrimaryExpression.name("primaryExpression");
@@ -94,25 +94,29 @@ namespace unilang
 				;
 			m_ruleLValueExpression.name("lValueExpression");*/
 
-			m_ruleArgumentList = -(m_ruleExpression % lexer(","));
-			m_ruleArgumentList.name("argumentList");
-
-			m_ruleFunctionCall =
-					identifierGrammar.m_ruleNamespacedIdentifier	
-				>>	lexer("\\(")
-				>	m_ruleArgumentList
-				>   lexer("\\)")
-				;
-			m_ruleFunctionCall.name("functionCall");
-
 			m_ruleMutableQualifier = 
 					matches[lexer("~")]
 				;
 			m_ruleMutableQualifier.name("mutableQualifier");
 
+			m_ruleArgumentList = -(m_ruleExpression % lexer(","));
+			m_ruleArgumentList.name("argumentList");
+
+			m_ruleFunctionCall =
+					identifierGrammar.m_ruleNamespacedIdentifier
+				>>	(m_ruleMutableQualifier
+				>>	(lexer("\\(")
+				>	m_ruleArgumentList
+				>   lexer("\\)")))
+				;
+			// Paranthesis are required because of operator precedence between > and >> and how fusion_adapt exposes the attributes.
+			// Without paranthesis the result would be tuple<tuple<IDF, bool>, Args>. So tuple<IDF, bool> is assigned to the identifier and Args would be assigned to bool -> Error. The right layout is tuple<IDF, bool, Args>.
+			// See http://boost.2283326.n4.nabble.com/fusion-adapted-struct-compile-error-due-to-evil-expectation-operator-why-minimal-example-provided-td2683017.html
+			m_ruleFunctionCall.name("functionCall");
+
 			m_ruleTypeDeclaration =
 					m_ruleMutableQualifier
-				>>	identifierGrammar
+				>>	identifierGrammar.m_ruleIdentifier	// TODO: support .m_ruleNamespacedIdentifier
 				;
 			m_ruleTypeDeclaration.name("typeDeclaration");
 
@@ -123,7 +127,7 @@ namespace unilang
 			//						-a user defined identifier
 			m_ruleVariableDeclaration =
 				-(
-					identifierGrammar
+					identifierGrammar.m_ruleIdentifier
 					>>	lexer(":")
 				)
 				>>	m_ruleTypeDeclaration

@@ -12,8 +12,8 @@ namespace unilang
 															llvm_code_generator & llvmCodeGenerator,
 															symbol_code_generator & symbolCodeGenerator,
 															allocation_code_generator & allocationCodeGenerator,
-															statement_code_generator & statementCodeGenerator)
-			:m_codeGeneratorErrors		(codeGeneratorErrors),
+															statement_code_generator & statementCodeGenerator) :
+			m_codeGeneratorErrors		(codeGeneratorErrors),
 			m_namespaceCodeGenerator	(namespaceCodeGenerator),
 			m_llvmCodeGenerator			(llvmCodeGenerator),
 			m_symbolCodeGenerator		(symbolCodeGenerator),

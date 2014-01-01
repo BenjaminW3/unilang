@@ -1,5 +1,8 @@
 #if defined(_MSC_VER)
 # pragma warning(disable: 4503)	// decorated name length exceeded, name was truncated
+# pragma warning(disable: 4510)	// warning C4510: 'boost::phoenix::actor<Expr>' : default constructor could not be generated
+# pragma warning(disable: 4512)	// warning C4512: 'boost::phoenix::vector6<const boost::phoenix::actor<Expr> *,A0,A1,A2,A3,A4>' : assignment operator could not be generated
+# pragma warning(disable: 4610)	// warning C4610 : struct 'boost::phoenix::actor<Expr>' can never be instantiated - user defined constructor required
 #endif
 
 #include <unilang/compiler/lexer/lexer_def.hpp>

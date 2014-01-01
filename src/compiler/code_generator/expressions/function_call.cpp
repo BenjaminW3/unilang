@@ -40,9 +40,18 @@ namespace unilang
 			LOG(x);
 
 			ast::function_declaration funcDecl;
+			funcDecl._bHasUnpureQualifier = x._bHasUnpureQualifier;
 			funcDecl._idfName = x._idfName.getMangledName();
 
-			// argument types
+			// TODO: Reject calls to unpure functions if calling function is pure.
+			/*if(x._bHasUnpureQualifier && ...)
+			{
+				std::stringstream sstr;
+				sstr << "Unpure function '" << funcDecl << "' can not be called from within a pure function ";
+				return m_codeGeneratorErrors.ErrorValue(sstr.str());
+			}*/
+
+			// Build the list of argument types.
 			std::vector<llvm::Value*> ArgsV;
 			for(ast::expression const & ex : x._vArgumentExpressions)
 			{

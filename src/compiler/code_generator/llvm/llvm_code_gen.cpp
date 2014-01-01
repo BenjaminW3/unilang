@@ -143,8 +143,8 @@ namespace unilang
 		//
 		//-----------------------------------------------------------------------------
 		llvm_code_generator::llvm_code_generator(	code_generator_errors & codeGeneratorErrors,
-													namespace_code_generator & namespaceCodeGenerator )
-			:builder					(std::make_shared<IRBuilderType>(getContext())),
+													namespace_code_generator & namespaceCodeGenerator ) :
+			builder						(std::make_shared<IRBuilderType>(getContext())),
 			llvmModule					(std::make_shared<llvm::Module>("unilang-llvm", getContext())),
 			m_codeGeneratorErrors		(codeGeneratorErrors),
 			m_namespaceCodeGenerator	(namespaceCodeGenerator)

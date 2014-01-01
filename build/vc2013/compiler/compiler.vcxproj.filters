@@ -141,9 +141,6 @@
     <ClCompile Include="..\..\..\src\compiler\code_generator\functions\function_definition.cpp">
       <Filter>Source Files\code_generator\functions</Filter>
     </ClCompile>
-    <ClCompile Include="..\..\..\src\compiler\ast\statement_ast .cpp">
-      <Filter>Source Files\ast</Filter>
-    </ClCompile>
     <ClCompile Include="..\..\..\src\compiler\ast\identifier_ast.cpp">
       <Filter>Source Files\ast</Filter>
     </ClCompile>
@@ -239,6 +236,9 @@
     </ClCompile>
     <ClCompile Include="..\..\..\src\compiler\code_generator\statements\while_code_gen.cpp">
       <Filter>Source Files\code_generator\statements</Filter>
+    </ClCompile>
+    <ClCompile Include="..\..\..\src\compiler\ast\statement_ast.cpp">
+      <Filter>Source Files\ast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

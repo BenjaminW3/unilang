@@ -19,8 +19,8 @@ namespace unilang
 #ifdef IMPLEMENT_VAR_ARG
 			bool bIsVarArg,
 #endif
-			std::vector<type_declaration> const & vReturnTypes)
-			:_idfName				(idfName),
+			std::vector<type_declaration> const & vReturnTypes) :
+			_idfName				(idfName),
 			_bHasUnpureQualifier	(bHasUnpureQualifier),
 			_vParameterTypes		(vParameterTypes),
 #ifdef IMPLEMENT_VAR_ARG
@@ -32,8 +32,8 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		function_declaration::function_declaration( function_definition const & functionDefinition )
-			:_idfName				(functionDefinition._idfName),
+		function_declaration::function_declaration( function_definition const & functionDefinition ) :
+			_idfName				(functionDefinition._idfName),
 			_bHasUnpureQualifier	(functionDefinition._bHasUnpureQualifier)
 		{
 			for(ast::variable_declaration const & decl : functionDefinition._vParameterDeclarations)
@@ -59,16 +59,22 @@ namespace unilang
 		{
 			std::stringstream sstr;
 			sstr << _idfName << ":";
+			if(_bHasUnpureQualifier)
+			{
+				sstr << "~";
+			}
 			sstr << "(";
 			bool bFirstArg = true;
 			for(type_declaration const & decl : _vParameterTypes)
 			{
 				if(bFirstArg){bFirstArg = false;}
-				else{sstr << ", ";}
+				else{sstr << ",";}
 
 				sstr << decl.build_mangled_name();
 			}
 			sstr << ")";
+			// The return value is not part of the mangled name because on the call site of a function the return type is irrelevant and is determined by overload resolution of the argument types.
+			// So overloads on the return values only are not allowed.
 			return sstr.str();
 		}
 		//-------------------------------------------------------------------------

@@ -33,7 +33,8 @@ namespace unilang
 		//!
 		//! Given a ast::module it recursively creates the corresponding llvm::Module.
 		//#########################################################################
-		class code_generator :	virtual boost::noncopyable
+		class code_generator :
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------

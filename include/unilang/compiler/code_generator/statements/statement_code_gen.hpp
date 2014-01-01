@@ -30,8 +30,9 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class statement_code_generator :	//public boost::static_visitor<bool>,
-											virtual boost::noncopyable
+		class statement_code_generator :
+			//public boost::static_visitor<bool>,
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------

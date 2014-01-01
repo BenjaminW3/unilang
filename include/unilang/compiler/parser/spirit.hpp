@@ -19,18 +19,11 @@
 #pragma warning(disable: 4100)		// unreferenced formal parameter
 #pragma warning(disable: 4127)		// conditional expression is constant
 #pragma warning(disable: 4512)		// assignment operator could not be generated
-
-// phoenix v3
-#pragma warning(disable: 4714)		// function marked as __forceinline not inlined
-#pragma warning(disable: 4510)		// default constructor could not be generated
-#pragma warning(disable: 4610)		// struct can never be instantiated - user defined constructor required
 #endif
 
 //#define BOOST_SPIRIT_UNICODE
 
 #define BOOST_RESULT_OF_USE_DECLTYPE
-
-#include <boost/spirit/include/phoenix_function.hpp>
 
 #include <boost/spirit/include/qi.hpp>
 

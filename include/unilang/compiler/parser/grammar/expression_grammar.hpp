@@ -38,7 +38,8 @@ namespace unilang
 		//!  The expression grammar.
 		//#########################################################################
 		template <typename BaseIterator, typename LexerIterator>
-		struct expression_grammar : qi::grammar<LexerIterator, ast::expression()>
+		struct expression_grammar :
+			qi::grammar<LexerIterator, ast::expression()>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -51,10 +52,11 @@ namespace unilang
 			qi::rule<LexerIterator, ast::operand()> m_ruleUnaryExpression, m_rulePostfixExpression;
 			qi::rule<LexerIterator, ast::expression()> m_ruleExpression;
 
+			qi::rule<LexerIterator, bool()> m_ruleMutableQualifier;
+
 			qi::rule<LexerIterator, std::vector<ast::expression>()> m_ruleArgumentList;
 			qi::rule<LexerIterator, ast::function_call()> m_ruleFunctionCall;
 			
-			qi::rule<LexerIterator, bool()> m_ruleMutableQualifier;
 			qi::rule<LexerIterator, ast::type_declaration()> m_ruleTypeDeclaration;
 			
 			qi::rule<LexerIterator, ast::variable_declaration()> m_ruleVariableDeclaration;

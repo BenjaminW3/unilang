@@ -24,11 +24,12 @@ namespace unilang
 		//#########################################################################
 		//! A meta_entity can be multiple things.
 		//#########################################################################
-		struct meta_entity :	public ast_base,
-								boost::spirit::extended_variant<	function_declaration, 
-																	function_definition, 
-																	boost::recursive_wrapper<namespace_declaration>
-																>
+		struct meta_entity :	
+			public ast_base,
+			boost::spirit::extended_variant<	function_declaration, 
+												function_definition, 
+												boost::recursive_wrapper<namespace_declaration>
+											>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -44,7 +45,8 @@ namespace unilang
 		//#########################################################################
 		//! A namespace declaration.
 		//#########################################################################
-		struct namespace_declaration :	public ast_base
+		struct namespace_declaration :
+			public ast_base
 		{
 			identifier _idfName;
 			std::vector<meta_entity> _metaEntities;
@@ -54,7 +56,8 @@ namespace unilang
 		//#########################################################################
 		//! A module is the root of the abstract syntax tree.
 		//#########################################################################
-		struct module : public ast_base
+		struct module :
+			public ast_base
 		{
 			std::vector<meta_entity> _metaEntities;
 		};

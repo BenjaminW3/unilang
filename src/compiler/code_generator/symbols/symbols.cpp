@@ -7,8 +7,8 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//! Constructor
 		//-------------------------------------------------------------------------
-		VarData::VarData(std::string identifier, llvm::AllocaInst* pMem, bool bMutableQualifier)
-			: m_identifier(identifier),
+		VarData::VarData(std::string identifier, llvm::AllocaInst* pMem, bool bMutableQualifier) :
+			m_identifier(identifier),
 			m_pMem(pMem),
 			m_bMutableQualifier(bMutableQualifier)
 		{

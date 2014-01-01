@@ -16,8 +16,8 @@ namespace unilang
 		//-----------------------------------------------------------------------------
 		statement_code_generator::statement_code_generator(	code_generator_errors & codeGeneratorErrors,
 															llvm_code_generator & llvmCodeGenerator,
-															expression_code_generator & expressionCodeGenerator )
-			:m_codeGeneratorErrors		(codeGeneratorErrors),
+															expression_code_generator & expressionCodeGenerator ) :
+			m_codeGeneratorErrors		(codeGeneratorErrors),
 			m_llvmCodeGenerator			(llvmCodeGenerator),
 			m_expressionCodeGenerator	(expressionCodeGenerator)
 		{

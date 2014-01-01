@@ -14,51 +14,53 @@ namespace unilang
 		// Supported Regular Expressions http://www.boost.org/doc/libs/1_53_0/libs/spirit/doc/html/spirit/lex/quick_reference/lexer.html
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		token_lexer<BaseIterator>::token_lexer() :	_uiCommentNestingLevel(0),
+		token_lexer<BaseIterator>::token_lexer() :
+			_uiCommentNestingLevel(0),
 #ifdef TOKEN_ID
-													m_tokWhitespace("\\s+", tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-													_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", tokens::ETokenIDs::comment),
-													m_tokIdentifier("[a-zA-Z_][a-zA-Z_0-9]*", tokens::ETokenIDs::identifier),
-													//tok_string("[^\"]+", tokens::ETokenIDs::string),
-													m_tokLiteralUnsignedFloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::m_tokLiteralUnsignedFloat),
-													//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
-													m_tokLiteralUnsignedInt("[1-9][0-9]*|0", tokens::ETokenIDs::m_tokLiteralUnsignedInt),
-													//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
-													m_tokLiteralBoolean("true|false", tokens::ETokenIDs::m_tokLiteralBoolean)
+			m_tokWhitespace("\\s+", tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+			_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", tokens::ETokenIDs::comment),
+			m_tokIdentifier("[a-zA-Z_][a-zA-Z_0-9]*", tokens::ETokenIDs::identifier),
+			//tok_string("[^\"]+", tokens::ETokenIDs::string),
+			m_tokLiteralUnsignedFloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::m_tokLiteralUnsignedFloat),
+			//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
+			m_tokLiteralUnsignedInt("[1-9][0-9]*|0", tokens::ETokenIDs::m_tokLiteralUnsignedInt),
+			//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
+			m_tokLiteralBoolean("true|false", tokens::ETokenIDs::m_tokLiteralBoolean)
 #else
-													m_tokWhitespace				("\\s+",															static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-													m_tokCommentSingleLine		("\\/\\/[^\r\n]*",													static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
-													m_tokCommentMultilineOpen	("\\/\\*",															static_cast<size_t>(tokens::ETokenIDs::comment_multiline_open)),
-													m_tokCommentMultilineRecursiveOpen("\\/\\*",													static_cast<size_t>(tokens::ETokenIDs::comment_multiline_recursive_open)),
-													m_tokCommentSingleLineInMultiline("\\/\\/[^\r\n]*",												static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
-													m_tokCommentMultilineCharacters("([^\\*\\/]|(\\/[^\\*\\/])|(\\*+[^\\*\\/]))+",					static_cast<size_t>(tokens::ETokenIDs::comment_multiline_characters)),
-													m_tokCommentMultilineClose	("\\*+\\/",															static_cast<size_t>(tokens::ETokenIDs::comment_multiline_close)),
-													m_tokIdentifier				("[a-zA-Z_][a-zA-Z_0-9]*",											static_cast<size_t>(tokens::ETokenIDs::identifier)),
-													//tok_string				("[^\"]+",															tokens::ETokenIDs::string),
-													//StringLiteral = L"\\\"[^\\\"]*\\\"";
-													m_tokLiteralHexadecimal		("0x[0-9a-fA-F]+",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-													m_tokLiteralOctal			("0q[0-8]+",														static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-													m_tokLiteralBinary			("0b[01]+",															static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-													m_tokLiteralUnsignedFloat	("((([1-9][0-9]*)|(0?))\\.[0-9]+)([eE][-\\+]?[0-9]+)?",				static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
-													m_tokLiteralUnsignedInt		("[1-9][0-9]*|0",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-													m_tokLiteralBoolean			("true|false",														static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
+			m_tokWhitespace				("\\s+",															static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+			m_tokCommentSingleLine		("\\/\\/[^\r\n]*",													static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
+			m_tokCommentMultilineOpen	("\\/\\*",															static_cast<size_t>(tokens::ETokenIDs::comment_multiline_open)),
+			m_tokCommentMultilineRecursiveOpen("\\/\\*",													static_cast<size_t>(tokens::ETokenIDs::comment_multiline_recursive_open)),
+			m_tokCommentSingleLineInMultiline("\\/\\/[^\r\n]*",												static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
+			m_tokCommentMultilineCharacters("([^\\*\\/]|(\\/[^\\*\\/])|(\\*+[^\\*\\/]))+",					static_cast<size_t>(tokens::ETokenIDs::comment_multiline_characters)),
+			m_tokCommentMultilineClose	("\\*+\\/",															static_cast<size_t>(tokens::ETokenIDs::comment_multiline_close)),
+			m_tokIdentifier				("[a-zA-Z_][a-zA-Z_0-9]*",											static_cast<size_t>(tokens::ETokenIDs::identifier)),
+			//tok_string				("[^\"]+",															tokens::ETokenIDs::string),
+			//StringLiteral = L"\\\"[^\\\"]*\\\"";
+			m_tokLiteralHexadecimal		("0x[0-9a-fA-F]+",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralOctal			("0q[0-8]+",														static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralBinary			("0b[01]+",															static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralUnsignedFloat	("((([1-9][0-9]*)|(0?))\\.[0-9]+)([eE][-\\+]?[0-9]+)?",				static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
+			m_tokLiteralUnsignedInt		("[1-9][0-9]*|0",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralBoolean			("true|false",														static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
 #endif
 		{
 			// The following tokens are associated with the default lexer state (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is strictly optional.
 
 			lex::_pass_type _pass;
+			lex::_state_type _state;
 
 			// single line comment before multiline so that you can comment out them like //*
-			this->self += m_tokCommentSingleLine [lex::_pass = lex::pass_flags::pass_ignore];
+			this->self += m_tokCommentSingleLine [_pass = lex::pass_flags::pass_ignore];
 
 			// recursive multiline comments
-			this->self += m_tokCommentMultilineOpen [lex::_state = "MULTILINE_COMMENT", ++boost::phoenix::ref(_uiCommentNestingLevel), lex::_pass = lex::pass_flags::pass_ignore];
-			this->self("MULTILINE_COMMENT") = m_tokCommentMultilineRecursiveOpen	[++boost::phoenix::ref(_uiCommentNestingLevel), lex::_pass = lex::pass_flags::pass_ignore]	// Does not work with += ?!?
-											| m_tokCommentMultilineClose			[--boost::phoenix::ref(_uiCommentNestingLevel), boost::phoenix::if_(boost::phoenix::ref(_uiCommentNestingLevel)==0)[lex::_state = "INITIAL"], lex::_pass = lex::pass_flags::pass_ignore]
-											| m_tokCommentSingleLineInMultiline	[lex::_pass = lex::pass_flags::pass_ignore]
-											| m_tokCommentMultilineCharacters	[lex::_pass = lex::pass_flags::pass_ignore];
+			this->self += m_tokCommentMultilineOpen [_state = "MULTILINE_COMMENT", ++boost::phoenix::ref(_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore];
+			this->self("MULTILINE_COMMENT") = m_tokCommentMultilineRecursiveOpen	[++boost::phoenix::ref(_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore]	// Does not work with += ?!?
+											| m_tokCommentMultilineClose			[--boost::phoenix::ref(_uiCommentNestingLevel), boost::phoenix::if_(boost::phoenix::ref(_uiCommentNestingLevel)==0)[_state = "INITIAL"], _pass = lex::pass_flags::pass_ignore]
+											| m_tokCommentSingleLineInMultiline		[_pass = lex::pass_flags::pass_ignore]
+											| m_tokCommentMultilineCharacters		[_pass = lex::pass_flags::pass_ignore];
 
-			this->self += m_tokWhitespace [lex::_pass = lex::pass_flags::pass_ignore];
+			this->self += m_tokWhitespace[_pass = lex::pass_flags::pass_ignore];
 
 			internal_add(":=",		tokens::ETokenIDs::assign);
 			internal_add("\\*=",	tokens::ETokenIDs::times_assign);

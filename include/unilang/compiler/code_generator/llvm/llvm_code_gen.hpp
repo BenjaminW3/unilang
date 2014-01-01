@@ -38,7 +38,8 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class llvm_code_generator : virtual boost::noncopyable
+		class llvm_code_generator :
+			virtual boost::noncopyable
 		{
 			// This typedef must be held the same as llvm::IRBuilder<> so that this always reflects the default arguments.
 			// We have to do this because we can not forward declare templates with default parameters without warnings/errors.

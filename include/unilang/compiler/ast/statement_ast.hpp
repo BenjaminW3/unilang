@@ -23,14 +23,15 @@ namespace unilang
 		//#########################################################################
 		//! A statement.
 		//#########################################################################
-		struct statement :	public ast_base,
-							boost::spirit::extended_variant<	boost::recursive_wrapper<if_statement>,
-																//boost::recursive_wrapper<while_statement>,
-																//boost::recursive_wrapper<return_statement>,
-																assignment,
-																expression,
-																boost::recursive_wrapper<statement_vector>
-								>
+		struct statement :
+			public ast_base,
+			boost::spirit::extended_variant<	boost::recursive_wrapper<if_statement>,
+												//boost::recursive_wrapper<while_statement>,
+												//boost::recursive_wrapper<return_statement>,
+												assignment,
+												expression,
+												boost::recursive_wrapper<statement_vector>
+											>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.
@@ -50,8 +51,9 @@ namespace unilang
 		//#########################################################################
 		//! A statement list of multiple statements.
 		//#########################################################################
-		struct statement_vector :	std::vector<statement>,
-								public ast_base
+		struct statement_vector :
+			std::vector<statement>,
+			public ast_base
 		{
 			bool isPure() const override;
 		};
@@ -60,7 +62,8 @@ namespace unilang
 		//#########################################################################
 		//! If-statement.
 		//#########################################################################
-		struct if_statement :	public ast_base
+		struct if_statement :
+			public ast_base
 		{
 			expression _expCondition;
 			statement_vector _thenStatementList;
@@ -73,7 +76,8 @@ namespace unilang
 		//#########################################################################
 		//! While statement.
 		//#########################################################################
-		/*struct while_statement :	public ast_base
+		/*struct while_statement :
+			public ast_base
 		{
 			expression _expCondition;
 			statement _body;
@@ -82,7 +86,8 @@ namespace unilang
 		//#########################################################################
 		//! Return statement.
 		//#########################################################################
-		/*struct return_statement :	public ast_base
+		/*struct return_statement :
+			public ast_base
 		{
 		};*/
 	}

@@ -37,7 +37,8 @@ namespace unilang
 		//!  The statement grammar.
 		//#########################################################################
 		template <typename BaseIterator, typename LexerIterator>
-		struct statement_grammar : qi::grammar<LexerIterator, ast::statement_vector()>
+		struct statement_grammar :
+			qi::grammar<LexerIterator, ast::statement_vector()>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.

@@ -38,8 +38,8 @@ namespace unilang
 																llvm_code_generator & llvmCodeGenerator,
 																constants_code_generator & constantsCodeGenerator,
 																symbol_code_generator & symbolCodeGenerator,
-																allocation_code_generator & allocationCodeGenerator )
-			:m_codeGeneratorErrors		(codeGeneratorErrors),
+																allocation_code_generator & allocationCodeGenerator ) :
+			m_codeGeneratorErrors		(codeGeneratorErrors),
 			m_namespaceCodeGenerator	(namespaceCodeGenerator),
 			m_llvmCodeGenerator			(llvmCodeGenerator),
 			m_constantsCodeGenerator	(constantsCodeGenerator),

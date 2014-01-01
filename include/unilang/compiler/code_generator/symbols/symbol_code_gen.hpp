@@ -29,7 +29,8 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class symbol_code_generator :	virtual boost::noncopyable
+		class symbol_code_generator :
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------

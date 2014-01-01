@@ -29,8 +29,8 @@ namespace unilang
 																	identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
 																	expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
 																	statement_grammar<BaseIterator, LexerIterator> const & statementGrammar, 
-																	lexer::token_lexer<BaseIterator> const & lexer)
-			: function_grammar::base_type(m_ruleFunctionDefinition, "function_grammar")
+																	lexer::token_lexer<BaseIterator> const & lexer) :
+			function_grammar::base_type(m_ruleFunctionDefinition, "function_grammar")
 		{
 			qi::_1_type _1;
 			qi::_3_type _3;
@@ -103,11 +103,11 @@ namespace unilang
 			);
 #endif
 			// Error handling: on error in start, call error_handler.
-			qi::on_error<qi::fail>(m_ruleParameterDeclarationList,error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			qi::on_error<qi::fail>(m_ruleReturnDeclarationList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleParameterDeclarationList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleReturnDeclarationList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			qi::on_error<qi::fail>(m_ruleFunctionDeclaration,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			qi::on_error<qi::fail>(m_ruleParameterDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
-			qi::on_error<qi::fail>(m_ruleReturnDefinitionList,	error_handler_function(error_handler)("Error! Expecting ", _4, _3));
+			qi::on_error<qi::fail>(m_ruleReturnDefinitionList,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 			qi::on_error<qi::fail>(m_ruleFunctionDefinition,		error_handler_function(error_handler)("Error! Expecting ", _4, _3));
 
 			// Annotation: on success, call annotation.

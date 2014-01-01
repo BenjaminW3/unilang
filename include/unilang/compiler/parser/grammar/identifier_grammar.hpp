@@ -26,7 +26,8 @@ namespace unilang
 		//!  The function grammar.
 		//#########################################################################
 		template <typename BaseIterator, typename LexerIterator>
-		struct identifier_grammar : boost::spirit::qi::grammar<LexerIterator, ast::identifier()>
+		struct identifier_grammar :
+			boost::spirit::qi::grammar<LexerIterator, ast::identifier()>
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.

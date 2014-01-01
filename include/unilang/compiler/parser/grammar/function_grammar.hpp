@@ -39,7 +39,8 @@ namespace unilang
 		//!  The function grammar.
 		//#########################################################################
 		template <typename BaseIterator, typename LexerIterator>
-		struct function_grammar : qi::grammar<LexerIterator, ast::function_definition() >
+		struct function_grammar :
+			qi::grammar<LexerIterator, ast::function_definition() >
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor.

@@ -61,11 +61,28 @@
 //! \subsection lang5 Functions
 //! Functions can be defined like <tt>increment:(i:i64)->(ret:i64{++i});</tt>. This is an inline definition because we did not even need a function body at all.
 //! We could also have written the function like: <tt>increment:(i:i64)->(ret:~i64){ret=i+1};</tt>
-//! Function parameters are evaluated from left to right.
+//! Functions can have multiple return values. TODO: NOT IMPLEMENTED! The results of a function can be given names and used as regular variables. There is no return statement. The values of the return parameters are returned when the current function block is left.
+//! Function return parameters are initialised from left to right.
+//! Function call parameters are evaluated from left to right.
+//! Functions can be overloaded on the argument types and their purity state.
+//! Calling of a unpure function has to be done explicitly by a <tt>~</tt> following the function name.
+//! The following example makes this clear:
+//! <tt>func:()->(i64{4})
+//! func:~()->(i64{4})// It is unpure, even if it does not make use of it.
+//! pure:()->(a:i64)
+//! {
+//!		a = func();		// Calls the pure function. If no pure function defined -> error.
+//!		a = func~();	// Error, unpure function call in pure function not allowed.
+//! }
+//! unpure:~()->(a:i64)
+//! {
+//!		a = func();		// Calls the pure function. If no pure function defined -> error.
+//!		a = func~();	// Calls the unpure function. If no unpure function defined -> error.
+//! }</tt>
 //!
 //! \subsection lang6 Executable modules
-//! The main module needs to have a function with the signature <tt>entrypoint:()->(i64{})</tt> 
-//! This means it has to have a single i64 errorcode return value. Return 0 if there was no error.
+//! The main module needs to have a function with the signature <tt>entrypoint:~()->(i64{})</tt> 
+//! This means it has to be unpure and have a single i64 errorcode return value. Return 0 if there was no error.
 //! This function has to be in the global namespace. It must not be inside a namespace.
 //!
 //! \subsection lang7 namespaces
@@ -76,7 +93,7 @@
 //! You can access members of nested namespaces by using the resultion operator as follows: <tt>namespace_name1::namespace_name2::function();</tt>.
 //! Scope resolution is by default done from the current namespace to the global namespace. If you are in the nested namespace <tt>nest1::nest2</tt> and you try to call a function of the last example then the search for the function will be made in three steps.
 //! At first in the current namespace <tt>nest1::nest2::namespace_name1::namespace_name2::function</tt> then for <tt>nest1::namespace_name1::namespace_name2::function</tt> and then <tt>namespace_name1::namespace_name2::function</tt>.
-//! If the scope resolution operator is used as the namespace prefix the name(space) following it is said to be found from global namespace. E.g.: <tt>::nest1::namespace_name2::function();</tt> is searched for only once in the global namespace directly under the given scopes.
+//! If the scope resolution operator is used as the namespace prefix the name(space) following it is said to be found from global namespace, such names are called qualified. E.g.: <tt>::nest1::namespace_name2::function();</tt> is searched for only once in the global namespace directly under the given scopes.
 //! Discontiguous Namespaces are also allowd. A namespace can be defined in several parts and so a namespace is made up of the sum of its separately defined parts. The separate parts of a namespace can be spread over multiple files.
 //! Multiple namespaces in different hierarchies can have the same name so <tt>namespace:math { /* code1 */ namespace:math { /* code2 */ } }</tt> and <tt>namespace:math { /* code1 */ namespace:const { /* code2 */ } } namespace:const { /* code3 */ }</tt> are both valid.
 //! You can not define members externally into different namespaces like: <tt>namespace:B {} namespace:A { B::f()->() }</tt>

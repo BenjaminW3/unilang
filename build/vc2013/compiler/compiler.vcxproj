@@ -5,7 +5,7 @@
     <RootNamespace>compiler</RootNamespace>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
-  <PropertyGroup>
+  <PropertyGroup Label="Configuration">
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120</PlatformToolset>
     <ConfigurationType>DynamicLibrary</ConfigurationType>
@@ -40,7 +40,7 @@
     <ClCompile Include="..\..\..\src\compiler\ast\function_ast.cpp" />
     <ClCompile Include="..\..\..\src\compiler\ast\identifier_ast.cpp" />
     <ClCompile Include="..\..\..\src\compiler\ast\operators.cpp" />
-    <ClCompile Include="..\..\..\src\compiler\ast\statement_ast .cpp" />
+    <ClCompile Include="..\..\..\src\compiler\ast\statement_ast.cpp" />
     <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\alloc_code_gen.cpp" />
     <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\variable_declaration.cpp" />
     <ClCompile Include="..\..\..\src\compiler\code_generator\allocation\variable_definition.cpp" />

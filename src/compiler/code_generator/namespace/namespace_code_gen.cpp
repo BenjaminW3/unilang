@@ -14,8 +14,8 @@ namespace unilang
 		//
 		//-------------------------------------------------------------------------
 		namespace_code_generator::namespace_code_generator(	code_generator_errors & codeGeneratorErrors, 
-															function_code_generator & functionCodeGenerator )
-			:m_codeGeneratorErrors	(codeGeneratorErrors),
+															function_code_generator & functionCodeGenerator ) :
+			m_codeGeneratorErrors	(codeGeneratorErrors),
 			m_functionCodeGenerator	(functionCodeGenerator)
 		{};
 		//-----------------------------------------------------------------------------

@@ -39,16 +39,6 @@ namespace unilang
 		std::string cTypeToUnilangTypeName<bool>();
 		
 		//-----------------------------------------------------------------------------
-		//! \return The llvm type converted to a string.
-		//-----------------------------------------------------------------------------
-		std::string getLLVMTypeName(llvm::Type const * const pType);
-
-		//-----------------------------------------------------------------------------
-		//! \return The unilang type corresponding to the given llvm type.
-		//-----------------------------------------------------------------------------
-		std::string llvmTypeToUnilangTypeName(llvm::Type const * const type);
-		
-		//-----------------------------------------------------------------------------
 		//!
 		//-----------------------------------------------------------------------------
 		template<typename TYPE>
@@ -65,5 +55,15 @@ namespace unilang
 			assembleCTypeToUnilangTypeName(lTypeNames, args...);
 			return lTypeNames;
 		}
+		
+		//-----------------------------------------------------------------------------
+		//! \return The llvm type converted to a string.
+		//-----------------------------------------------------------------------------
+		std::string getLLVMTypeName(llvm::Type const * const pType);
+
+		//-----------------------------------------------------------------------------
+		//! \return The unilang type corresponding to the given llvm type.
+		//-----------------------------------------------------------------------------
+		std::string llvmTypeToUnilangTypeName(llvm::Type const * const type);
 	}
 }

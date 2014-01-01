@@ -34,8 +34,9 @@ namespace unilang
 		//#########################################################################
 		//! 
 		//#########################################################################
-		class allocation_code_generator :	//public boost::static_visitor<llvm::AllocaInst*>,
-											virtual boost::noncopyable
+		class allocation_code_generator :
+			//public boost::static_visitor<llvm::AllocaInst*>,
+			virtual boost::noncopyable
 		{
 		public:
 			//-------------------------------------------------------------------------
