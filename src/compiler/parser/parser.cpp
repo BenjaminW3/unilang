@@ -22,9 +22,9 @@ namespace unilang
 {
 	namespace parser
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		ast::module parse_code( std::string const & sSourceCode )
 		{
 			std::cout << std::endl << "###########Parsing##########" << std::endl;
@@ -63,7 +63,7 @@ namespace unilang
 			// return the ast only if it was successfull
 			if (bSuccess && (cIterBegin == cIterEnd))
 			{
-				if (lexer.getCommentNestingLevel() != 0)
+				if (lexer.getCurrentCommentNestingLevel() != 0)
 				{
 					throw std::runtime_error("Parsing failed! Reached the end of the source but there are open multi-line-comments!");
 				}

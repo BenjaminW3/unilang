@@ -28,7 +28,7 @@ namespace unilang
 		EOperators & operator&=(EOperators& a, EOperators b);
 		EOperators operator~(EOperators a);*/
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! \return The precedence of the given operator.
 		//! 
 		//! // precedence 1
@@ -66,9 +66,9 @@ namespace unilang
 		//! 
 		//! // precedence 12
 		//! op_times, op_divide, op_mod
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		size_t getPrecedenceOfOperator(EOperators op);
 
-		std::ostream& operator<<(std::ostream& out, EOperators const& x);
+		std::ostream& operator<<(std::ostream& out, EOperators const & x);
 	}
 }

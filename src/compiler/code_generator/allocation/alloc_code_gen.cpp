@@ -31,9 +31,9 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		allocation_code_generator::allocation_code_generator(	code_generator_errors & codeGeneratorErrors,
 																llvm_code_generator & llvmCodeGenerator,
 																symbol_code_generator & symbolCodeGenerator,
@@ -44,18 +44,18 @@ namespace unilang
 			m_expressionCodeGenerator	(expressionCodeGenerator)
 		{
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::AllocaInst * allocation_code_generator::createEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & sVarName)
 		{
 			llvm::IRBuilder<> TmpB(&TheFunction->getEntryBlock(), TheFunction->getEntryBlock().begin());
 			std::string const sTempName = "EntryBlockAlloca_" + sVarName;
 			return TmpB.CreateAlloca(pType, 0,  sTempName.c_str());
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Value * allocation_code_generator::create_cast(llvm::Value * pVal, llvm::Type * const pDestinationType)
 		{
 			if(!pVal)

@@ -29,9 +29,9 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::AllocaInst * allocation_code_generator::operator()(ast::variable_declaration const & x)
 		{
 			LOG_SCOPE_DEBUG;
@@ -83,7 +83,7 @@ namespace unilang
 			// Remember this variable in symbol table.
 			if(bHasName)
 			{
-				m_symbolCodeGenerator.vSymbolTable.push_back(VarData(sName, Alloca, x._type._bHasMutableQualifier));
+				m_symbolCodeGenerator.addVar(VarData(sName, Alloca, x._type._bHasMutableQualifier));
 			}
 
 			return Alloca;

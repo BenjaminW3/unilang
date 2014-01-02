@@ -34,9 +34,9 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Function * function_code_generator::operator()(ast::function_declaration const & x)
 		{
 			LOG_SCOPE_DEBUG;
@@ -46,7 +46,7 @@ namespace unilang
 
 			// Create list of parameter types.
 			std::vector<llvm::Type*> vpParameterTypes;
-			for( ast::type_declaration const & typeDecl : x._vParameterTypes)
+			for( ast::variable_type_declaration const & typeDecl : x._vParameterTypes)
 			{
 				llvm::Type * const pType (m_symbolCodeGenerator.getTypeByName(typeDecl._idfName._name));
 				if(!pType)
@@ -77,11 +77,7 @@ namespace unilang
 				return m_codeGeneratorErrors.ErrorFunction("Function return type '"+(*x._vReturnTypes.begin())._idfName._name+"' for function '"+sMangledName+"' is not valid.");
 			}
 			
-#ifdef IMPLEMENT_VAR_ARG
-			llvm::FunctionType * const FT (llvm::FunctionType::get(pReturnType,	vpParameterTypes, x._bIsVarArg));
-#else
 			llvm::FunctionType * const FT (llvm::FunctionType::get(pReturnType,	vpParameterTypes, false));
-#endif
 
 			llvm::Function *F (llvm::Function::Create(FT, llvm::Function::ExternalLinkage, sMangledName, m_llvmCodeGenerator.getModule().get()));
 

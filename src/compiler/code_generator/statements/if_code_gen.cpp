@@ -31,10 +31,10 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
-		bool statement_code_generator::operator()(ast::if_statement const& x)
+		//-------------------------------------------------------------------------
+		bool statement_code_generator::operator()(ast::if_statement const & x)
 		{
 			LOG_SCOPE_DEBUG;
 

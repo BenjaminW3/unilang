@@ -33,9 +33,9 @@ namespace unilang
 		enum class EOperators : size_t;
 	}
 
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	namespace code_generator
 	{
 		// forward declarations
@@ -66,7 +66,7 @@ namespace unilang
 
 			typedef llvm::Value * result_type;
 
-			llvm::Value * operator()(ast::primary_expr const& x);
+			llvm::Value * operator()(ast::primary_expr const & x);
 			llvm::Value * operator()(ast::identifier const & x);
 			llvm::Value * operator()(ast::unary_expr const & x);
 			llvm::Value * operator()(ast::function_call const & x);
@@ -87,16 +87,16 @@ namespace unilang
 			llvm::Value * operator()(bool const & x);
 
 		private:
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \return The expression created with the shunting yard algorithm.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			llvm::Value * CreateExpression(	size_t min_precedence,
 											llvm::Value * lhs,
 											std::vector<ast::operation>::const_iterator& rest_begin,
 											std::vector<ast::operation>::const_iterator rest_end);
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \return The value returned from the execution of 'L op R'.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			llvm::Value * CreateBinaryOperation(llvm::Value * L, llvm::Value * R, operators::EOperators op);
 
 		private:

@@ -50,50 +50,50 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::LLVMContext& llvm_code_generator::getContext() const
 		{
 			return llvm::getGlobalContext(); 
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::IRBuilder<>> llvm_code_generator::getBuilder()
 		{
 			return builder;
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> llvm_code_generator::getModule() const
 		{
 			return llvmModule;
 		}
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Function * llvm_code_generator::getFunctionFromNameInNamespaceHierarchy( std::string const & sMangledName, std::vector<std::string> vsNamespaceHierarchy )
 		{
 			std::string const sMangledNamespaceName (m_namespaceCodeGenerator.buildMangledNamespaceName(vsNamespaceHierarchy));
-			// if this is said to be searched for only in global namespace
+			// If this is said to be searched for only in global namespace ...
 			if(sMangledName.substr(0,2)=="::")
 			{
 				std::string const sMangledFunctionName (sMangledName.substr(2));
 				return getFunctionFromMangledName(sMangledFunctionName);
 			}
-			// reverse search through the namespaces
+			// ... else reverse search through the namespaces.
 			else
 			{
 				for(;;)
 				{
 					std::string const sMangledFunctionName (sMangledNamespaceName+sMangledName);
-					// if we retreive directly we would set the error flag
+					// If we would call getFunctionFromMangledName directly we would set the error flag. Therefore special has method.
 					if(hasFunctionFromMangledName(sMangledFunctionName))
 					{
-						// can the availability change in betweeen?
+						// Can the availability change in betweeen hasFunctionFromMangledName and now?
 						return getFunctionFromMangledName(sMangledFunctionName);
 					}
 
@@ -117,17 +117,17 @@ namespace unilang
 
 			return m_codeGeneratorErrors.ErrorFunction("Function '"+sMangledName+"' has not been decalred.");
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		bool llvm_code_generator::hasFunctionFromMangledName( std::string const & sMangledName ) const
 		{
 			llvm::Function* pFunction (getModule()->getFunction(sMangledName));
 			return (pFunction!=nullptr);
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Function * llvm_code_generator::getFunctionFromMangledName( std::string const & sMangledName )
 		{
 			llvm::Function* pFunction (getModule()->getFunction(sMangledName));
@@ -139,9 +139,9 @@ namespace unilang
 			return pFunction;
 		}
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm_code_generator::llvm_code_generator(	code_generator_errors & codeGeneratorErrors,
 													namespace_code_generator & namespaceCodeGenerator ) :
 			builder						(std::make_shared<IRBuilderType>(getContext())),
@@ -154,9 +154,9 @@ namespace unilang
 			//llvm::InitializeNativeTarget();
 			//llvm::llvm_start_multithreaded();	// only needed if concurrent threads are used
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		// http://llvm.1065342.n5.nabble.com/how-to-get-TargetData-td21590.html
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		void llvm_code_generator::optimizeModule() const
 		{
 			LOG_SCOPE_DEBUG;
@@ -327,9 +327,9 @@ namespace unilang
 			std::cout << rso.str() << std::endl;
 #endif
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		void llvm_code_generator::verifyModule() const
 		{
 			std::string ErrStr;
@@ -338,9 +338,9 @@ namespace unilang
 				throw std::runtime_error("verifyModule failure! "+ErrStr);
 			}
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		void llvm_code_generator::printModuleBytecode() const
 		{
 			LOG_SCOPE_DEBUG;

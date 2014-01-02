@@ -21,15 +21,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		bool identifier::isPure() const
-		{
-			// FIXME: using vars declared outside of a method is not pure! But this can also be used for types and functions.
-			return true;
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, identifier const& x)
+		std::ostream& operator<<(std::ostream& out, identifier const & x)
 		{
 			out << x._name; return out;
 		}
@@ -41,14 +33,6 @@ namespace unilang
 			m_bGlobalNamespace	(false),
 			m_sNames			()
 		{
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		bool namespaced_identifier::isPure() const
-		{
-			// FIXME: using vars declared outside of a method is not pure! But this can also be used for types and functions.
-			return true;
 		}
 		//-------------------------------------------------------------------------
 		//
@@ -72,7 +56,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, namespaced_identifier const& x)
+		std::ostream& operator<<(std::ostream& out, namespaced_identifier const & x)
 		{
 			out << /*(x.m_bGlobalNamespace ? "::" : "") +*/ x.getMangledName(); return out;
 		}

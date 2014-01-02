@@ -15,17 +15,14 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		function_declaration::function_declaration( identifier idfName, bool bHasUnpureQualifier, std::vector<type_declaration> const & vParameterTypes,
-#ifdef IMPLEMENT_VAR_ARG
-			bool bIsVarArg,
-#endif
-			std::vector<type_declaration> const & vReturnTypes) :
+		function_declaration::function_declaration(
+			identifier const & idfName, 
+			bool bHasUnpureQualifier, 
+			std::vector<variable_type_declaration> const & vParameterTypes,
+			std::vector<variable_type_declaration> const & vReturnTypes) :
 			_idfName				(idfName),
 			_bHasUnpureQualifier	(bHasUnpureQualifier),
 			_vParameterTypes		(vParameterTypes),
-#ifdef IMPLEMENT_VAR_ARG
-			_bIsVarArg				(bIsVarArg),
-#endif
 			_vReturnTypes			(vReturnTypes)
 		{
 		}
@@ -48,13 +45,6 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		bool function_declaration::isPure() const
-		{
-			return false;
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
 		std::string function_declaration::build_mangled_name() const
 		{
 			std::stringstream sstr;
@@ -65,7 +55,7 @@ namespace unilang
 			}
 			sstr << "(";
 			bool bFirstArg = true;
-			for(type_declaration const & decl : _vParameterTypes)
+			for(variable_type_declaration const & decl : _vParameterTypes)
 			{
 				if(bFirstArg){bFirstArg = false;}
 				else{sstr << ",";}
@@ -80,7 +70,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, function_declaration const& x)
+		std::ostream& operator<<(std::ostream& out, function_declaration const & x)
 		{
 			out << "?";
 			out << x._idfName << ":";
@@ -90,7 +80,7 @@ namespace unilang
 			}
 			out << "(";
 			bool bFirstArg = true;
-			for(type_declaration const & decl : x._vParameterTypes)
+			for(variable_type_declaration const & decl : x._vParameterTypes)
 			{
 				if(bFirstArg){bFirstArg = false;}
 				else{out << ", ";}
@@ -101,7 +91,7 @@ namespace unilang
 
 			out << '(';
 			bool bFirstRet = true;
-			for(type_declaration const & decl : x._vReturnTypes)
+			for(variable_type_declaration const & decl : x._vReturnTypes)
 			{
 				if(bFirstRet){bFirstRet = false;}
 				else{out << ", ";}
@@ -111,27 +101,11 @@ namespace unilang
 			out << ")";
 			return out;
 		}
-		
+
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		bool function_definition::isPure() const	
-		{
-			if(_bHasUnpureQualifier){return false;}
-			for(ast::variable_definition const & ret : _vReturnValueDefinitions)
-			{
-				if(!ret.isPure()) {return false;}
-			}
-			for(ast::variable_declaration const & arg : _vParameterDeclarations)
-			{
-				if(!arg.isPure()) {return false;}
-			}
-			return _body.isPure();
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, function_definition const& x)
+		std::ostream& operator<<(std::ostream& out, function_definition const & x)
 		{
 			out << x._idfName << ":";
 			if(x._bHasUnpureQualifier)

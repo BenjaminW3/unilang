@@ -26,9 +26,9 @@ namespace llvm
 
 namespace unilang
 { 
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	namespace code_generator
 	{
 		// forward declarations
@@ -79,22 +79,22 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			std::shared_ptr<llvm::Module> getModule() const;
 			
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! Searches for the given function from inside the deepest namespace to the top of the herarchy.
 			//! \param sMangledName The mangled function name to search for (with namespaces).
 			//! \param vsNamespaceHierarchy The namespace hierarchy being searched through for the function.
 			//! \return The Function with the given name. If none is found an error is signified.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			llvm::Function * getFunctionFromNameInNamespaceHierarchy( std::string const & sMangledName, std::vector<std::string> vsNamespaceHierarchy );
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \param sMangledName The mangled function name to search for (with namespaces).
 			//! \return If the function exists. No error is signified if not found.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			bool hasFunctionFromMangledName( std::string const & sMangledName ) const;
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \param sMangledName The mangled function name to search for (with namespaces).
 			//! \return The Function with the given name. If none is found an error is signified.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			llvm::Function * getFunctionFromMangledName( std::string const & sMangledName );
 
 		private:

@@ -19,9 +19,9 @@ namespace unilang
 	{
 		namespace qi = boost::spirit::qi;
 		
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! Constructor.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		template <typename BaseIterator, typename LexerIterator>
 		statement_grammar<BaseIterator,LexerIterator>::statement_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
 																			//identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 

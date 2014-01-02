@@ -35,15 +35,15 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Function * function_code_generator::operator()(ast::function_definition const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			
 			// TODO: symbol table
-			m_symbolCodeGenerator.vSymbolTable.clear();
+			//auto spFunctionBlockSymbolTable(m_symbolCodeGenerator.addBlock());
 
 			// purity test
 			/*if ((!x.decl._bHasUnpureQualifier) && !x._body.IsPure())
@@ -193,19 +193,19 @@ namespace unilang
 #else
 				if(_bIsVarArg)
 				{
-					return m_codeGeneratorErrors.ErrorFunction("Variable argument count not implemented during extern declaration of '"+name+"'.", EErrorLevel::Internal);
+					return m_codeGeneratorErrors.ErrorFunction("Variable argument count not implemented! Usage in extern declaration of '"+name+"'.", EErrorLevel::Internal);
 				}
 #endif
 				for(std::string const & x : paramTypes)
 				{
 					ast::identifier id(x);
-					ast::type_declaration td(false, id);
+					ast::variable_type_declaration td(false, id);
 					decl._vParameterTypes.push_back(td);
 				}
 				for(std::string const & x : resTypes)
 				{
 					ast::identifier id(x);
-					ast::type_declaration td(false, id);
+					ast::variable_type_declaration td(false, id);
 					decl._vReturnTypes.push_back(td);
 				}
 

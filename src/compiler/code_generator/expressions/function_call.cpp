@@ -31,9 +31,9 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(ast::function_call const & x)
 		{
 			LOG_SCOPE_DEBUG;
@@ -63,7 +63,7 @@ namespace unilang
 					return m_codeGeneratorErrors.ErrorValue("Invalid argument returned from '" +sstr.str()+ "'.");
 				}
 
-				ast::type_declaration ty;
+				ast::variable_type_declaration ty;
 				ty._idfName = llvmTypeToUnilangTypeName(ArgsV.back()->getType());
 
 				funcDecl._vParameterTypes.push_back(ty);

@@ -6,7 +6,7 @@
 #include <memory>
 #include <vector>
 
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 //! \mainpage unilang
 //! 
 //! \section intro_sec Introduction
@@ -94,39 +94,39 @@
 //! Scope resolution is by default done from the current namespace to the global namespace. If you are in the nested namespace <tt>nest1::nest2</tt> and you try to call a function of the last example then the search for the function will be made in three steps.
 //! At first in the current namespace <tt>nest1::nest2::namespace_name1::namespace_name2::function</tt> then for <tt>nest1::namespace_name1::namespace_name2::function</tt> and then <tt>namespace_name1::namespace_name2::function</tt>.
 //! If the scope resolution operator is used as the namespace prefix the name(space) following it is said to be found from global namespace, such names are called qualified. E.g.: <tt>::nest1::namespace_name2::function();</tt> is searched for only once in the global namespace directly under the given scopes.
-//! Discontiguous Namespaces are also allowd. A namespace can be defined in several parts and so a namespace is made up of the sum of its separately defined parts. The separate parts of a namespace can be spread over multiple files.
+//! Discontiguous Namespaces are allowed. A namespace can be defined in several parts and so a namespace is made up of the sum of its separately defined parts. The separate parts of a namespace can be spread over multiple files.
 //! Multiple namespaces in different hierarchies can have the same name so <tt>namespace:math { /* code1 */ namespace:math { /* code2 */ } }</tt> and <tt>namespace:math { /* code1 */ namespace:const { /* code2 */ } } namespace:const { /* code3 */ }</tt> are both valid.
 //! You can not define members externally into different namespaces like: <tt>namespace:B {} namespace:A { B::f()->() }</tt>
 //! 
 // $ - The stringify operator
 // if you write $ in front of a variable or expression its content is converted to a string. This can be used for Debug purposes.
 //!
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 
 // forward declarations
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 //! The llvm namespace.
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 namespace llvm
 {
 	class Module;
 }
 
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 //! The namespace defining the unilang language.
-//-----------------------------------------------------------------------------
+//-------------------------------------------------------------------------
 namespace unilang
 {
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//! The namespace defining the compiler.
 	//! 
 	//! To compile a file call compile_file and use the returned module to execute it just-in-time with the execution_engine.
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	namespace compiler
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! Defines the verbosity of the debug output.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		enum EDebugOutputOptions
 		{
 			Standard	= 0,
@@ -136,42 +136,42 @@ namespace unilang
 			All			= /*SourceCode |*/ Unoptimized | Optimized,
 		};
 		
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! Reads the source from the given file.
 		//!
 		//! \param sSourceCodeFilePath The path to the source code file.
 		//! \return The source code.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		U_EXPORT std::string read_source_from_file( std::string const & sSourceCodeFilePath );
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! Compiles the given source.
 		//! The returned module will be optimized.
 		//!
 		//! \param sSourceCode The source code.
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Module being created.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		U_EXPORT std::shared_ptr<llvm::Module> compile_source( std::string const & sSourceCode, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! Compiles the given file.
 		//! The returned module will be optimized.
 		//!
 		//! \param sSourceCodeFilePath The path to the source code file.
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Module being created.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		U_EXPORT std::shared_ptr<llvm::Module> compile_source_from_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! Compiles the given files.
 		//! The returned modules will be optimized.
 		//!
 		//! \param vsSourceCodeFilePaths The paths to the source code files.
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Modules being created.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		U_EXPORT std::vector<std::shared_ptr<llvm::Module>> compile_source_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 	}
 }

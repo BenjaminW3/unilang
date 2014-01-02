@@ -37,16 +37,14 @@ namespace unilang
 			//! Constructor.
 			//-------------------------------------------------------------------------
 			statement();
-			statement(if_statement const& val);
-			//statement(while_statement const& val);
-			//statement(return_statement const& val);
-			statement(assignment const& val);
-			statement(expression const& val);
-			statement(statement_vector const& val);
-
-			inline bool isPure() const override;
+			statement(if_statement const & val);
+			//statement(while_statement const & val);
+			//statement(return_statement const & val);
+			statement(assignment const & val);
+			statement(expression const & val);
+			statement(statement_vector const & val);
 		};
-		std::ostream& operator<<(std::ostream& out, statement const& x);
+		std::ostream& operator<<(std::ostream& out, statement const & x);
 		
 		//#########################################################################
 		//! A statement list of multiple statements.
@@ -55,9 +53,8 @@ namespace unilang
 			std::vector<statement>,
 			public ast_base
 		{
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, statement_vector const& x);
+		std::ostream& operator<<(std::ostream& out, statement_vector const & x);
 
 		//#########################################################################
 		//! If-statement.
@@ -68,10 +65,8 @@ namespace unilang
 			expression _expCondition;
 			statement_vector _thenStatementList;
 			boost::optional<statement_vector> _elseOptionalStatementList;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, if_statement const& x);
+		std::ostream& operator<<(std::ostream& out, if_statement const & x);
 
 		//#########################################################################
 		//! While statement.

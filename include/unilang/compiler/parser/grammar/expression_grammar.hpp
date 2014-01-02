@@ -20,7 +20,7 @@ namespace unilang
 		struct operand;
 		struct expression;
 		struct function_call;
-		struct type_declaration;
+		struct variable_type_declaration;
 		struct variable_declaration;
 		struct variable_definition;
 		struct assignment;
@@ -57,7 +57,7 @@ namespace unilang
 			qi::rule<LexerIterator, std::vector<ast::expression>()> m_ruleArgumentList;
 			qi::rule<LexerIterator, ast::function_call()> m_ruleFunctionCall;
 			
-			qi::rule<LexerIterator, ast::type_declaration()> m_ruleTypeDeclaration;
+			qi::rule<LexerIterator, ast::variable_type_declaration()> m_ruleTypeDeclaration;
 			
 			qi::rule<LexerIterator, ast::variable_declaration()> m_ruleVariableDeclaration;
 			qi::rule<LexerIterator, std::vector<ast::expression>()> m_ruleDefinitionParameterList;

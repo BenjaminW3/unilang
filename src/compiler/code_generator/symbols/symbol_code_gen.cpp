@@ -32,7 +32,7 @@ namespace unilang
 	namespace code_generator
 	{
 		//-------------------------------------------------------------------------
-		//! Constructor
+		//
 		//-------------------------------------------------------------------------
 		symbol_code_generator::symbol_code_generator(	code_generator_errors & codeGeneratorErrors,
 														llvm_code_generator & llvmCodeGenerator ) :
@@ -41,9 +41,9 @@ namespace unilang
 		{
 		}
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Type* symbol_code_generator::getTypeByName(std::string sTypeName) const
 		{
 			if(sTypeName=="f64")
@@ -84,10 +84,10 @@ namespace unilang
 				return m_codeGeneratorErrors.ErrorType("Use of unknown Type: '"+sTypeName+"'.");
 			}
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
-		VarData const * const symbol_code_generator::getVarFromName( std::string const & name ) const
+		//-------------------------------------------------------------------------
+		VarData const * symbol_code_generator::getVarFromName( std::string const & name ) const
 		{
 			const auto itlocal = std::find_if(vSymbolTable.begin(), vSymbolTable.end(), 
 				[&name](VarData const & var){ return (var.getIdentifier() == name); }
@@ -97,6 +97,13 @@ namespace unilang
 				return &(*itlocal);
 			}
 			return nullptr;
+		}
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		void symbol_code_generator::addVar(VarData const & var)
+		{
+			vSymbolTable.emplace_back(var);
 		}
 	}
 }

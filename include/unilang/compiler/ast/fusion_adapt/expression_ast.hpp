@@ -46,7 +46,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
-	unilang::ast::type_declaration,
+	unilang::ast::variable_type_declaration,
 	(bool, _bHasMutableQualifier)
 	(unilang::ast::identifier, _idfName)
 )
@@ -54,7 +54,7 @@ BOOST_FUSION_ADAPT_STRUCT(
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::variable_declaration,
 	(boost::optional<unilang::ast::identifier>, _optionalIdentifier)
-	(unilang::ast::type_declaration, _type)
+	(unilang::ast::variable_type_declaration, _type)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(

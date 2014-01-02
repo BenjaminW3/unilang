@@ -14,7 +14,7 @@ namespace unilang
 			ETokenIDs & operator ++(ETokenIDs & a)							{ a = static_cast<ETokenIDs>(static_cast<size_t>(a) + 1); return a; }
 			ETokenIDs operator ++(ETokenIDs & a, int)						{ETokenIDs b = a; ++a; return b;}*/
 
-			inline std::ostream& operator<<(std::ostream& out, ETokenIDs const& x)
+			inline std::ostream& operator<<(std::ostream& out, ETokenIDs const & x)
 			{
 				switch(x)
 				{

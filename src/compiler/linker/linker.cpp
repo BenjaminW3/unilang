@@ -36,9 +36,9 @@ namespace unilang
 { 
 	namespace linker
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> load_module_from_bitcode_file( std::string const & sBitCodeFilePath )
 		{
 			// TODO: check file validity
@@ -66,9 +66,9 @@ namespace unilang
 
 			return module;
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::vector<std::shared_ptr<llvm::Module>> load_modules_from_bitcode_files( std::vector<std::string> const & vsBitcodeFilePaths )
 		{
 			std::vector<std::shared_ptr<llvm::Module>> vspModules;
@@ -80,9 +80,9 @@ namespace unilang
 
 			return vspModules;
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		void write_module_to_bitcode_file( llvm::Module const & module, std::string const & sBitCodeFilePath )
 		{
 			std::string sError;
@@ -95,9 +95,9 @@ namespace unilang
 			llvm::WriteBitcodeToFile(&module, fd_ostream);
 		}
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> link_modules( std::vector<std::shared_ptr<llvm::Module>> vModules )
 		{
 			std::shared_ptr<llvm::Module> newModule (std::make_shared<llvm::Module>("unilang-module", llvm::getGlobalContext()));
@@ -120,9 +120,9 @@ namespace unilang
 
 			return bErrorOccured ? nullptr : newModule;
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> link_bitcode_files_to_module( std::vector<std::string> const & vsBitcodeFilePaths ) 
 		{
 			return link_modules(load_modules_from_bitcode_files(vsBitcodeFilePaths));

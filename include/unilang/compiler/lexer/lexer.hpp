@@ -75,9 +75,9 @@ namespace boost
 	{ 
 		namespace traits
 		{
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! Converts decimal string to unsigned integer.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			template <typename BaseIterator>
 			struct assign_to_attribute_from_iterators<uint64_t, BaseIterator>
 			{
@@ -119,16 +119,16 @@ namespace boost
 
 namespace unilang
 {
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//! The namespace defining the lexer infrastructure.
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	namespace lexer
 	{
 		namespace lex = boost::spirit::lex;
 		
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//! The namespace defining the used lexer properties.
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		namespace detail
 		{
 			namespace lex = boost::spirit::lex;
@@ -205,42 +205,52 @@ namespace unilang
 			token_lexer();
 			
 			//-------------------------------------------------------------------------
-			//! Extract a raw_token(id) for the given registered keyword
+			//! Extract a raw_token(id) for the given registered keyword.
 			//-------------------------------------------------------------------------
-			raw_token_spec operator()(std::string const& keyword) const;
+			raw_token_spec operator()(std::string const & keyword) const;
 			
 			//-------------------------------------------------------------------------
-			//! Extract a token(id) for the given registered keyword
+			//! Extract a token(id) for the given registered keyword.
 			//-------------------------------------------------------------------------
-			//token_spec token(std::string const& keyword) const;
+			//token_spec token(std::string const & keyword) const;
 			
 			//-------------------------------------------------------------------------
 			//! \return The current comment nesting level.
 			//-------------------------------------------------------------------------
-			size_t getCommentNestingLevel() const;
+			size_t getCurrentCommentNestingLevel() const;
 
 		private:
 			//-------------------------------------------------------------------------
 			//! Adds a keyword to the mapping table
 			//-------------------------------------------------------------------------
-			bool internal_add( std::string const& keyword, tokens::ETokenIDs id, char const * state = nullptr, char const * targetstate = nullptr );
+			bool internal_add( std::string const & keyword, tokens::ETokenIDs id, char const * state = nullptr, char const * targetstate = nullptr );
 
 		public:
 #ifdef TOKEN_ID
-			lex::token_def<lex::omit, char, tokens::ETokenIDs> const m_tokWhitespace;
-			lex::token_def<lex::omit, char, tokens::ETokenIDs> const _tok_comment;
+			typedef lex::token_def<lex::omit, char, tokens::ETokenIDs> TConsumedToken;
+			TConsumedToken const m_tokWhitespace;
+			TConsumedToken const m_tokCommentSingleLine;
+			TConsumedToken const m_tokCommentMultilineOpen;
+			TConsumedToken const m_tokCommentMultilineRecursiveOpen;
+			TConsumedToken const m_tokCommentSingleLineInMultiline;
+			TConsumedToken const m_tokCommentMultilineCharacters;
+			TConsumedToken const m_tokCommentMultilineClose;
 			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokIdentifier;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralHexadecimal;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralOctal;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralBinary;
 			lex::token_def<long double, char, tokens::ETokenIDs> const m_tokLiteralUnsignedFloat;
 			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralUnsignedInt;
 			lex::token_def<bool, char, tokens::ETokenIDs> const m_tokLiteralBoolean;
 #else
-			lex::token_def<lex::omit> const m_tokWhitespace;
-			lex::token_def<lex::omit> const m_tokCommentSingleLine;
-			lex::token_def<lex::omit> const m_tokCommentMultilineOpen;
-			lex::token_def<lex::omit> const m_tokCommentMultilineRecursiveOpen;
-			lex::token_def<lex::omit> const m_tokCommentSingleLineInMultiline;
-			lex::token_def<lex::omit> const m_tokCommentMultilineCharacters;
-			lex::token_def<lex::omit> const m_tokCommentMultilineClose;
+			typedef lex::token_def<lex::omit> TConsumedToken;
+			TConsumedToken const m_tokWhitespace;
+			TConsumedToken const m_tokCommentSingleLine;
+			TConsumedToken const m_tokCommentMultilineOpen;
+			TConsumedToken const m_tokCommentMultilineRecursiveOpen;
+			TConsumedToken const m_tokCommentSingleLineInMultiline;
+			TConsumedToken const m_tokCommentMultilineCharacters;
+			TConsumedToken const m_tokCommentMultilineClose;
 			lex::token_def<std::string> const m_tokIdentifier;
 			lex::token_def<uint64_t> const m_tokLiteralHexadecimal;
 			lex::token_def<uint64_t> const m_tokLiteralOctal;

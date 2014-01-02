@@ -53,18 +53,18 @@ namespace unilang
 			llvm::AllocaInst * operator()(ast::variable_definition const & x);
 
 		private:
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! Create an alloca instruction in the entry block of the function.
 			//! This is used for mutable variables etc.
 			//! Only used internally.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			static llvm::AllocaInst * createEntryBlockAlloca(llvm::Function * const TheFunction, llvm::Type * const pType, std::string const & sVarName);
 
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! Tries to cast the given value to the given type.
 			//! Implemented casts: fXX -> iXX, iXX -> fXX
 			//! \return The casted value. 0 if cast was not possible.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			llvm::Value * create_cast(llvm::Value * pVal, llvm::Type * const pDestinationType);
 
 		private:

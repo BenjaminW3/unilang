@@ -17,15 +17,22 @@ namespace unilang
 		token_lexer<BaseIterator>::token_lexer() :
 			_uiCommentNestingLevel(0),
 #ifdef TOKEN_ID
-			m_tokWhitespace("\\s+", tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-			_tok_comment("(\\/\\*[^*]*\\*+([^/*][^*]*\\*+)*\\/)|(\\/\\/[^\r\n]*)", tokens::ETokenIDs::comment),
-			m_tokIdentifier("[a-zA-Z_][a-zA-Z_0-9]*", tokens::ETokenIDs::identifier),
-			//tok_string("[^\"]+", tokens::ETokenIDs::string),
-			m_tokLiteralUnsignedFloat("(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::m_tokLiteralUnsignedFloat),
-			//lit_float("[-\\+]?(([1-9][0-9]*\\.[0-9]+)|(\\.[0-9]+))([eE][-\\+]?[0-9]+)?", tokens::ETokenIDs::lit_float),
-			m_tokLiteralUnsignedInt("[1-9][0-9]*|0", tokens::ETokenIDs::m_tokLiteralUnsignedInt),
-			//lit_int("[-\\+][1-9][0-9]*|\\+0|-0", tokens::ETokenIDs::lit_int),
-			m_tokLiteralBoolean("true|false", tokens::ETokenIDs::m_tokLiteralBoolean)
+			m_tokWhitespace				("\\s+",															tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+			m_tokCommentSingleLine		("\\/\\/[^\r\n]*",													tokens::ETokenIDs::comment_singleline),
+			m_tokCommentMultilineOpen	("\\/\\*",															tokens::ETokenIDs::comment_multiline_open),
+			m_tokCommentMultilineRecursiveOpen("\\/\\*",													tokens::ETokenIDs::comment_multiline_recursive_open),
+			m_tokCommentSingleLineInMultiline("\\/\\/[^\r\n]*",												tokens::ETokenIDs::comment_singleline),
+			m_tokCommentMultilineCharacters("([^\\*\\/]|(\\/[^\\*\\/])|(\\*+[^\\*\\/]))+",					tokens::ETokenIDs::comment_multiline_characters),
+			m_tokCommentMultilineClose	("\\*+\\/",															tokens::ETokenIDs::comment_multiline_close),
+			m_tokIdentifier				("[a-zA-Z_][a-zA-Z_0-9]*",											tokens::ETokenIDs::identifier),
+			//tok_string				("[^\"]+",															tokens::ETokenIDs::string),
+			//StringLiteral = L"\\\"[^\\\"]*\\\"";
+			m_tokLiteralHexadecimal		("0x[0-9a-fA-F]+",													tokens::ETokenIDs::lit_uint),
+			m_tokLiteralOctal			("0q[0-8]+",														tokens::ETokenIDs::lit_uint),
+			m_tokLiteralBinary			("0b[01]+",															tokens::ETokenIDs::lit_uint),
+			m_tokLiteralUnsignedFloat	("((([1-9][0-9]*)|(0?))\\.[0-9]+)([eE][-\\+]?[0-9]+)?",				tokens::ETokenIDs::lit_ufloat),
+			m_tokLiteralUnsignedInt		("[1-9][0-9]*|0",													tokens::ETokenIDs::lit_uint),
+			m_tokLiteralBoolean			("true|false",														tokens::ETokenIDs::lit_boolean)
 #else
 			m_tokWhitespace				("\\s+",															static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
 			m_tokCommentSingleLine		("\\/\\/[^\r\n]*",													static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
@@ -136,7 +143,7 @@ namespace unilang
 			assert(!keyword.empty());
 			
 #ifdef TOKEN_ID
-			add_token(state ? state : initial_state().c_str(), keyword, id, targetstate);
+			add_token(state ? state : initial_state().c_str(), keyword, id, targetstate ? targetstate : state);
 			// store the mapping for later retrieval
 			return _keywords.insert(typename keyword_map_type::value_type(keyword, id)).second;
 #else
@@ -149,7 +156,7 @@ namespace unilang
 		// 
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		typename token_lexer<BaseIterator>::raw_token_spec token_lexer<BaseIterator>::operator()(std::string const& keyword) const
+		typename token_lexer<BaseIterator>::raw_token_spec token_lexer<BaseIterator>::operator()(std::string const & keyword) const
 		{
 			assert(!keyword.empty());
 
@@ -168,7 +175,7 @@ namespace unilang
 		// 
 		//-------------------------------------------------------------------------
 		/*template <typename BaseIterator>
-		typename token_lexer<BaseIterator>::token_spec token_lexer<BaseIterator>::token(std::string const& keyword) const
+		typename token_lexer<BaseIterator>::token_spec token_lexer<BaseIterator>::token(std::string const & keyword) const
 		{
 			namespace qi = boost::spirit::qi;
 			qi::token_type token;
@@ -185,7 +192,7 @@ namespace unilang
 		//! \return The current comment nesting level.
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		size_t token_lexer<BaseIterator>::getCommentNestingLevel() const
+		size_t token_lexer<BaseIterator>::getCurrentCommentNestingLevel() const
 		{
 			return _uiCommentNestingLevel;
 		}

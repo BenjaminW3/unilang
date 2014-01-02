@@ -22,7 +22,7 @@ namespace unilang
 			ETokenIDs & operator ++ (ETokenIDs & a);
 			ETokenIDs operator ++ (ETokenIDs & a, int);*/
 
-			std::ostream& operator<<(std::ostream& out, ETokenIDs const& x);
+			std::ostream& operator<<(std::ostream& out, ETokenIDs const & x);
 		}
 	}
 }

@@ -12,7 +12,7 @@ namespace unilang
 		meta_entity::meta_entity(function_definition const & val) : base_type(val) {}
 		meta_entity::meta_entity(namespace_declaration const & val) : base_type(val) {}
 
-		std::ostream& operator<<(std::ostream& out, meta_entity const& x)
+		std::ostream& operator<<(std::ostream& out, meta_entity const & x)
 		{
 			switch(x.get().which())
 			{
@@ -26,7 +26,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, std::vector<meta_entity> const& x)
+		std::ostream& operator<<(std::ostream& out, std::vector<meta_entity> const & x)
 		{
 			bool bFirstRet = false;
 			for(meta_entity const & me : x)
@@ -42,7 +42,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, module const& x)
+		std::ostream& operator<<(std::ostream& out, module const & x)
 		{
 			out << x._metaEntities;
 			return out;
@@ -51,7 +51,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, namespace_declaration const& x)
+		std::ostream& operator<<(std::ostream& out, namespace_declaration const & x)
 		{
 			out << "namespace : " << x._idfName
 				<< "{" << std::endl

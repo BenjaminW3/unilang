@@ -18,9 +18,9 @@ namespace unilang
 		struct function_definition;
 	}
 
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//! The namespace defining the code_generator.
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	namespace code_generator
 	{
 		// forward declarations
@@ -42,26 +42,26 @@ namespace unilang
 										function_code_generator & functionCodeGenerator );
 
 		public:
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \return The namespaces from outermost to innermost.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			std::vector<std::string> getCurrentNamespaceHierarchy() const;
 
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \return The concatenation of namespaces.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			std::string getCurrentMangledNamespaceName() const;
 
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			//! \param vsNamespaceHierarchy The namespaces from outermost to innermost.
 			//! \return The concatenation of namespaces.
-			//-----------------------------------------------------------------------------
+			//-------------------------------------------------------------------------
 			static std::string buildMangledNamespaceName( std::vector<std::string> const & vsNamespaceHierarchy );
 
 			typedef bool result_type;
 
-			bool operator()(ast::module const& x);
-			bool operator()(ast::namespace_declaration const& x);
+			bool operator()(ast::module const & x);
+			bool operator()(ast::namespace_declaration const & x);
 
 		public: // public for static_visitor
 			bool operator()(ast::function_declaration const & x);

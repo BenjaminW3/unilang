@@ -42,13 +42,11 @@ namespace unilang
 			primary_expr(long double val);
 			primary_expr(uint64_t val);
 			primary_expr(bool val);
-			primary_expr(identifier const& val);
-			primary_expr(expression const& val);
-			primary_expr(primary_expr const& rhs);
-
-			bool isPure() const override;
+			primary_expr(identifier const & val);
+			primary_expr(expression const & val);
+			primary_expr(primary_expr const & rhs);
 		};
-		std::ostream& operator<<(std::ostream& out, primary_expr const& x);
+		std::ostream& operator<<(std::ostream& out, primary_expr const & x);
 
 		// forward declarations
 		struct unary_expr;
@@ -71,16 +69,14 @@ namespace unilang
 			//! Constructor.
 			//-------------------------------------------------------------------------
 			operand();
-			operand(primary_expr const& val);
-			operand(unary_expr const& val);
-			operand(function_call const& val);
-			operand(variable_definition const& val);
-			//operand(assignment const& val);
-			operand(operand const& rhs);
-
-			bool isPure() const override;
+			operand(primary_expr const & val);
+			operand(unary_expr const & val);
+			operand(function_call const & val);
+			operand(variable_definition const & val);
+			//operand(assignment const & val);
+			operand(operand const & rhs);
 		};
-		std::ostream& operator<<(std::ostream& out, operand const& x);
+		std::ostream& operator<<(std::ostream& out, operand const & x);
 
 		//#########################################################################
 		//! A unary expression.
@@ -90,10 +86,8 @@ namespace unilang
 		{
 			OPERATOR_TYPE _uiOperatorID;
 			operand _opOperand;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, unary_expr const& x);
+		std::ostream& operator<<(std::ostream& out, unary_expr const & x);
 
 		//#########################################################################
 		//! A operation.
@@ -103,10 +97,8 @@ namespace unilang
 		{
 			OPERATOR_TYPE _uiOperatorID;
 			operand _opOperand;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, operation const& x);
+		std::ostream& operator<<(std::ostream& out, operation const & x);
 
 		//#########################################################################
 		//! An expression.
@@ -116,11 +108,9 @@ namespace unilang
 		{
 			operand _firstOperand;
 			std::vector<operation> _vRestOperands;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, expression const& x);
-		std::ostream& operator<<(std::ostream& out, std::vector<expression> const& x);
+		std::ostream& operator<<(std::ostream& out, expression const & x);
+		std::ostream& operator<<(std::ostream& out, std::vector<expression> const & x);
 
 		//#########################################################################
 		//! A function call.
@@ -131,34 +121,28 @@ namespace unilang
 			namespaced_identifier _idfName;
 			bool _bHasUnpureQualifier;
 			std::vector<expression> _vArgumentExpressions;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, function_call const& x);
+		std::ostream& operator<<(std::ostream& out, function_call const & x);
 
 		//#########################################################################
 		//! A type declaration.
 		//#########################################################################
-		struct type_declaration :
+		struct variable_type_declaration :
 			public ast_base
 		{
 			//-------------------------------------------------------------------------
 			//! Constructor!
 			//-------------------------------------------------------------------------
-			type_declaration();
+			variable_type_declaration();
 			//-------------------------------------------------------------------------
 			//! Constructor!
 			//-------------------------------------------------------------------------
-			type_declaration(identifier const & type_identifier);
+			variable_type_declaration(identifier const & type_identifier);
 			//-------------------------------------------------------------------------
 			//! Constructor!
 			//-------------------------------------------------------------------------
-			type_declaration(bool bHasMutableQualifier, identifier const & type_identifier);
+			variable_type_declaration(bool bHasMutableQualifier, identifier const & type_identifier);
 
-			//-------------------------------------------------------------------------
-			//! 
-			//-------------------------------------------------------------------------
-			bool isPure() const override;
 			//-------------------------------------------------------------------------
 			//! \return Unique names for different types.
 			//-------------------------------------------------------------------------
@@ -167,7 +151,7 @@ namespace unilang
 			bool _bHasMutableQualifier;
 			identifier _idfName;
 		};
-		std::ostream& operator<<(std::ostream& out, type_declaration const& x);
+		std::ostream& operator<<(std::ostream& out, variable_type_declaration const & x);
 
 		//#########################################################################
 		//! A variable declaration.
@@ -176,11 +160,9 @@ namespace unilang
 			public ast_base
 		{
 			boost::optional<identifier> _optionalIdentifier;
-			type_declaration _type;
-
-			bool isPure() const override;
+			variable_type_declaration _type;
 		};
-		std::ostream& operator<<(std::ostream& out, variable_declaration const& x);
+		std::ostream& operator<<(std::ostream& out, variable_declaration const & x);
 
 		//#########################################################################
 		//! A variable definition.
@@ -190,10 +172,8 @@ namespace unilang
 		{
 			variable_declaration _declaration;
 			std::vector<expression> _vParameterExpressions;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, variable_definition const& x);
+		std::ostream& operator<<(std::ostream& out, variable_definition const & x);
 
 		//#########################################################################
 		//! Assignment consists of a identifier, the operator and an expression.
@@ -213,9 +193,7 @@ namespace unilang
 			identifier _lhs;
 			OPERATOR_TYPE _uiOperatorID;
 			expression _rhs;
-
-			bool isPure() const override;
 		};
-		std::ostream& operator<<(std::ostream& out, assignment const& x);
+		std::ostream& operator<<(std::ostream& out, assignment const & x);
 	}
 }

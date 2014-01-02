@@ -32,9 +32,9 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		// The Shunting-yard algorithm
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::CreateExpression(	size_t min_precedence,
 																	llvm::Value * lhs,
 																	std::vector<ast::operation>::const_iterator & rest_begin,
@@ -87,9 +87,9 @@ namespace unilang
 			}
 			return lhs;
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(ast::expression const & x)
 		{
 			LOG_SCOPE_DEBUG;
@@ -111,9 +111,9 @@ namespace unilang
 			std::vector<ast::operation>::const_iterator rest_begin (x._vRestOperands.begin());
 			return CreateExpression(0, lhs, rest_begin, x._vRestOperands.end());
 		}
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, operators::EOperators op)
 		{
 			if(!L)

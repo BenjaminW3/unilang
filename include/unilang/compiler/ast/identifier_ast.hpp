@@ -25,11 +25,9 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			identifier(std::string const & name);
 
-			bool isPure() const override;
-
 			std::string _name;
 		};
-		std::ostream& operator<<(std::ostream& out, identifier const& x);
+		std::ostream& operator<<(std::ostream& out, identifier const & x);
 		//#########################################################################
 		//! A namespaced identifier.
 		//#########################################################################
@@ -41,13 +39,11 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			namespaced_identifier();
 
-			bool isPure() const override;
-
 			std::string getMangledName() const;
 
 			bool m_bGlobalNamespace;
 			std::vector<std::string> m_sNames;
 		};
-		std::ostream& operator<<(std::ostream& out, namespaced_identifier const& x);
+		std::ostream& operator<<(std::ostream& out, namespaced_identifier const & x);
 	}
 }

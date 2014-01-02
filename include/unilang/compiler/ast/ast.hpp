@@ -14,9 +14,9 @@
 
 namespace unilang
 {
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	//! The namespace defining all the abstract syntax tree objects.
-	//-----------------------------------------------------------------------------
+	//-------------------------------------------------------------------------
 	namespace ast
 	{
 		// forward declarations
@@ -24,7 +24,7 @@ namespace unilang
 		//#########################################################################
 		//! A meta_entity can be multiple things.
 		//#########################################################################
-		struct meta_entity :	
+		struct meta_entity :
 			public ast_base,
 			boost::spirit::extended_variant<	function_declaration, 
 												function_definition, 
@@ -39,8 +39,8 @@ namespace unilang
 			meta_entity(function_definition const & val);
 			meta_entity(namespace_declaration const & val);
 		};
-		std::ostream& operator<<(std::ostream& out, meta_entity const& x);
-		std::ostream& operator<<(std::ostream& out, std::vector<meta_entity> const& x);
+		std::ostream& operator<<(std::ostream& out, meta_entity const & x);
+		std::ostream& operator<<(std::ostream& out, std::vector<meta_entity> const & x);
 
 		//#########################################################################
 		//! A namespace declaration.
@@ -51,7 +51,7 @@ namespace unilang
 			identifier _idfName;
 			std::vector<meta_entity> _metaEntities;
 		};
-		std::ostream& operator<<(std::ostream& out, namespace_declaration const& x);
+		std::ostream& operator<<(std::ostream& out, namespace_declaration const & x);
 
 		//#########################################################################
 		//! A module is the root of the abstract syntax tree.
@@ -61,6 +61,6 @@ namespace unilang
 		{
 			std::vector<meta_entity> _metaEntities;
 		};
-		std::ostream& operator<<(std::ostream& out, module const& x);
+		std::ostream& operator<<(std::ostream& out, module const & x);
 	}
 }

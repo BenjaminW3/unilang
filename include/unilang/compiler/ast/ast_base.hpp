@@ -14,16 +14,6 @@ namespace unilang
 			//! Constructor.
 			//-------------------------------------------------------------------------
 			ast_base();
-			
-			//-------------------------------------------------------------------------
-			//! Base mathode that can be overwritten.
-			//! This base method always returns false.
-			//! \return If the object is pure.
-			//-------------------------------------------------------------------------
-			virtual bool isPure() const
-			{
-				return false;
-			}
 
 			size_t _id;
 		};

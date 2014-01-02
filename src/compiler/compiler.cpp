@@ -13,9 +13,9 @@ namespace unilang
 {
 	namespace compiler
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::string read_source_from_file( std::string const & sSourceCodeFilePath )
 		{
 			std::tr2::sys::path const pInPath(sSourceCodeFilePath);
@@ -46,9 +46,9 @@ namespace unilang
 			return sSourceCode;
 		}
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> compile_source( std::string const & sSourceCode, EDebugOutputOptions const output )
 		{
 			/*if((EDebugOutputOptions::SourceCode & output) == EDebugOutputOptions::SourceCode)
@@ -81,17 +81,17 @@ namespace unilang
 			return gen.getllvmCodeGenerator().getModule();
 		}
 
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::shared_ptr<llvm::Module> compile_source_from_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output )
 		{
 			return compile_source(read_source_from_file(sSourceCodeFilePath), output);
 		}
 		
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		std::vector<std::shared_ptr<llvm::Module>> compile_source_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output )
 		{
 			std::vector<std::shared_ptr<llvm::Module>> vspModules;

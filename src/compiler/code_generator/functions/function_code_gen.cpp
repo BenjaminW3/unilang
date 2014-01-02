@@ -4,9 +4,9 @@ namespace unilang
 { 
 	namespace code_generator
 	{
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		//
-		//-----------------------------------------------------------------------------
+		//-------------------------------------------------------------------------
 		function_code_generator::function_code_generator(	code_generator_errors & codeGeneratorErrors,
 															namespace_code_generator & namespaceCodeGenerator,
 															llvm_code_generator & llvmCodeGenerator,
