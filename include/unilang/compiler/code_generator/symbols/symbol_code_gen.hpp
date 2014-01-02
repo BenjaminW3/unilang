@@ -59,6 +59,11 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			void addVar(VarData const & var);
 
+			//-------------------------------------------------------------------------
+			//! TODO: Remove clearSymbolTable!
+			//-------------------------------------------------------------------------
+			void clearSymbolTable();
+
 		private:
 			std::vector<VarData /*const*/> vSymbolTable;
 

@@ -105,5 +105,13 @@ namespace unilang
 		{
 			vSymbolTable.emplace_back(var);
 		}
+
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		void symbol_code_generator::clearSymbolTable()
+		{
+			vSymbolTable.clear();
+		}
 	}
 }

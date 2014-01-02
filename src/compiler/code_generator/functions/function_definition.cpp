@@ -42,6 +42,7 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 			
+			m_symbolCodeGenerator.clearSymbolTable();
 			// TODO: symbol table
 			//auto spFunctionBlockSymbolTable(m_symbolCodeGenerator.addBlock());
 
