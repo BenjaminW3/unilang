@@ -77,6 +77,7 @@ namespace unilang
 			llvm::Value * operator()(ast::variable_definition const & x);
 
 		public:	// public for static_visitor
+			llvm::Value * operator()(std::string const & x);
 			llvm::Value * operator()(long double const & x);
 			llvm::Value * operator()(double const & x);
 			llvm::Value * operator()(float const & x);

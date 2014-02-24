@@ -22,7 +22,8 @@ namespace unilang
 		//#########################################################################
 		struct primary_expr :
 			public ast_base,
-			boost::spirit::extended_variant<	long double,
+			boost::spirit::extended_variant<	std::string,
+												long double,
 												uint64_t,
 												bool,
 												identifier,
@@ -33,6 +34,7 @@ namespace unilang
 			//! Constructor.
 			//-------------------------------------------------------------------------
 			primary_expr();
+			primary_expr(std::string val);
 			primary_expr(long double val);
 			primary_expr(uint64_t val);
 			primary_expr(bool val);

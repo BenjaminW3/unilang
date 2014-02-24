@@ -210,6 +210,26 @@ namespace unilang
 
 		public:
 #ifdef TOKEN_ID
+			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokIdentifier;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralString;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralHexadecimal;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralOctal;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralBinary;
+			lex::token_def<long double, char, tokens::ETokenIDs> const m_tokLiteralUnsignedFloat;
+			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralUnsignedInt;
+			lex::token_def<bool, char, tokens::ETokenIDs> const m_tokLiteralBoolean;
+#else
+			lex::token_def<std::string> const m_tokIdentifier;
+			lex::token_def<std::string> const m_tokLiteralString;
+			lex::token_def<uint64_t> const m_tokLiteralHexadecimal;
+			lex::token_def<uint64_t> const m_tokLiteralOctal;
+			lex::token_def<uint64_t> const m_tokLiteralBinary;
+			lex::token_def<long double> const m_tokLiteralUnsignedFloat;
+			lex::token_def<uint64_t> const m_tokLiteralUnsignedInt;
+			lex::token_def<bool> const m_tokLiteralBoolean;
+#endif
+		private:
+#ifdef TOKEN_ID
 			typedef lex::token_def<lex::omit, char, tokens::ETokenIDs> TConsumedToken;
 			TConsumedToken const m_tokWhitespace;
 			TConsumedToken const m_tokCommentSingleLine;
@@ -218,16 +238,7 @@ namespace unilang
 			TConsumedToken const m_tokCommentSingleLineInMultiline;
 			TConsumedToken const m_tokCommentMultilineCharacters;
 			TConsumedToken const m_tokCommentMultilineClose;
-			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokIdentifier;
-			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralString;
-			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralRawString;
-			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralRawStringDelimiter;
-			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralHexadecimal;
-			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralOctal;
-			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralBinary;
-			lex::token_def<long double, char, tokens::ETokenIDs> const m_tokLiteralUnsignedFloat;
-			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralUnsignedInt;
-			lex::token_def<bool, char, tokens::ETokenIDs> const m_tokLiteralBoolean;
+			TConsumedToken const m_tokLiteralStringDelimiter;
 #else
 			typedef lex::token_def<lex::omit> TConsumedToken;
 			TConsumedToken const m_tokWhitespace;
@@ -237,20 +248,11 @@ namespace unilang
 			TConsumedToken const m_tokCommentSingleLineInMultiline;
 			TConsumedToken const m_tokCommentMultilineCharacters;
 			TConsumedToken const m_tokCommentMultilineClose;
-			lex::token_def<std::string> const m_tokIdentifier;
-			lex::token_def<std::string> const m_tokLiteralString;
-			lex::token_def<std::string> const m_tokLiteralRawString;
-			lex::token_def<std::string> const m_tokLiteralRawStringDelimiter;
-			lex::token_def<uint64_t> const m_tokLiteralHexadecimal;
-			lex::token_def<uint64_t> const m_tokLiteralOctal;
-			lex::token_def<uint64_t> const m_tokLiteralBinary;
-			lex::token_def<long double> const m_tokLiteralUnsignedFloat;
-			lex::token_def<uint64_t> const m_tokLiteralUnsignedInt;
-			lex::token_def<bool> const m_tokLiteralBoolean;
+			TConsumedToken const m_tokLiteralStringDelimiter;
 #endif
-		private:
 			size_t m_uiCommentNestingLevel;
-			//std::string m_sRawStringOpenDelimiterToken;
+			std::string m_sRawStringOpenDelimiterToken;
+			std::string m_sRawString;
 		};
 	}
 }

@@ -1,0 +1,7 @@
+entrypoint:~()
+{
+	''This is a basic string that does not include the delimiters.'';
+	''A string can also include newlines,
+	tabs, and other Symbols #~+*´`?\/=}{()/&%$§"!²^°<>'';
+	'~'If we want to have a string containing two immediately following single quotes, we have to extend our string delimiter by a user defined token that is not contained inside the string.'~';
+}->(i64{0})

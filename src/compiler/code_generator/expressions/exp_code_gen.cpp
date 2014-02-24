@@ -84,16 +84,23 @@ namespace unilang
 			llvm::AllocaInst * pDeclAlloca (m_allocationCodeGenerator(x));
 			if(!pDeclAlloca)
 			{
-				return m_codeGeneratorErrors.ErrorValue("Unable to load variable definition value from invalid allocation.");
+				return m_codeGeneratorErrors.ErrorValue("Unable to generate allocation for variable definition.");
 			}
 
 			llvm::Value * pRetVal (m_llvmCodeGenerator.getBuilder()->CreateLoad(pDeclAlloca, "load.var_def.alloca"));
 			if(!pRetVal)
 			{
-				return m_codeGeneratorErrors.ErrorValue("Unable to load variable definition value.");
+				return m_codeGeneratorErrors.ErrorValue("Unable to generate load instruction from variable definition allocation.");
 			}
 
 			return pRetVal;
+		}
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		llvm::Value * expression_code_generator::operator()(std::string const & x)
+		{
+			return m_llvmCodeGenerator.getBuilder()->CreateGlobalStringPtr(x, "create.global_string_ptr");
 		}
 		//-------------------------------------------------------------------------
 		//

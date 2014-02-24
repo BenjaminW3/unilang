@@ -12,6 +12,7 @@ namespace unilang
 		//! 
 		//-------------------------------------------------------------------------
 		primary_expr::primary_expr() : base_type() {}
+		primary_expr::primary_expr(std::string val) : base_type(val) {}
 		primary_expr::primary_expr(long double val) : base_type(val) {}
 		primary_expr::primary_expr(uint64_t val) : base_type(val) {}
 		primary_expr::primary_expr(bool val) : base_type(val) {}
@@ -23,11 +24,12 @@ namespace unilang
 		{
 			switch(x.get().which())
 			{
-				case 0: out << boost::get<long double>(x); break;
-				case 1: out << boost::get<uint64_t>(x); break;
-				case 2: out << boost::get<bool>(x); break;
-				case 3: out << boost::get<identifier>(x); break;
-				case 4: out << boost::get<expression>(x); break;
+				case 0: out << boost::get<std::string>(x); break;
+				case 1: out << boost::get<long double>(x); break;
+				case 2: out << boost::get<uint64_t>(x); break;
+				case 3: out << boost::get<bool>(x); break;
+				case 4: out << boost::get<identifier>(x); break;
+				case 5: out << boost::get<expression>(x); break;
 				default: out << "undefined primary_expr"; break;
 			}
 			return out;

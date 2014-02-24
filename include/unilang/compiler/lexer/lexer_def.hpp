@@ -15,6 +15,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
 		token_lexer<BaseIterator>::token_lexer() :
+			lex::lexer<typename detail::get_lexer_type<BaseIterator>::type>(lex::match_flags::match_default),	// match_default sets the matching of a '.' to match everything. Standard for lexertl is everything but no newline.
 			m_uiCommentNestingLevel(0),
 #ifdef TOKEN_ID
 			m_tokWhitespace				("\\s+",															tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
@@ -25,8 +26,9 @@ namespace unilang
 			m_tokCommentMultilineCharacters("([^\\*\\/]|(\\/[^\\*\\/])|(\\*+[^\\*\\/]))+",					tokens::ETokenIDs::comment_multiline_characters),
 			m_tokCommentMultilineClose	("\\*+\\/",															tokens::ETokenIDs::comment_multiline_close),
 			m_tokIdentifier				("[a-zA-Z_][a-zA-Z_0-9]*",											tokens::ETokenIDs::identifier),
-			m_tokLiteralString			(R"(\"[^\"]*\")",													tokens::ETokenIDs::lit_string),
-			m_tokLiteralRawString				(R"(\"[^\"]*\")",											tokens::ETokenIDs::lit_string),
+			//m_tokLiteralString					(R"(\"[^\"]*\")",											tokens::ETokenIDs::lit_string),
+			m_tokLiteralStringDelimiter			("'[^']*'",													tokens::ETokenIDs::lit_string_delimiter),
+			m_tokLiteralString					(".",														tokens::ETokenIDs::lit_string),
 			m_tokLiteralHexadecimal		("0x[0-9a-fA-F]+",													tokens::ETokenIDs::lit_uint),
 			m_tokLiteralOctal			("0q[0-8]+",														tokens::ETokenIDs::lit_uint),
 			m_tokLiteralBinary			("0b[01]+",															tokens::ETokenIDs::lit_uint),
@@ -42,9 +44,9 @@ namespace unilang
 			m_tokCommentMultilineCharacters		(R"(([^\*\/]|(\/[^\*\/])|(\*+[^\*\/]))*)",					static_cast<size_t>(tokens::ETokenIDs::comment_multiline_characters)),
 			m_tokCommentMultilineClose			(R"(\*+\/)",												static_cast<size_t>(tokens::ETokenIDs::comment_multiline_close)),
 			m_tokIdentifier						("[a-zA-Z_][a-zA-Z_0-9]*",									static_cast<size_t>(tokens::ETokenIDs::identifier)),
-			m_tokLiteralString					(R"(\"[^\"]*\")",											static_cast<size_t>(tokens::ETokenIDs::lit_string)),
-			m_tokLiteralRawStringDelimiter		(R"('[^\']')",												static_cast<size_t>(tokens::ETokenIDs::lit_string_delimiter)),
-			m_tokLiteralRawString				(R"('[^\']')",												static_cast<size_t>(tokens::ETokenIDs::lit_string)),
+			//m_tokLiteralString					(R"(\"[^\"]*\")",											static_cast<size_t>(tokens::ETokenIDs::lit_string)),
+			m_tokLiteralStringDelimiter			("\'[^\']*\'",													static_cast<size_t>(tokens::ETokenIDs::lit_string_delimiter)),
+			m_tokLiteralString					(".",														static_cast<size_t>(tokens::ETokenIDs::lit_string)),
 			m_tokLiteralHexadecimal				("0x[0-9a-fA-F]+",											static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
 			m_tokLiteralOctal					("0q[0-8]+",												static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
 			m_tokLiteralBinary					("0b[01]+",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
@@ -53,37 +55,90 @@ namespace unilang
 			m_tokLiteralBoolean					("true|false",												static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
 #endif
 		{
-			lex::_pass_type _pass;
-			lex::_state_type _state;
-
 			// The following tokens are associated with the default lexer state (the state "INITIAL" == initial_state().c_str() ). Specifying 'INITIAL' as a lexer state is strictly optional.
 
-			// Add single line comment before multiline so that you can comment them out like '//*' .
-			this->self += m_tokCommentSingleLine [_pass = lex::pass_flags::pass_ignore];
-
-			// Add recursive multiline comments.
-			this->self += m_tokCommentMultilineOpen [_state = "MULTILINE_COMMENT", ++boost::phoenix::ref(m_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore];
-			this->self("MULTILINE_COMMENT") = m_tokCommentMultilineRecursiveOpen	[++boost::phoenix::ref(m_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore]	// Does not work with += ?!?
-											| m_tokCommentMultilineClose			[--boost::phoenix::ref(m_uiCommentNestingLevel), boost::phoenix::if_(boost::phoenix::ref(m_uiCommentNestingLevel)==0)[_state = "INITIAL"], _pass = lex::pass_flags::pass_ignore]
-											| m_tokCommentSingleLineInMultiline		[_pass = lex::pass_flags::pass_ignore]
-											| m_tokCommentMultilineCharacters		[_pass = lex::pass_flags::pass_ignore];
-
 			typedef boost::spirit::lex::lexertl::detail::data<BaseIterator, boost::mpl::true_, boost::spirit::lex::lexertl::position_token<base_iterator_type, boost::spirit::lex::omit, boost::mpl::true_, size_t>::has_state, boost::variant<boost::detail::variant::over_sequence<boost::mpl::vector5<boost::iterator_range<std::_String_const_iterator<std::_String_val<std::_Simple_types<char>>>>, std::string, long double, unsigned __int64, bool>>>> context_type;
+
+			// Define semantic action to ignore value.
 			auto const fctPassIgnore(
-				[](BaseIterator &, BaseIterator &, lex::pass_flags & pass, size_t &, context_type & ctx)
+				[](BaseIterator &, BaseIterator &, lex::pass_flags & pass, size_t &, context_type &)
 				{
 					pass = lex::pass_flags::pass_ignore;
-					//ctx.more();
-					//context_type;
 				}
 			);
 
-			this->self += m_tokWhitespace[fctPassIgnore];
+			// Add single line comment before multiline so that you can comment them out like '//*' .
+			this->self += m_tokCommentSingleLine[fctPassIgnore];
 
-			//this->self += m_tokLiteralRawStringDelimiter[[&m_sRawStringOpenDelimiterToken](BaseIterator& itStart, BaseIterator& itEnd, lex::_pass_type&, lex::_tokenid_type&, lex::_tokenid_type& ctx) { m_sRawStringOpenDelimiterToken = ; }];
-			//this->self += m_tokLiteralRawStringDelimiter[_state = "RAW_STRING", boost::phoenix::ref(m_sRawStringOpenDelimiterToken) = std::string(boost::spirit::lex::_start, boost::spirit::lex::_end)];
-			//this->self("MULTILINE_COMMENT") = m_tokLiteralRawString 
-			//								| m_tokLiteralRawStringDelimiter[boost::phoenix::if_(boost::phoenix::ref(m_sRawStringOpenDelimiterToken)==std::string(boost::spirit::lex::_start, boost::spirit::lex::_end))[_state = "INITIAL"]];
+			// Define actions for multiline comments.
+			auto const fctCommentMultilineOpen(
+				[this](BaseIterator &, BaseIterator &, lex::pass_flags & pass, size_t &, context_type & ctx)
+				{
+					++m_uiCommentNestingLevel;
+					ctx.set_state(ctx.get_state_id("MULTILINE_COMMENT"));
+					pass = lex::pass_flags::pass_ignore;
+				}
+			);
+			auto const fctCommentMultilineRecursiveOpen(
+				[this](BaseIterator &, BaseIterator &, lex::pass_flags & pass, size_t &, context_type &)
+				{
+					++m_uiCommentNestingLevel;
+					pass = lex::pass_flags::pass_ignore;
+				}
+			);
+			auto const fctCommentMultilineClose(
+				[this](BaseIterator &, BaseIterator &, lex::pass_flags & pass, size_t &, context_type & ctx)
+				{
+					--m_uiCommentNestingLevel;
+					if(m_uiCommentNestingLevel == 0)
+					{
+						ctx.set_state(ctx.get_state_id("INITIAL"));
+					}
+					pass = lex::pass_flags::pass_ignore;
+				}
+			);
+			// Add recursive multiline comment tokens.
+			this->self += m_tokCommentMultilineOpen [fctCommentMultilineOpen];
+			this->self("MULTILINE_COMMENT") = m_tokCommentMultilineRecursiveOpen	[fctCommentMultilineRecursiveOpen]	// Does not work with += ?!?
+											| m_tokCommentMultilineClose			[fctCommentMultilineClose]
+											| m_tokCommentSingleLineInMultiline		[fctPassIgnore]
+											| m_tokCommentMultilineCharacters		[fctPassIgnore];
+
+			// Define actions for raw strings.
+			auto const fctLiteralRawStringDelimiter(
+				[this](BaseIterator & itStart, BaseIterator & itEnd, lex::pass_flags & pass, size_t &, context_type & ctx)
+				{
+					m_sRawStringOpenDelimiterToken = std::string(itStart, itEnd);
+					ctx.set_state(ctx.get_state_id("RAW_STRING"));
+					// Ignore the opening string literal token.
+					pass = lex::pass_flags::pass_ignore;
+				}
+			);
+			auto const fctLiteralRawStringDelimiterEnd(
+				[this](BaseIterator & itStart, BaseIterator & itEnd, lex::pass_flags & pass, size_t &, context_type & ctx)
+				{
+					m_sRawString += std::string(itStart, itEnd);
+					size_t uiRawStringLength(m_sRawString.length());
+					size_t uiDelimiterStringLength(m_sRawStringOpenDelimiterToken.length());
+					size_t uiRawStringDelimiterBeginIndex(uiRawStringLength-uiDelimiterStringLength);
+					if(uiRawStringLength>=uiDelimiterStringLength && m_sRawString.substr(uiRawStringDelimiterBeginIndex) == m_sRawStringOpenDelimiterToken)
+					{
+						ctx.set_value(m_sRawString.substr(0, uiRawStringDelimiterBeginIndex));
+						ctx.set_state(ctx.get_state_id("INITIAL"));
+						m_sRawStringOpenDelimiterToken.clear();
+						m_sRawString.clear();
+					}
+					else
+					{
+						pass = lex::pass_flags::pass_ignore;
+					}
+				}
+			);
+			// Add raw string tokens.
+			this->self += m_tokLiteralStringDelimiter[fctLiteralRawStringDelimiter];
+			this->self("RAW_STRING")	= m_tokLiteralString[fctLiteralRawStringDelimiterEnd];
+
+			this->self += m_tokWhitespace[fctPassIgnore];
 
 			internal_add(":=",		tokens::ETokenIDs::assign);
 			internal_add("\\*=",	tokens::ETokenIDs::times_assign);
@@ -140,7 +195,6 @@ namespace unilang
 			//internal_add("~",		tokens::ETokenIDs::tilde);
 			internal_add("\\?",		tokens::ETokenIDs::question_mark);
 
-			this->self += m_tokLiteralString;
 			this->self += m_tokLiteralHexadecimal;
 			this->self += m_tokLiteralOctal;
 			this->self += m_tokLiteralBinary;

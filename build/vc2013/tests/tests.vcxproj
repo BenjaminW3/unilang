@@ -97,6 +97,7 @@
     <None Include="..\..\..\src\tests\code\pass\pass_operator_not.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_operator_precedence.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_singleline_comment.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_string_literals.u" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\compiler\compiler.vcxproj">

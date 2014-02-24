@@ -194,5 +194,8 @@
     <None Include="..\..\..\src\tests\code\pass\pass_higherorder_function_type.u">
       <Filter>Resource Files\pass</Filter>
     </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_string_literals.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
   </ItemGroup>
 </Project>

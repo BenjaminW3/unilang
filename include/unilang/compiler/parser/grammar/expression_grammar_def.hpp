@@ -71,13 +71,14 @@ namespace unilang
 			m_rulePostfixExpression =
 					m_ruleFunctionCall
 				|	m_ruleVariableDefinition
-				//|	m_ruleAssignmentStatement
+				//|	m_ruleAssignmentStatement	// Assignment is no expression anymore.
 				|   m_rulePrimaryExpression
 				;
 			m_rulePostfixExpression.name("postfix_expr");
 
 			m_rulePrimaryExpression =
-					lexer.m_tokLiteralHexadecimal
+					lexer.m_tokLiteralString
+				|	lexer.m_tokLiteralHexadecimal
 				|	lexer.m_tokLiteralOctal
 				|	lexer.m_tokLiteralBinary
 				|	lexer.m_tokLiteralUnsignedFloat

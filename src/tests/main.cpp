@@ -44,6 +44,7 @@ int main( int /*argc*/, char * /*argv*/[] )
 	vTestFiles.emplace_back("pass/pass_int_initialization_list_nonconst.u", true, 23);
 	vTestFiles.emplace_back("pass/pass_int_empty_initialization_list_const.u", true, 0);
 	vTestFiles.emplace_back("pass/pass_int_empty_initialization_list_nonconst.u", true, 0);
+	vTestFiles.emplace_back("pass/pass_string_literals.u", true, 0);
 	vTestFiles.emplace_back("pass/pass_operator_precedence.u", true, 1+2+4+8+16+32+64+128+256);
 	vTestFiles.emplace_back("pass/pass_operator_decrement.u", true, 41);
 	vTestFiles.emplace_back("pass/pass_operator_increment.u", true, 34);
