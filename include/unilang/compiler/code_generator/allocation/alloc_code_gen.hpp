@@ -42,10 +42,11 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			allocation_code_generator(	code_generator_errors & codeGeneratorErrors,
-										llvm_code_generator & llvmCodeGenerator,
-										symbol_code_generator & symbolCodeGenerator,
-										expression_code_generator & expressionCodeGenerator );
+			allocation_code_generator(
+				code_generator_errors & codeGeneratorErrors,
+				llvm_code_generator & llvmCodeGenerator,
+				symbol_code_generator & symbolCodeGenerator,
+				expression_code_generator & expressionCodeGenerator );
 
 			typedef llvm::AllocaInst * result_type;
 

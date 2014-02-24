@@ -1,3 +1,1 @@
-entrypoint: ~()->(~i64{})
-{
-}
+entrypoint:~()->(~i64{})

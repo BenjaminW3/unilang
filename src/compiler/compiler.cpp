@@ -92,7 +92,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::vector<std::shared_ptr<llvm::Module>> compile_source_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output )
+		std::vector<std::shared_ptr<llvm::Module>> compile_sources_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output )
 		{
 			std::vector<std::shared_ptr<llvm::Module>> vspModules;
 			

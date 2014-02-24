@@ -35,10 +35,11 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		// The Shunting-yard algorithm
 		//-------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::CreateExpression(	size_t min_precedence,
-																	llvm::Value * lhs,
-																	std::vector<ast::operation>::const_iterator & rest_begin,
-																	std::vector<ast::operation>::const_iterator rest_end)
+		llvm::Value * expression_code_generator::CreateExpression(
+			size_t min_precedence,
+			llvm::Value * lhs,
+			std::vector<ast::operation>::const_iterator & rest_begin,
+			std::vector<ast::operation>::const_iterator rest_end)
 		{
 			while ((rest_begin != rest_end) && (operators::getPrecedenceOfOperator(
 #ifdef TOKEN_ID

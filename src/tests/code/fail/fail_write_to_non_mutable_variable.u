@@ -1,4 +1,6 @@
-entrypoint: ~()->(iErrorCode:i64{1})
+entrypoint:~()
 {
+	iErrorCode:i64{1};
 	iErrorCode := 42;
 }
+->(iErrorCode)

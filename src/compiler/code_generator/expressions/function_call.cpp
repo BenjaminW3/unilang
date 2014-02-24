@@ -63,10 +63,10 @@ namespace unilang
 					return m_codeGeneratorErrors.ErrorValue("Invalid argument returned from '" +sstr.str()+ "'.");
 				}
 
-				ast::variable_type_declaration ty;
-				ty._idfName = llvmTypeToUnilangTypeName(ArgsV.back()->getType());
+				ast::variable_declaration var;
+				var._type._idfName = llvmTypeToUnilangTypeName(ArgsV.back()->getType());
 
-				funcDecl._vParameterTypes.push_back(ty);
+				funcDecl._vParameterDeclarations.push_back(var);
 			}
 			// Look up the mangled name in the global module table.
 			std::string const sMangledName (funcDecl.build_mangled_name());
@@ -81,7 +81,7 @@ namespace unilang
 			{
 				std::stringstream sstr;
 				sstr << "Expected " << CalleeF->arg_size() << " arguments but " << x._vArgumentExpressions.size() << " are given.";
-				return ErrorValue("Incorrect number of arguments passed to '"+x._idfName._name+"' ! "+sstr.str());
+				return ErrorValue("Incorrect number of arguments passed to '"+x._idfName.m_sName+"' ! "+sstr.str());
 			}
 
 			// argument type match?
@@ -91,7 +91,7 @@ namespace unilang
 				if(ArgsV.back()->getType()!=(*itArg).getType())
 				{
 					std::stringstream sstr;
-					sstr << "Trying to call function '" << x._idfName._name << "' with argument number " << (*itArg).getArgNo();
+					sstr << "Trying to call function '" << x._idfName.m_sName << "' with argument number " << (*itArg).getArgNo();
 					return ErrorValue("Argument type mismatch! "+sstr.str()+" with type '"+getLLVMTypeName(ArgsV.back()->getType())+"' but function expects a value of type '"+getLLVMTypeName((*itArg).getType())+"'.");
 				}
 				++itArg;

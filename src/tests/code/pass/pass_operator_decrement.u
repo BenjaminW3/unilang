@@ -1,6 +1,6 @@
-decrement:(x:~i64)->(i64{--x})
-
-entrypoint: ~()->(iErrorCode:~i64{1})
+entrypoint:~()
 {
-	iErrorCode := decrement(42);
+	iErrorCode:~i64{42};
+	--iErrorCode;
 }
+->(iErrorCode)

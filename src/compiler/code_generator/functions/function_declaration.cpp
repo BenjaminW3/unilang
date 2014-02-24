@@ -46,12 +46,14 @@ namespace unilang
 
 			// Create list of parameter types.
 			std::vector<llvm::Type*> vpParameterTypes;
-			for( ast::variable_type_declaration const & typeDecl : x._vParameterTypes)
+			for( auto const & varDecl : x._vParameterDeclarations)
 			{
-				llvm::Type * const pType (m_symbolCodeGenerator.getTypeByName(typeDecl._idfName._name));
+				ast::variable_type_declaration const & typeDecl(varDecl._type);
+				llvm::Type * const pType (m_symbolCodeGenerator.getTypeByName(typeDecl._idfName.m_sName));
 				if(!pType)
 				{
-					return m_codeGeneratorErrors.ErrorFunction("Function parameter type '"+typeDecl._idfName._name+"' in function '"+sMangledName+"' is not valid.");
+					std::string sVariableName(varDecl._optionalIdentifier.is_initialized() ? varDecl._optionalIdentifier.get().m_sName : "");
+					return m_codeGeneratorErrors.ErrorFunction("Function parameter type '"+typeDecl._idfName.m_sName+"' of variable '" + sVariableName + "' in function '"+sMangledName+"' is not valid.");
 				}
 				//FIXME: mutable state for function parameters is not stored along with the llvm::Type.
 				vpParameterTypes.push_back(pType);
@@ -59,13 +61,13 @@ namespace unilang
 			
 			// Create the return types.
 			llvm::Type* pReturnType (nullptr);
-			if(x._vReturnTypes.size()==0)
+			if(x._vReturnDeclarations.size()==0)
 			{
 				pReturnType = llvm::Type::getVoidTy(m_llvmCodeGenerator.getContext());
 			}
-			else if(x._vReturnTypes.size()==1)
+			else if(x._vReturnDeclarations.size()==1)
 			{
-				pReturnType = m_symbolCodeGenerator.getTypeByName((*x._vReturnTypes.begin())._idfName._name);
+				pReturnType = m_symbolCodeGenerator.getTypeByName((*x._vReturnDeclarations.begin())._type._idfName.m_sName);
 			}
 			else
 			{
@@ -74,11 +76,13 @@ namespace unilang
 			}
 			if(!pReturnType)
 			{
-				return m_codeGeneratorErrors.ErrorFunction("Function return type '"+(*x._vReturnTypes.begin())._idfName._name+"' for function '"+sMangledName+"' is not valid.");
+				return m_codeGeneratorErrors.ErrorFunction("Function return type '"+(*x._vReturnDeclarations.begin())._type._idfName.m_sName+"' for function '"+sMangledName+"' is not valid.");
 			}
 			
+			// Create llvm function type.
 			llvm::FunctionType * const FT (llvm::FunctionType::get(pReturnType,	vpParameterTypes, false));
 
+			// Create llvm function.
 			llvm::Function *F (llvm::Function::Create(FT, llvm::Function::ExternalLinkage, sMangledName, m_llvmCodeGenerator.getModule().get()));
 
 			// If F conflicted, there was already something with exactly the same name. So LLVM creates a new unique name for the just declared function.
@@ -94,32 +98,23 @@ namespace unilang
 				//{
 				//	return ErrorFunction("Redefinition of function '"+sMangledName+"' !");
 				//}
-	
-				// This can not happen because the mangled name indirectly includes the number of parameters
-				//// If F took a different number of args, reject it.
-				//if (F->arg_size() != x._vParameterTypes.size())
-				//{
-				//	std::stringstream sstr;
-				//	sstr << "Definition of function "+sMangledName+"' with different number of parameters(" << x._vParameterTypes.size() << ") then previous declaration (" << F->arg_size() << ")";
-				//	return ErrorFunction(sstr.str());
-				//}
 
 				// The following tests should never return an error because the mangled name should reflect the types
 				size_t uiArg (0);
 				for (llvm::Function::arg_iterator AI (F->arg_begin()); AI != F->arg_end();	++AI, ++uiArg)
 				{
-					llvm::Type const * const pDefType (m_symbolCodeGenerator.getTypeByName(x._vParameterTypes[uiArg]._idfName._name));
+					llvm::Type const * const pDefType (m_symbolCodeGenerator.getTypeByName(x._vParameterDeclarations[uiArg]._type._idfName.m_sName));
 					if(!pDefType)
 					{
 						std::stringstream sstr;
-						sstr << "Definition of function "+sMangledName+"' uses undefined type '" << x._vParameterTypes[uiArg]._idfName._name << "' as "<< uiArg+1;
+						sstr << "Definition of function " << sMangledName << "' uses undefined type '" << x._vParameterDeclarations[uiArg]._type._idfName.m_sName << "' as "<< uiArg+1;
 						return m_codeGeneratorErrors.ErrorFunction(sstr.str()+" parameter type. ");
 					}
 					//FIXME: mutable not checked.
 					if(AI->getType()!=pDefType)
 					{
 						std::stringstream sstr;
-						sstr << "Definition of function "+sMangledName+"' differs from declaration in " << uiArg+1;
+						sstr << "Definition of function " << sMangledName << "' differs from declaration in " << uiArg+1;
 						return m_codeGeneratorErrors.ErrorFunction(sstr.str()+". parameter type. '"+getLLVMTypeName(AI->getType())+"' was declared but '"+getLLVMTypeName(pDefType)+ "' used in definition.");
 					}
 				}

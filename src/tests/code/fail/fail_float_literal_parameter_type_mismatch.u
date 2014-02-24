@@ -1,0 +1,3 @@
+successor:(x:i64)->(x+1)
+
+entrypoint:~()->(successor(3.14))

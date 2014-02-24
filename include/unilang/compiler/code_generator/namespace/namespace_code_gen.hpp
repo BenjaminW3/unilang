@@ -38,8 +38,9 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			namespace_code_generator(	code_generator_errors & codeGeneratorErrors, 
-										function_code_generator & functionCodeGenerator );
+			namespace_code_generator(
+				code_generator_errors & codeGeneratorErrors, 
+				function_code_generator & functionCodeGenerator );
 
 		public:
 			//-------------------------------------------------------------------------

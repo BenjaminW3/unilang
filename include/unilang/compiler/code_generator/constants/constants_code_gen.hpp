@@ -32,7 +32,8 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor
 			//-------------------------------------------------------------------------
-			constants_code_generator( llvm_code_generator & llvmCodeGenerator );
+			constants_code_generator( 
+				llvm_code_generator & llvmCodeGenerator );
 
 			typedef llvm::Constant * result_type;
 

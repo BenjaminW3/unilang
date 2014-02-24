@@ -34,10 +34,11 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		allocation_code_generator::allocation_code_generator(	code_generator_errors & codeGeneratorErrors,
-																llvm_code_generator & llvmCodeGenerator,
-																symbol_code_generator & symbolCodeGenerator,
-																expression_code_generator & expressionCodeGenerator ) :
+		allocation_code_generator::allocation_code_generator(
+			code_generator_errors & codeGeneratorErrors,
+			llvm_code_generator & llvmCodeGenerator,
+			symbol_code_generator & symbolCodeGenerator,
+			expression_code_generator & expressionCodeGenerator ) :
 			m_codeGeneratorErrors		(codeGeneratorErrors),
 			m_llvmCodeGenerator			(llvmCodeGenerator),
 			m_symbolCodeGenerator		(symbolCodeGenerator),

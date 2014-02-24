@@ -142,9 +142,8 @@ namespace unilang
 				// Our token needs to be able to carry several token values
 				typedef boost::mpl::vector<std::string, long double, uint64_t, bool> token_value_types;
 
-				// Using the position_token class as the token type to be returned from the lexer iterators allows to retain positional information
-				// as every token instance stores an iterator pair pointing to the matched input sequence.
-				// The third parameter says if token definitions can use the state
+				// Using the position_token class as the token type to be returned from the lexer iterators allows to retain positional information as every token instance stores an iterator pair pointing to the matched input sequence.
+				// The third parameter says if token definitions can use the state.
 #ifdef TOKEN_ID
 				typedef lex::lexertl::position_token< BaseIterator, token_value_types, boost::mpl::true_, tokens::ETokenIDs > token_type;
 #else
@@ -156,16 +155,10 @@ namespace unilang
 				typedef lex::lexertl::actor_lexer<token_type> type;
 #elif defined LEXER_STATIC_TABLES
 				// use the lexer based on pre-generated static DFA tables
-				typedef lex::lexertl::static_actor_lexer<
-					token_type
-				  , boost::spirit::lex::lexertl::static_::lexer_conjure_static
-				> type;
+				typedef lex::lexertl::static_actor_lexer< token_type, boost::spirit::lex::lexertl::static_::lexer_conjure_static > type;
 #elif defined LEXER_STATIC_SWITCH
 				// use the lexer based on pre-generated static code
-				typedef lex::lexertl::static_actor_lexer<
-					token_type
-				  , boost::spirit::lex::lexertl::static_::lexer_conjure_static_switch
-				> type;
+				typedef lex::lexertl::static_actor_lexer< token_type, boost::spirit::lex::lexertl::static_::lexer_conjure_static_switch > type;
 #else
 	#error "Configuration problem: please select exactly one type of lexer to build"
 #endif
@@ -185,16 +178,10 @@ namespace unilang
 #ifdef TOKEN_ID
 			// get the type of any qi::raw_token(...) and qi::token(...) constructs
 			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(tokens::ETokenIDs) >::type raw_token_spec;
-
 			//typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(tokens::ETokenIDs) >::type token_spec;
-
-			typedef std::map<std::string, tokens::ETokenIDs> keyword_map_type;
 #else
 			typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::raw_token(size_t) >::type raw_token_spec;
-
 			//typedef typename boost::spirit::result_of::terminal< boost::spirit::tag::token(size_t) >::type token_spec;
-
-			typedef std::map<std::string, size_t> keyword_map_type;
 #endif
 		public:
 			typedef BaseIterator base_iterator_type;
@@ -205,13 +192,9 @@ namespace unilang
 			token_lexer();
 			
 			//-------------------------------------------------------------------------
-			//! Extract a raw_token(id) for the given registered keyword.
+			//! Extract a raw_token(id) for the given token-id.
 			//-------------------------------------------------------------------------
-			raw_token_spec operator()(std::string const & keyword) const;
-			
-			//-------------------------------------------------------------------------
-			//! Extract a token(id) for the given registered keyword.
-			//-------------------------------------------------------------------------
+			raw_token_spec operator()(tokens::ETokenIDs const & eTokenID) const;
 			//token_spec token(std::string const & keyword) const;
 			
 			//-------------------------------------------------------------------------
@@ -223,7 +206,7 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Adds a keyword to the mapping table
 			//-------------------------------------------------------------------------
-			bool internal_add( std::string const & keyword, tokens::ETokenIDs id, char const * state = nullptr, char const * targetstate = nullptr );
+			void internal_add(std::string const & keyword, tokens::ETokenIDs id, char const * state = nullptr, char const * targetstate = nullptr );
 
 		public:
 #ifdef TOKEN_ID
@@ -236,6 +219,9 @@ namespace unilang
 			TConsumedToken const m_tokCommentMultilineCharacters;
 			TConsumedToken const m_tokCommentMultilineClose;
 			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokIdentifier;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralString;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralRawString;
+			lex::token_def<std::string, char, tokens::ETokenIDs> const m_tokLiteralRawStringDelimiter;
 			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralHexadecimal;
 			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralOctal;
 			lex::token_def<uint64_t, char, tokens::ETokenIDs> const m_tokLiteralBinary;
@@ -252,6 +238,9 @@ namespace unilang
 			TConsumedToken const m_tokCommentMultilineCharacters;
 			TConsumedToken const m_tokCommentMultilineClose;
 			lex::token_def<std::string> const m_tokIdentifier;
+			lex::token_def<std::string> const m_tokLiteralString;
+			lex::token_def<std::string> const m_tokLiteralRawString;
+			lex::token_def<std::string> const m_tokLiteralRawStringDelimiter;
 			lex::token_def<uint64_t> const m_tokLiteralHexadecimal;
 			lex::token_def<uint64_t> const m_tokLiteralOctal;
 			lex::token_def<uint64_t> const m_tokLiteralBinary;
@@ -259,11 +248,9 @@ namespace unilang
 			lex::token_def<uint64_t> const m_tokLiteralUnsignedInt;
 			lex::token_def<bool> const m_tokLiteralBoolean;
 #endif
-
 		private:
-			keyword_map_type _keywords;
-
-			size_t _uiCommentNestingLevel;
+			size_t m_uiCommentNestingLevel;
+			//std::string m_sRawStringOpenDelimiterToken;
 		};
 	}
 }

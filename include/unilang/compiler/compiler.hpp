@@ -26,10 +26,16 @@
 //! \subsection lang2 Comments
 //! There are two types of comments available. 
 //! On the one hand there are C++ style comments <tt>// commented text</tt>. Those comment out everything from the two slashes to the end of the line.
-//! On the other hand you can use C-style comments <tt>/* commented text*/</tt>. They can be used in a line and also over multiple lines e.g. <tt>iErrorCode = /*3 +*/ 4;</tt>.
-//! Those comments can also be nested like <tt>iErrorCode = /*3 /*+ 8*/ +*/ 4;</tt>.
-//! Comments can be used everywhere except inside a literal token. E.g. the code <tt>iErr/*rr*/orCode = 4;</tt> will not compile because now 'iErr' and 'orCode' are two different identifiers. 
-//! The same rule applies to <tt>iErrorCode = 1/*0*/0;</tt> because '1' and '0' are two different numbers and there is no connecting operator between them.
+//! On the other hand you can use C-style comments <tt>/* commented text */</tt>. They can be used in a line and also over multiple lines e.g. <tt>iErrorCode = /*3 +*/ 4;</tt>.
+//! Singleline- and multiline-comments can also be nested like <tt>iErrorCode = /*3 /*+ 8*/ +*/ 4;</tt>.
+//! Comments can be used everywhere except inside a literal token. E.g. the code <tt>iErr/*rr*/orCode = 4;</tt> will not compile because now 'iErr' and 'orCode' are two different identifiers. This results in in an invalid expression. 
+//! The same rule applies to <tt>iErrorCode = 1/*0*/0;</tt> because '1' and '0' represent two different numbers after lexing and there is no connecting operator between them.
+//! The contents of strings are not tokenized. Consequently, comment openings occurring within a string usually do not begin a comment. 
+//! However there is one exception. Comments inside a string can get recognized if a opening multiline-comment is added before the string e.g. <tt>/*sText:"this is a string containing a closing comment */";</tt>. This line ends being recognized as <tt> '";' </tt> only.
+//! This is due to contents of comments not being tokenized either. So string delimiters within a comment do not affect the recognition of comment closings '*/' and nested '/*' or '//' comment openings. 
+//! Single-line comments '//' occurring within a multiline-comment '/*' are not ignored. This is different from the way it is handeled in C++ and other languages.
+//! So the code <tt> /* function:()->(a:i64) // This is a comment at the end of a method being commented out fully. */ </tt> is missing a closing multiline comment because the singleline-comment makes the lexer ignore the existing one.
+//! This is on purpose so that commented out multiline comments are fully permissive for being recursively commented out themselves.
 //!
 //! \subsection lang3 Types
 //! Unilang defines a few fundamental types. There is only the differentation between floating point and integer types of different precision.
@@ -59,29 +65,35 @@
 //! To give a special value as construction parameter you can use the initialiser-list syntax. E.g.: <tt>my64BitInteger:i64{42};</tt> defines a constant integer.
 //! 
 //! \subsection lang5 Functions
-//! Functions can be defined like <tt>increment:(i:i64)->(ret:i64{++i});</tt>. This is an inline definition because we did not even need a function body at all.
-//! We could also have written the function like: <tt>increment:(i:i64)->(ret:~i64){ret=i+1};</tt>
-//! Functions can have multiple return values. TODO: NOT IMPLEMENTED! The results of a function can be given names and used as regular variables. There is no return statement. The values of the return parameters are returned when the current function block is left.
-//! Function return parameters are initialised from left to right.
+//! Functions can be defined like <tt>successor:(i:i64){ret:i+1}->(suc:i64{ret});</tt>. Here we are getting a single 64-bit integer input, compute its successor, save it in a new variable called ret and return this in the return clause as suc.
+//! Note that there is no return statement. All values returned have to be given in the return clause. The return clause is executed after the function body completed.
+//! The parameter and return list is in the same scope as the function body. 
+//! The return clause can include arbitrary expressions so we could have written: <tt>successor:(i:i64)->(suc:i64{i+1});</tt>. This is an inline definition because we did not even need a function body at all.
+//! But it can be even shorter. The results of a function can be given names but there is no need to. 
+//! The <tt>ret:i64{i+1}</tt> expression is only a standard variable definition that is returning the newly created value. So it also could look like <tt>successor:(i:i64)->(i64{i+1});</tt>
+//! The type(s) the function returns are automatically inferred from the expressions written into the return clause.
+//! So the shortest way to write the successor function is: <tt>successor:(i:i64)->(i+1);</tt>. TODO: NOT IMPLEMENTED!
+//! Functions can have multiple return values. TODO: NOT IMPLEMENTED!
+//! Function return expressions are executed from left to right.
 //! Function call parameters are evaluated from left to right.
 //! Functions can be overloaded on the argument types and their purity state.
 //! Calling of a unpure function has to be done explicitly by a <tt>~</tt> following the function name.
 //! The following example makes this clear:
 //! <tt>func:()->(i64{4})
 //! func:~()->(i64{4})// It is unpure, even if it does not make use of it.
-//! pure:()->(a:i64)
+//! pure:()
 //! {
 //!		a = func();		// Calls the pure function. If no pure function defined -> error.
 //!		a = func~();	// Error, unpure function call in pure function not allowed.
-//! }
-//! unpure:~()->(a:i64)
+//! }->(a:i64)
+//! unpure:~()
 //! {
 //!		a = func();		// Calls the pure function. If no pure function defined -> error.
 //!		a = func~();	// Calls the unpure function. If no unpure function defined -> error.
-//! }</tt>
+//! }->(a:i64)</tt>
 //!
 //! \subsection lang6 Executable modules
-//! The main module needs to have a function with the signature <tt>entrypoint:~()->(i64{})</tt> 
+//! The main module needs to have a function with the signature <tt>entrypoint:~()->(i64)</tt> 
 //! This means it has to be unpure and have a single i64 errorcode return value. Return 0 if there was no error.
 //! This function has to be in the global namespace. It must not be inside a namespace.
 //!
@@ -172,6 +184,6 @@ namespace unilang
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Modules being created.
 		//-------------------------------------------------------------------------
-		U_EXPORT std::vector<std::shared_ptr<llvm::Module>> compile_source_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
+		U_EXPORT std::vector<std::shared_ptr<llvm::Module>> compile_sources_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 	}
 }

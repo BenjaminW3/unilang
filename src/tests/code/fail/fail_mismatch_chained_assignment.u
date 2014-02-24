@@ -1,4 +1,4 @@
-entrypoint: ~()->(i64{1})
+entrypoint:~()
 {
 	foo:~i64{42};
 	bar:~f64{1};
@@ -6,3 +6,4 @@ entrypoint: ~()->(i64{1})
 	
 	foo := bar := baz := 0;
 }
+->(foo)

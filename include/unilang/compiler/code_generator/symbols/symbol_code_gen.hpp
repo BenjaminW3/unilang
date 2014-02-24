@@ -36,8 +36,9 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor
 			//-------------------------------------------------------------------------
-			symbol_code_generator(	code_generator_errors & codeGeneratorErrors,
-									llvm_code_generator & llvmCodeGenerator );
+			symbol_code_generator(
+				code_generator_errors & codeGeneratorErrors,
+				llvm_code_generator & llvmCodeGenerator );
 
 			//-------------------------------------------------------------------------
 			//! \return The type corresponding to the given Typename

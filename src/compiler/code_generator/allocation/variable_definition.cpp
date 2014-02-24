@@ -42,11 +42,11 @@ namespace unilang
 			bool const bHasName		(x._declaration._optionalIdentifier.is_initialized());
 			
 			// TODO: hard coded types
-			std::string const sTypeName		(x._declaration._type._idfName._name);
+			std::string const sTypeName		(x._declaration._type._idfName.m_sName);
 			llvm::Type * const pDeclType	(m_symbolCodeGenerator.getTypeByName(sTypeName));
 			if(!pDeclType)
 			{
-				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
+				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get().m_sName : "");
 				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get type of variable '"+sVarName+"'.");
 			}
 
@@ -62,7 +62,7 @@ namespace unilang
 					{
 						std::stringstream sstr;
 						sstr << *x._vParameterExpressions.begin();
-						auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
+						auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get().m_sName : "");
 						return m_codeGeneratorErrors.ErrorAllocaInst("Initial null value for variable '"+sVarName+"' of type '"+sTypeName+"' could not be generated.");
 					}
 				}
@@ -73,7 +73,7 @@ namespace unilang
 					{
 						std::stringstream sstr;
 						sstr << *x._vParameterExpressions.begin();
-						auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
+						auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get().m_sName : "");
 						// TODO: output real parameter number
 						return m_codeGeneratorErrors.ErrorAllocaInst("Invalid 1. initialisation parameter '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+sTypeName+"'");
 					}
@@ -84,7 +84,7 @@ namespace unilang
 						{
 							std::stringstream sstr;
 							sstr << *x._vParameterExpressions.begin();
-							auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
+							auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get().m_sName : "");
 							return m_codeGeneratorErrors.ErrorAllocaInst("Expression '"+sstr.str()+"' for variable '"+sVarName+"' of type '"+sTypeName+"' can not be cast.");
 						}
 					}
@@ -105,7 +105,7 @@ namespace unilang
 			llvm::AllocaInst * pDeclAlloc ((*this)(x._declaration));
 			if(!pDeclAlloc)
 			{
-				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get()._name : "");
+				auto const sVarName (bHasName ? x._declaration._optionalIdentifier.get().m_sName : "");
 				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to declare variable '"+sVarName+"' of type '"+sTypeName+"'.");
 			}
 

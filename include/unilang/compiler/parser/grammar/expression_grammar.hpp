@@ -44,9 +44,10 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			expression_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-								identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
-								lexer::token_lexer<BaseIterator> const & lexer);
+			expression_grammar(
+				error_handler<BaseIterator, LexerIterator>& error_handler, 
+				identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+				lexer::token_lexer<BaseIterator> const & lexer);
 			
 			qi::rule<LexerIterator, ast::primary_expr()> m_rulePrimaryExpression;
 			qi::rule<LexerIterator, ast::operand()> m_ruleUnaryExpression, m_rulePostfixExpression;

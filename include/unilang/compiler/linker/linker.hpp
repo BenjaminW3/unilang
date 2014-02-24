@@ -44,6 +44,14 @@ namespace unilang
 		U_EXPORT void write_module_to_bitcode_file( llvm::Module const & module, std::string const & sBitCodeFilePath );
 
 		//-------------------------------------------------------------------------
+		//! Loads the module from the given IR file.
+		//!
+		//! \param sIRCodeFilePath The path to the IR file to be loaded.
+		//! \return The loaded module. Null if there has been an error.
+		//-------------------------------------------------------------------------
+		U_EXPORT std::shared_ptr<llvm::Module> load_module_from_ir_file( std::string const & sIRCodeFilePath );
+
+		//-------------------------------------------------------------------------
 		//! Links the given modules together.
 		//!
 		//! \param vModules A list of all modules to be linked together.

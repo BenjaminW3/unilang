@@ -1,0 +1,5 @@
+apply : ( func:(i64)->(i64), v:i64 )->( func(v) )
+
+successor:( x:i64 )->( x+1 )
+
+entrypoint:~()->(apply(successor, 76))

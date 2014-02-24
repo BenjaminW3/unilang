@@ -1,0 +1,24 @@
+three:()->(i64{-3})
+
+namespace:two
+{
+	three:()->(i64{-3})
+}
+namespace:three
+{
+	three:()->(i64{-3})
+}
+
+entrypoint:~()
+{
+	iErrorCode:~i64{2};
+
+	use two;
+
+	iErrorCode = three();	// Two ambigous methods.
+
+	use three;
+
+	iErrorCode = three();	// Three ambigous methods.
+}
+->(iErrorCode)

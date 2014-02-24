@@ -70,5 +70,11 @@ namespace unilang
 		size_t getPrecedenceOfOperator(EOperators op);
 
 		std::ostream& operator<<(std::ostream& out, EOperators const & x);
+
+#ifdef TOKEN_ID
+	#define OPERATOR_TYPE operators::EOperators
+#else
+	#define OPERATOR_TYPE size_t
+#endif
 	}
 }

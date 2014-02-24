@@ -7,7 +7,7 @@
 
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::identifier,
-	(std::string, _name)
+	(std::string, m_sName)
 )
 BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::namespaced_identifier,

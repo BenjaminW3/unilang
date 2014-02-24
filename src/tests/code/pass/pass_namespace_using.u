@@ -1,0 +1,47 @@
+operation_with_same_name:(x:i64)->(x-1)
+
+namespace:math
+{
+	namespace:constants
+	{
+		three:()->(i64{3})
+
+		method_using_global_namespace_resolution:(x:i64)->(::operation_with_same_name(x))
+	}
+
+	operation_with_same_name:(x:i64)->(x+1)
+	predecessor:(x:i64)->(x-1)
+
+	namespace:constants
+	{
+		two:()->(i64{2})
+	}
+}
+namespace:constants
+{
+	three:()->(i64{-3})
+}
+
+entrypoint:~()
+{
+	iErrorCode:~i64{2};
+
+	// standard namespace
+	iErrorCode = math::predecessor(iErrorCode)*2;					// (2-1)*2 = 2
+
+	// method usage unqualified
+	iErrorCode = operation_with_same_name(iErrorCode)*4;		// (2-1)*4 = 4
+	// and qualified
+	iErrorCode = math::operation_with_same_name(iErrorCode);	// (4+1) = 5
+	
+	// namespace extension
+	iErrorCode += math::constants::two()*4;						// 5+(2*4) = 11
+
+	// same namespace name but different hierarchy depth not extending
+	iErrorCode += constants::three();
+	iErrorCode += math::constants::three();
+
+	// global namespace resolution
+	iErrorCode = math::constants::method_using_global_namespace_resolution(iErrorCode);	//11-1=10
+}
+->(iErrorCode)

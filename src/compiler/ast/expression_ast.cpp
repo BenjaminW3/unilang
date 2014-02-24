@@ -1,7 +1,5 @@
 #include <unilang/compiler/ast/expression_ast.hpp>
 
-#include <unilang/compiler/ast/operators_def.hpp>		// assignment default constructor
-
 #include <boost/variant/get.hpp>
 
 #include <sstream>
@@ -186,7 +184,7 @@ namespace unilang
 		{
 			if(x._optionalIdentifier.is_initialized())
 			{
-				out << x._optionalIdentifier.get()._name << ":";
+				out << x._optionalIdentifier.get().m_sName << ":";
 			}
 			out << x._type;
 			return out;
@@ -199,32 +197,6 @@ namespace unilang
 		{
 			out << x._declaration << "{" << x._vParameterExpressions << "}";
 			return out;
-		}
-
-		//-------------------------------------------------------------------------
-		//! 
-		//-------------------------------------------------------------------------
-		assignment::assignment() :
-			_lhs(/*"unnamed-identifier"*/),
-			_uiOperatorID(static_cast<OPERATOR_TYPE>(operators::EOperators::assign)),
-			_rhs()
-		{
-		}
-		assignment::assignment(identifier lhs, OPERATOR_TYPE op, expression rhs) :
-			_lhs(lhs),
-			_uiOperatorID(op),
-			_rhs(rhs)
-		{
-		}
-		std::ostream& operator<<(std::ostream& out, assignment const & x)
-		{
-			out << x._lhs << 
-#ifdef TOKEN_ID
-				x._uiOperatorID
-#else
-				static_cast<operators::EOperators>(x._uiOperatorID)
-#endif
-				<< x._rhs; return out;
 		}
 	}
 }

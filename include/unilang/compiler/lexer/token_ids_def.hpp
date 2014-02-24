@@ -26,6 +26,7 @@ namespace unilang
 				comment_multiline_recursive_open,
 				comment_multiline_characters,
 				comment_multiline_close,
+				lit_string_delimiter,
 				whitespace,
 				comma,
 				double_colon,
@@ -91,7 +92,8 @@ namespace unilang
 				plus_assign			= operators::EOperators::plus_assign,
 				minus_assign,
 
-				lit_ufloat			= minus_assign + 1,
+				lit_string			= minus_assign + 1,
+				lit_ufloat,
 				lit_uint,
 				lit_boolean,
 			};

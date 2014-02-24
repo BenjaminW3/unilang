@@ -1,7 +1,8 @@
-entrypoint: ~()->(i64{1})
+entrypoint:~()
 {
 	if:i64{42};
 	else:i64{42};
 	//while:i64{42};
 	//return:i64{42};
 }
+->(i64{1})

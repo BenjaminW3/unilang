@@ -25,7 +25,7 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			identifier(std::string const & name);
 
-			std::string _name;
+			std::string m_sName;
 		};
 		std::ostream& operator<<(std::ostream& out, identifier const & x);
 		//#########################################################################

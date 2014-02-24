@@ -13,8 +13,9 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		namespace_code_generator::namespace_code_generator(	code_generator_errors & codeGeneratorErrors, 
-															function_code_generator & functionCodeGenerator ) :
+		namespace_code_generator::namespace_code_generator(	
+			code_generator_errors & codeGeneratorErrors, 
+			function_code_generator & functionCodeGenerator ) :
 			m_codeGeneratorErrors	(codeGeneratorErrors),
 			m_functionCodeGenerator	(functionCodeGenerator)
 		{};
@@ -40,7 +41,7 @@ namespace unilang
 		{
 			LOG_SCOPE_DEBUG;
 			
-			m_vsNamespaceHierarchy.push_back(x._idfName._name);
+			m_vsNamespaceHierarchy.push_back(x._idfName.m_sName);
 			
 			bool bSuccess (true);
 			for(ast::meta_entity const & meta : x._metaEntities)

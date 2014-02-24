@@ -4,7 +4,7 @@
 
 #include <unilang/compiler/log/log.hpp>
 
-#include <stdio.h>
+#include <iostream>
 
 namespace unilang
 { 
@@ -13,12 +13,12 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		void code_generator::addStringConverters()
+		/*void code_generator::addStringConverters()
 		{
-			/*std::vector<llvm::Type*> Doubles(	x._vArgumentExpressions.size(),	llvm::Type::getDoubleTy(getContext()));
+			std::vector<llvm::Type*> Doubles(	x._vArgumentExpressions.size(),	llvm::Type::getDoubleTy(getContext()));
 			llvm::FunctionType *FT = llvm::FunctionType::get(llvm::Type::get(getContext()),	Doubles, false);
 
-			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x._idfName._name, module.get());
+			llvm::Function *F = llvm::Function::Create(FT, llvm::Function::ExternalLinkage, x._idfName.m_sName, module.get());
 
 			llvm::Constant *double_to_string_func = module->getOrInsertFunction("double_to_string",
 												llvm::Type::getVoidTy(),
@@ -27,12 +27,12 @@ namespace unilang
 												llvm::Type::Int32Ty,
 												nullptr);
 
-			llvm::Value* v = llvm::ConstantArray::get(llvmContext, myString.c_str());*/
+			llvm::Value* v = llvm::ConstantArray::get(llvmContext, myString.c_str());
 
 			//llvm::ConstantFP::getInfinity();
 
 			//getModule()->;
-		}
+		}*/
 
 		//-------------------------------------------------------------------------
 		//
@@ -46,23 +46,23 @@ namespace unilang
 			m_allocationCodeGenerator	(m_codeGeneratorErrors, m_llvmCodeGenerator, m_symbolCodeGenerator, m_expressionCodeGenerator),
 			m_expressionCodeGenerator	(m_codeGeneratorErrors, m_namespaceCodeGenerator, m_llvmCodeGenerator, m_constantsCodeGenerator, m_symbolCodeGenerator, m_allocationCodeGenerator),
 			m_statementCodeGenerator	(m_codeGeneratorErrors, m_llvmCodeGenerator, m_expressionCodeGenerator),
-			m_functionCodeGenerator		(m_codeGeneratorErrors, m_namespaceCodeGenerator, m_llvmCodeGenerator, m_symbolCodeGenerator, m_allocationCodeGenerator, m_statementCodeGenerator)
+			m_functionCodeGenerator		(m_codeGeneratorErrors, m_namespaceCodeGenerator, m_llvmCodeGenerator, m_symbolCodeGenerator, m_allocationCodeGenerator, m_expressionCodeGenerator, m_statementCodeGenerator)
 		{
 			LOG_SCOPE_DEBUG;
 			
 			std::cout << std::endl << "##########CodeGen###########" << std::endl;
 			
-			// generate code
+			// Generate code.
 			bool const bSuccess (m_namespaceCodeGenerator(AST));
 
-			// test success
+			// Test if it succeeded.
 			if(!bSuccess || m_codeGeneratorErrors.getErrorOccured())
 			{
 				throw std::runtime_error("Error occured during compilation of module!");
 			}
 			std::cout << "############################" << std::endl << std::endl;
 			
-			// throws excpetion if there are errors
+			// Throw excpetion if there was an error.
 			m_llvmCodeGenerator.verifyModule();
 		}
 		//-------------------------------------------------------------------------

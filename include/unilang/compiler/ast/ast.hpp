@@ -30,7 +30,7 @@ namespace unilang
 												function_definition, 
 												boost::recursive_wrapper<namespace_declaration>
 											>
-		{
+		{ 
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------

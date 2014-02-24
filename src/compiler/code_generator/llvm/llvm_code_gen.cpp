@@ -20,7 +20,7 @@
 //#include <llvm/ExecutionEngine/ExecutionEngine.h>
 //#include <llvm/ExecutionEngine/JIT.h>
 #include <llvm/PassManager.h>
-#include <llvm/Analysis/Verifier.h>
+#include <llvm/IR/Verifier.h>
 #include <llvm/Analysis/Passes.h>
 #include <llvm/Transforms/Scalar.h>
 #include "llvm/Transforms/IPO.h"		// createDeadArgEliminationPass, ...
@@ -32,8 +32,8 @@
 #include <llvm/MC/SubtargetFeature.h>
 #ifdef _DEBUG
 #include <llvm/ADT/Statistic.h>			// EnableStatistics
-#include <llvm/Support/raw_ostream.h>	// PrintStatistics
 #endif
+#include <llvm/Support/raw_ostream.h>	// verifyModule
 
 #if defined(_MSC_VER)
 #pragma warning(pop)
@@ -53,7 +53,23 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		llvm::LLVMContext& llvm_code_generator::getContext() const
+		llvm_code_generator::llvm_code_generator(
+			code_generator_errors & codeGeneratorErrors,
+			namespace_code_generator & namespaceCodeGenerator) :
+			builder(std::make_shared<IRBuilderType>(getContext())),
+			llvmModule(std::make_shared<llvm::Module>("unilang-llvm", getContext())),
+			m_codeGeneratorErrors(codeGeneratorErrors),
+			m_namespaceCodeGenerator(namespaceCodeGenerator)
+		{
+			LOG_SCOPE_DEBUG;
+
+			//llvm::InitializeNativeTarget();
+			//llvm::llvm_start_multithreaded();	// only needed if concurrent threads are used
+		}
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		llvm::LLVMContext & llvm_code_generator::getContext() const
 		{
 			return llvm::getGlobalContext(); 
 		}
@@ -71,113 +87,28 @@ namespace unilang
 		{
 			return llvmModule;
 		}
-
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		llvm::Function * llvm_code_generator::getFunctionFromNameInNamespaceHierarchy( std::string const & sMangledName, std::vector<std::string> vsNamespaceHierarchy )
-		{
-			std::string const sMangledNamespaceName (m_namespaceCodeGenerator.buildMangledNamespaceName(vsNamespaceHierarchy));
-			// If this is said to be searched for only in global namespace ...
-			if(sMangledName.substr(0,2)=="::")
-			{
-				std::string const sMangledFunctionName (sMangledName.substr(2));
-				return getFunctionFromMangledName(sMangledFunctionName);
-			}
-			// ... else reverse search through the namespaces.
-			else
-			{
-				for(;;)
-				{
-					std::string const sMangledFunctionName (sMangledNamespaceName+sMangledName);
-					// If we would call getFunctionFromMangledName directly we would set the error flag. Therefore special has method.
-					if(hasFunctionFromMangledName(sMangledFunctionName))
-					{
-						// Can the availability change in betweeen hasFunctionFromMangledName and now?
-						return getFunctionFromMangledName(sMangledFunctionName);
-					}
-
-					if(!vsNamespaceHierarchy.empty())
-					{
-						vsNamespaceHierarchy.pop_back();
-					}
-					else
-					{
-						break;
-					}
-				}
-			}
-
-			// if we would have using statements now they would be used to look into
-			// we would have to look through all of them
-			// using namespace Foo;
-			// using namespace Goo;
-			// cout << DoSomething(4, 3) << endl;
-			// error C2668: 'DoSomething' : ambiguous call to overloaded function
-
-			return m_codeGeneratorErrors.ErrorFunction("Function '"+sMangledName+"' has not been decalred.");
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		bool llvm_code_generator::hasFunctionFromMangledName( std::string const & sMangledName ) const
-		{
-			llvm::Function* pFunction (getModule()->getFunction(sMangledName));
-			return (pFunction!=nullptr);
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		llvm::Function * llvm_code_generator::getFunctionFromMangledName( std::string const & sMangledName )
-		{
-			llvm::Function* pFunction (getModule()->getFunction(sMangledName));
-			if (!pFunction)
-			{
-				return m_codeGeneratorErrors.ErrorFunction("Function '"+sMangledName+"' has not been decalred.");
-			}
-
-			return pFunction;
-		}
-
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		llvm_code_generator::llvm_code_generator(	code_generator_errors & codeGeneratorErrors,
-													namespace_code_generator & namespaceCodeGenerator ) :
-			builder						(std::make_shared<IRBuilderType>(getContext())),
-			llvmModule					(std::make_shared<llvm::Module>("unilang-llvm", getContext())),
-			m_codeGeneratorErrors		(codeGeneratorErrors),
-			m_namespaceCodeGenerator	(namespaceCodeGenerator)
-		{
-			LOG_SCOPE_DEBUG;
-
-			//llvm::InitializeNativeTarget();
-			//llvm::llvm_start_multithreaded();	// only needed if concurrent threads are used
-		}
 		//-------------------------------------------------------------------------
 		// http://llvm.1065342.n5.nabble.com/how-to-get-TargetData-td21590.html
 		//-------------------------------------------------------------------------
 		void llvm_code_generator::optimizeModule() const
 		{
 			LOG_SCOPE_DEBUG;
-
 #ifdef _DEBUG
+			// Enable build statistics in debug builds.
 			llvm::EnableStatistics();
 #endif
-
-			std::string const sTripleStr = llvm::sys::getDefaultTargetTriple(); // "i686-unknown-win32"
+#ifdef USE_MCJIT
+			std::string const sTripleStr (llvm::sys::getDefaultTargetTriple() + "-elf"); // Something like "i686-unknown-win32" FIXME:  + "-elf" is needed for MCJIT
+#endif
+			std::string const sTripleStr(llvm::sys::getDefaultTargetTriple()); // Something like "i686-unknown-win32"
 			std::cout << "Using target triple: '" << sTripleStr << "'" << std::endl;
-
-			// Or just call llvm::InitializeAllTargetInfos() and llvm::InitializeAllTargets() for all targets enabled by your LLVM build.
-			//llvm::LLVMInitializeX86TargetInfo();
-			//llvm::LLVMInitializeX86Target();
 
 			llvm::InitializeAllTargetInfos();
 			llvm::InitializeAllTargets();
 			llvm::InitializeAllTargetMCs();
 
 			std::string sErr;
-			llvm::Target const * const target (llvm::TargetRegistry::lookupTarget(sTripleStr, sErr));
+			llvm::Target const * const target(llvm::TargetRegistry::lookupTarget(sTripleStr, sErr));
 			if(!sErr.empty())
 			{
 				throw std::runtime_error(sErr);
@@ -187,42 +118,43 @@ namespace unilang
 			llvm::SubtargetFeatures subtargetFeatures;
 
 			subtargetFeatures.getDefaultSubtargetFeatures(llvm::Triple(sTripleStr));
-			if (llvm::sys::getHostCPUFeatures(featureMap)) 
+			if(llvm::sys::getHostCPUFeatures(featureMap))
 			{
-				for (llvm::StringMapIterator<bool> it = featureMap.begin(); it != featureMap.end();) 
+				for(llvm::StringMapIterator<bool> it = featureMap.begin(); it != featureMap.end();)
 				{
 					subtargetFeatures.AddFeature(it->getKey(), it->getValue());
 				}
 			}
-			std::string sFeatures (subtargetFeatures.getString());
+			std::string sFeatures(subtargetFeatures.getString());
 			std::cout << "Using features: '" << sFeatures << "'" << std::endl;
-			
+
 			std::cout << "Using HostCPUName: '" << llvm::sys::getHostCPUName().str() << "'" << std::endl;
 
 			// Create TargetMachine
 			llvm::TargetOptions targetOptions;
 			// for debugging symbols targetOptions.NoFramePointerElim = true;
 
-			std::unique_ptr<llvm::TargetMachine> targetMachine(target->createTargetMachine(	sTripleStr,
-																							llvm::sys::getHostCPUName(),
-																							sFeatures,
-																							targetOptions,
-																							llvm::Reloc::Default,
-																							llvm::CodeModel::Default,
-																							llvm::CodeGenOpt::None));
+			std::unique_ptr<llvm::TargetMachine> targetMachine(target->createTargetMachine(
+				sTripleStr,
+				llvm::sys::getHostCPUName(),
+				sFeatures,
+				targetOptions,
+				llvm::Reloc::Default,
+				llvm::CodeModel::Default,
+				llvm::CodeGenOpt::None));
 			if(!targetMachine)
 			{
 				throw std::runtime_error("target->createTargetMachine failed!");
 			}
 
-			llvm::DataLayout const * const targetData (targetMachine->getDataLayout());
+			llvm::DataLayout const * const targetData(targetMachine->getDataLayout());
 
 			// otimize functions
 			// use some basic passes like : http://llvm.org/docs/tutorial/LangImpl4.html
-			for ( auto functionListIterator(llvmModule->getFunctionList().begin()); functionListIterator != llvmModule->getFunctionList().end(); ++functionListIterator)
+			for(auto functionListIterator(llvmModule->getFunctionList().begin()); functionListIterator != llvmModule->getFunctionList().end(); ++functionListIterator)
 			{
 				llvm::FunctionPassManager OurFPM(llvmModule.get());
-				
+
 				// Set up the optimizer pipeline.  Start with registering info about how the target lays out data structures.
 				OurFPM.add(new llvm::DataLayout(*targetData));
 
@@ -318,7 +250,7 @@ namespace unilang
 			OurPM.add(llvm::createGlobalDCEPass());
 
 			OurPM.run(*llvmModule.get());
-			
+
 #ifdef _DEBUG
 			std::string type_str;
 			llvm::raw_string_ostream rso(type_str);
@@ -332,10 +264,11 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		void llvm_code_generator::verifyModule() const
 		{
-			std::string ErrStr;
-			if(llvm::verifyModule(*llvmModule.get(), llvm::VerifierFailureAction::ReturnStatusAction, &ErrStr))
+			std::string sError;
+			llvm::raw_string_ostream rso(sError);
+			if(llvm::verifyModule(*llvmModule.get(), &rso))
 			{
-				throw std::runtime_error("verifyModule failure! "+ErrStr);
+				throw std::runtime_error("verifyModule returned following errors : '" + rso.str() + "'.");
 			}
 		}
 		//-------------------------------------------------------------------------
@@ -346,6 +279,73 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 
 			llvmModule->dump();
+		}
+
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		llvm::Function * llvm_code_generator::getFunctionFromNameInNamespaceHierarchy( std::string const & sMangledName, std::vector<std::string> vsNamespaceHierarchy )
+		{
+			std::string const sMangledNamespaceName (m_namespaceCodeGenerator.buildMangledNamespaceName(vsNamespaceHierarchy));
+			// If this is said to be searched for only in global namespace ...
+			if(sMangledName.substr(0,2)=="::")
+			{
+				std::string const sMangledFunctionName (sMangledName.substr(2));
+				return getFunctionFromMangledName(sMangledFunctionName);
+			}
+			// ... else reverse search through the namespaces.
+			else
+			{
+				for(;;)
+				{
+					std::string const sMangledFunctionName (sMangledNamespaceName+sMangledName);
+					// If we would call getFunctionFromMangledName directly we would set the error flag. Therefore special has method.
+					if(hasFunctionFromMangledName(sMangledFunctionName))
+					{
+						// Can the availability change in betweeen hasFunctionFromMangledName and now?
+						return getFunctionFromMangledName(sMangledFunctionName);
+					}
+
+					if(!vsNamespaceHierarchy.empty())
+					{
+						vsNamespaceHierarchy.pop_back();
+					}
+					else
+					{
+						break;
+					}
+				}
+			}
+
+			// if we would have using statements now they would be used to look into
+			// we would have to look through all of them
+			// using namespace Foo;
+			// using namespace Goo;
+			// cout << DoSomething(4, 3) << endl;
+			// error C2668: 'DoSomething' : ambiguous call to overloaded function
+
+			return m_codeGeneratorErrors.ErrorFunction("Function '" + sMangledName + "' has not been decalred.");
+		}
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		bool llvm_code_generator::hasFunctionFromMangledName( std::string const & sMangledName ) const
+		{
+			llvm::Function * pFunction (getModule()->getFunction(sMangledName));
+			return (pFunction!=nullptr);
+		}
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		llvm::Function * llvm_code_generator::getFunctionFromMangledName( std::string const & sMangledName )
+		{
+			llvm::Function * pFunction (getModule()->getFunction(sMangledName));
+			if (!pFunction)
+			{
+				return m_codeGeneratorErrors.ErrorFunction("Function '" + sMangledName + "' has not been decalred.");
+			}
+
+			return pFunction;
 		}
 	}
 }

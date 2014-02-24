@@ -35,7 +35,7 @@ namespace unilang
 	namespace code_generator
 	{
 		//-------------------------------------------------------------------------
-		//
+		// This is an expression for the moment because operators::EOperators::minus_minus needs it.
 		//-------------------------------------------------------------------------
 		llvm::Value * expression_code_generator::operator()(ast::assignment const & x)
 		{
@@ -43,23 +43,23 @@ namespace unilang
 			LOG(x);
 
 			// Look up the name.
-			VarData const * const pVariable (m_symbolCodeGenerator.getVarFromName(x._lhs._name));
+			VarData const * const pVariable(m_symbolCodeGenerator.getVarFromName(x._lhs.m_sName));
 			if(!pVariable)
 			{
-				return m_codeGeneratorErrors.ErrorValue("Undefined variable name '"+x._lhs._name+"' !");
+				return m_codeGeneratorErrors.ErrorValue("Undefined variable name '"+x._lhs.m_sName+"' !");
 			}
 			else
 			{
 				if(!pVariable->isMutable())
 				{
-					return m_codeGeneratorErrors.ErrorValue("Assignment to const (non-mutable) variable '"+x._lhs._name+"' is impossible!");
+					return m_codeGeneratorErrors.ErrorValue("Assignment to const (non-mutable) variable '"+x._lhs.m_sName+"' is impossible!");
 				}
 				else
 				{
 					llvm::AllocaInst * lhsAlloca (pVariable->getAllocaInst());
 					if(!lhsAlloca)
 					{
-						return m_codeGeneratorErrors.ErrorValue("Variable '"+x._lhs._name+"' is not allocated!", EErrorLevel::Internal);
+						return m_codeGeneratorErrors.ErrorValue("Variable '"+x._lhs.m_sName+"' is not allocated!", EErrorLevel::Internal);
 					}
 					else
 					{

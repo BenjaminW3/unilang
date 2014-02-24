@@ -16,10 +16,9 @@ namespace unilang
 	}
 	namespace ast
 	{
-		struct variable_type_declaration;
-		struct function_declaration;
 		struct variable_declaration;
-		struct variable_definition;
+		struct expression;
+		struct function_declaration;
 		struct function_definition;
 	}
 
@@ -45,17 +44,16 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			function_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-								identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
-								expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
-								statement_grammar<BaseIterator, LexerIterator> const & statementGrammar, 
-								lexer::token_lexer<BaseIterator> const & lexer);
+			function_grammar(
+				error_handler<BaseIterator, LexerIterator>& error_handler, 
+				identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+				expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
+				statement_grammar<BaseIterator, LexerIterator> const & statementGrammar, 
+				lexer::token_lexer<BaseIterator> const & lexer);
 			
-			qi::rule<LexerIterator, std::vector<ast::variable_type_declaration>()> m_ruleParameterDeclarationList;
-			qi::rule<LexerIterator, std::vector<ast::variable_type_declaration>()> m_ruleReturnDeclarationList;
+			qi::rule<LexerIterator, std::vector<ast::variable_declaration>()> m_ruleVariableDeclarationList;
 			qi::rule<LexerIterator, ast::function_declaration()> m_ruleFunctionDeclaration;
-			qi::rule<LexerIterator, std::vector<ast::variable_declaration>()> m_ruleParameterDefinitionList;
-			qi::rule<LexerIterator, std::vector<ast::variable_definition>()> m_ruleReturnDefinitionList;
+			qi::rule<LexerIterator, std::vector<ast::expression>()> m_ruleReturnDefinitionList;
 			qi::rule<LexerIterator, ast::function_definition()> m_ruleFunctionDefinition;
 		};
 	}

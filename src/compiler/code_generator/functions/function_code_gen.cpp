@@ -7,17 +7,20 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		function_code_generator::function_code_generator(	code_generator_errors & codeGeneratorErrors,
-															namespace_code_generator & namespaceCodeGenerator,
-															llvm_code_generator & llvmCodeGenerator,
-															symbol_code_generator & symbolCodeGenerator,
-															allocation_code_generator & allocationCodeGenerator,
-															statement_code_generator & statementCodeGenerator) :
+		function_code_generator::function_code_generator(	
+			code_generator_errors & codeGeneratorErrors,
+			namespace_code_generator & namespaceCodeGenerator,
+			llvm_code_generator & llvmCodeGenerator,
+			symbol_code_generator & symbolCodeGenerator,
+			allocation_code_generator & allocationCodeGenerator,
+			expression_code_generator & expressionCodeGenerator,
+			statement_code_generator & statementCodeGenerator) :
 			m_codeGeneratorErrors		(codeGeneratorErrors),
 			m_namespaceCodeGenerator	(namespaceCodeGenerator),
 			m_llvmCodeGenerator			(llvmCodeGenerator),
 			m_symbolCodeGenerator		(symbolCodeGenerator),
 			m_allocationCodeGenerator	(allocationCodeGenerator),
+			m_expressionCodeGenerator	(expressionCodeGenerator),
 			m_statementCodeGenerator	(statementCodeGenerator)
 		{
 		}

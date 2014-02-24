@@ -8,6 +8,7 @@
 #include <unilang/compiler/ast/fusion_adapt/statement_ast.hpp>
 
 #include <unilang/compiler/lexer/lexer.hpp>
+#include <unilang/compiler/lexer/token_ids_def.hpp>
 #include <unilang/compiler/parser/error_handler.hpp>
 #include <unilang/compiler/parser/annotation.hpp>
 
@@ -23,10 +24,11 @@ namespace unilang
 		//! Constructor.
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator, typename LexerIterator>
-		statement_grammar<BaseIterator,LexerIterator>::statement_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-																			//identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
-																			expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
-																			lexer::token_lexer<BaseIterator> const & lexer) :
+		statement_grammar<BaseIterator,LexerIterator>::statement_grammar(
+			error_handler<BaseIterator, LexerIterator>& error_handler, 
+			//identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+			expression_grammar<BaseIterator, LexerIterator> const & expressionGrammar, 
+			lexer::token_lexer<BaseIterator> const & lexer) :
 			statement_grammar::base_type(m_ruleStatementList, "statement_grammar")
 		{
 			qi::_1_type _1;
@@ -42,24 +44,24 @@ namespace unilang
 			// expression as a statement is needed for calling functions without storing a return value
 			m_ruleExpressionStatement =
 					expressionGrammar
-				>	lexer(";")
+				>	lexer(lexer::tokens::ETokenIDs::semicolon)
 				;
 			m_ruleExpressionStatement.name("expressionStatement");
 			
 			m_ruleAssignmentStatement =
 					expressionGrammar.m_ruleAssignmentExpression
-				>	lexer(";")
+				>	lexer(lexer::tokens::ETokenIDs::semicolon)
 				;
 			m_ruleAssignmentStatement.name("assignmentStatement");
 
 			m_ruleIfStatement =
-					lexer("if")
-				>	lexer("\\(")
+					lexer(lexer::tokens::ETokenIDs::if_)
+				>	lexer(lexer::tokens::ETokenIDs::opening_parenthesis)
 				>	expressionGrammar
-				>	lexer("\\)")
+				>	lexer(lexer::tokens::ETokenIDs::closing_parenthesis)
 				>	m_ruleCompoundStatement
 				>	-(
-						lexer("else")
+						lexer(lexer::tokens::ETokenIDs::else_)
 					>	m_ruleCompoundStatement
 					)
 				;
@@ -76,16 +78,16 @@ namespace unilang
 
 
 			/*m_ruleReturnStatement =
-					lexer("return") 
+					lexer(lexer::tokens::ETokenIDs::return_) 
 				>	-expressionGrammar
-				>   lexer(";")
+				>   lexer(lexer::tokens::ETokenIDs::semicolon)
 				;
 			m_ruleReturnStatement.name("returnStatement");*/
 
 			m_ruleCompoundStatement =
-					lexer("\\{")
+					lexer(lexer::tokens::ETokenIDs::opening_brace)
 				>>	m_ruleStatementList
-				>	lexer("\\}")
+				>	lexer(lexer::tokens::ETokenIDs::closing_brace)
 				;
 			m_ruleCompoundStatement.name("compoundStatement");
 

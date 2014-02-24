@@ -32,6 +32,7 @@ int main( int /*argc*/, char * /*argv*/[] )
 	std::string const sSourceDirectoryPath = "src/tests/code/";
 
 	std::vector<Test> vTestFiles;
+	//vTestFiles.emplace_back("pass/pass_function_void_return.u", true, 77); // FIXME: implement
 	vTestFiles.emplace_back("pass/pass_namespace_functions.u", true, 10);
 	vTestFiles.emplace_back("pass/pass_assignment.u", true, 65);
 	vTestFiles.emplace_back("pass/pass_singleline_comment.u", true, 36);
@@ -58,7 +59,7 @@ int main( int /*argc*/, char * /*argv*/[] )
 	vTestFiles.emplace_back("pass/pass_operator_combined_assignment_bit_or.u", true, 8);
 	vTestFiles.emplace_back("pass/pass_operator_combined_assignment_bit_xor.u", true, 8);
 	vTestFiles.emplace_back("pass/pass_operator_combined_assignment_mod.u", true, 3);
-	vTestFiles.emplace_back("pass/pass_missing_return_variable_name.u", true, 77);
+	//vTestFiles.emplace_back("pass/pass_higherorder_function_type.u.u", true, 77);	//TODO: higherorder-type not implemented
 	
 	vTestFiles.emplace_back("fail/fail_entrypoint_namespace.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_chained_assignment.u", false, 0);
@@ -66,25 +67,25 @@ int main( int /*argc*/, char * /*argv*/[] )
 	vTestFiles.emplace_back("fail/fail_multiline_comment_unclosed.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_accessing_non_existant_function.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_accessing_non_existant_local_variable.u", false, 0);
-	vTestFiles.emplace_back("fail/fail_duplicate_function_name.u", false, 0);
+	vTestFiles.emplace_back("fail/fail_duplicate_function_definition.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_duplicate_parameter_name.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_duplicate_variable_name.u", false, 0);
-	/*vTestFiles.emplace_back("fail/fail_higherorder_function_type_mismatch.u", false, 0);	//FIXME higherorder-type not recognized*/
 	vTestFiles.emplace_back("fail/fail_int_initialization_list_too_long.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_int_literal_bin.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_int_literal_hex.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_int_literal_oct.u", false, 0);
-	vTestFiles.emplace_back("fail/fail_literal_float_parameter_type_mismatch.u", false, 0);
-	vTestFiles.emplace_back("fail/fail_literal_int_parameter_type_mismatch.u", false, 0);
-	vTestFiles.emplace_back("fail/fail_mismatch_chained_assignment.u", false, 0);
+	vTestFiles.emplace_back("fail/fail_float_literal_parameter_type_mismatch.u", false, 0);
+	vTestFiles.emplace_back("fail/fail_int_literal_parameter_type_mismatch.u", false, 0);
+	//vTestFiles.emplace_back("fail/fail_mismatch_chained_assignment.u", false, 0);	// Chained assignment not allowed at the moment.
 	vTestFiles.emplace_back("fail/fail_missing_function_identifier.u", false, 0);
-	vTestFiles.emplace_back("fail/fail_missing_variable_definition_type.u", false, 0);
+	vTestFiles.emplace_back("fail/fail_function_input_missing_variable_declaration_type.u.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_use_of_variable_before_its_definition.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_variable_shadowing_variable_same_type.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_variable_shadowing_variable_different_type.u", false, 0);
 	//vTestFiles.emplace_back("fail/fail_variable_shadowing_function.u", false, 0);	//FIXME: do not allow ?
 	vTestFiles.emplace_back("fail/fail_variable_shadowing_keyword.u", false, 0);
 	vTestFiles.emplace_back("fail/fail_write_to_non_mutable_variable.u", false, 0);
+	//vTestFiles.emplace_back("fail/fail_higherorder_function_type_mismatch.u", false, 0);	//TODO: higherorder-type not implemented
 	
 	std::vector<std::string> vFailedTests;
 

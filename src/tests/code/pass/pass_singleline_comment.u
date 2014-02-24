@@ -1,8 +1,11 @@
-entrypoint: ~()->(iErrorCode:~i64{36})
+entrypoint:~()
 {
+	iErrorCode:~i64{36};
+
 	//iErrorCode *= 4;
 
 	// we can make comments // iErrorCode *= 4; more then one deep 
 	
 	// / /// //*// iErrorCode *= 4;
 }
+->(iErrorCode)

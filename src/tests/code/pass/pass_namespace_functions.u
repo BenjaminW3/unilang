@@ -1,4 +1,4 @@
-operation_with_same_name:(x:i64)->(i64{x-1})
+operation_with_same_name:(x:i64)->(x-1)
 
 namespace:math
 {
@@ -6,11 +6,11 @@ namespace:math
 	{
 		three:()->(i64{3})
 
-		method_using_global_namespace_resolution:(x:i64)->(i64{::operation_with_same_name(x)})
+		method_using_global_namespace_resolution:(x:i64)->(::operation_with_same_name(x))
 	}
 
-	operation_with_same_name:(x:i64)->(i64{x+1})
-	decrement:(x:i64)->(i64{x-1})
+	operation_with_same_name:(x:i64)->(x+1)
+	predecessor:(x:i64)->(x-1)
 
 	namespace:constants
 	{
@@ -22,10 +22,12 @@ namespace:constants
 	three:()->(i64{-3})
 }
 
-entrypoint: ~()->(iErrorCode:~i64{2})
+entrypoint:~()
 {
+	iErrorCode:~i64{2};
+
 	// standard namespace
-	iErrorCode = math::decrement(iErrorCode)*2;					// (2-1)*2 = 2
+	iErrorCode = math::predecessor(iErrorCode)*2;					// (2-1)*2 = 2
 
 	// method usage unqualified
 	iErrorCode = operation_with_same_name(iErrorCode)*4;		// (2-1)*4 = 4
@@ -42,3 +44,4 @@ entrypoint: ~()->(iErrorCode:~i64{2})
 	// global namespace resolution
 	iErrorCode = math::constants::method_using_global_namespace_resolution(iErrorCode);	//11-1=10
 }
+->(iErrorCode)

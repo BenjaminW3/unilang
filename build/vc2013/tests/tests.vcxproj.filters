@@ -38,9 +38,6 @@
     <None Include="..\..\..\src\tests\code\fail\fail_chained_assignment.u">
       <Filter>Resource Files\fail</Filter>
     </None>
-    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_function_name.u">
-      <Filter>Resource Files\fail</Filter>
-    </None>
     <None Include="..\..\..\src\tests\code\fail\fail_duplicate_parameter_name.u">
       <Filter>Resource Files\fail</Filter>
     </None>
@@ -56,22 +53,10 @@
     <None Include="..\..\..\src\tests\code\fail\fail_int_initialization_list_too_long.u">
       <Filter>Resource Files\fail</Filter>
     </None>
-    <None Include="..\..\..\src\tests\code\fail\fail_literal_float_parameter_type_mismatch.u">
-      <Filter>Resource Files\fail</Filter>
-    </None>
-    <None Include="..\..\..\src\tests\code\fail\fail_literal_int_parameter_type_mismatch.u">
-      <Filter>Resource Files\fail</Filter>
-    </None>
-    <None Include="..\..\..\src\tests\code\fail\fail_literal_uint_parameter_type_mismatch.u">
-      <Filter>Resource Files\fail</Filter>
-    </None>
     <None Include="..\..\..\src\tests\code\fail\fail_mismatch_chained_assignment.u">
       <Filter>Resource Files\fail</Filter>
     </None>
     <None Include="..\..\..\src\tests\code\fail\fail_missing_function_identifier.u">
-      <Filter>Resource Files\fail</Filter>
-    </None>
-    <None Include="..\..\..\src\tests\code\fail\fail_missing_variable_definition_type.u">
       <Filter>Resource Files\fail</Filter>
     </None>
     <None Include="..\..\..\src\tests\code\fail\fail_multiline_comment_unclosed.u">
@@ -120,9 +105,6 @@
       <Filter>Resource Files\pass</Filter>
     </None>
     <None Include="..\..\..\src\tests\code\pass\pass_int_types.u">
-      <Filter>Resource Files\pass</Filter>
-    </None>
-    <None Include="..\..\..\src\tests\code\pass\pass_missing_return_variable_name.u">
       <Filter>Resource Files\pass</Filter>
     </None>
     <None Include="..\..\..\src\tests\code\pass\pass_multiline_comment.u">
@@ -193,6 +175,24 @@
     </None>
     <None Include="..\..\..\src\tests\code\fail\fail_int_literal_oct.u">
       <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_function_void_return.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_parameter_type_mismatch.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_float_literal_parameter_type_mismatch.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_function_definition.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_function_input_missing_variable_declaration_type.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_higherorder_function_type.u">
+      <Filter>Resource Files\pass</Filter>
     </None>
   </ItemGroup>
 </Project>

@@ -34,8 +34,9 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		symbol_code_generator::symbol_code_generator(	code_generator_errors & codeGeneratorErrors,
-														llvm_code_generator & llvmCodeGenerator ) :
+		symbol_code_generator::symbol_code_generator(
+			code_generator_errors & codeGeneratorErrors,
+			llvm_code_generator & llvmCodeGenerator ) :
 			m_codeGeneratorErrors	(codeGeneratorErrors),
 			m_llvmCodeGenerator		(llvmCodeGenerator)
 		{

@@ -48,8 +48,8 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			llvm_code_generator const & getllvmCodeGenerator() const;
 
-		private:
-			void addStringConverters();
+		//private:
+			//void addStringConverters();
 
 		private:
 			code_generator_errors m_codeGeneratorErrors;

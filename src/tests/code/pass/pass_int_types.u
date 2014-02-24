@@ -1,4 +1,5 @@
-entrypoint: ~()->(iErrorCode:~i64{1})
+entrypoint:~()
 {
-	i16{i8{0b10000000}}	// variables can have type names
+	i16{i8{0b10000000}}	// type casts
 }
+->(i64{1})

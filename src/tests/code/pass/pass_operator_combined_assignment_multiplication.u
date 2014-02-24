@@ -1,6 +1,8 @@
-entrypoint: ~()->(iErrorCode:~i64{4})
+entrypoint:~()
 {
+	iErrorCode:~i64{4};
 	foo:~f64{0.5};
 	foo *=4.0;	// 2.0
 	iErrorCode *= i64{foo};
 }
+->(iErrorCode)

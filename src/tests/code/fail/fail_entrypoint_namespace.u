@@ -1,6 +1,4 @@
 namespace:math
 {
-	entrypoint: ~()->(iErrorCode:~i64{2})
-	{
-	}
+	entrypoint:~()->(i64{2})
 }

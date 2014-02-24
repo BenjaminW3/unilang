@@ -11,12 +11,6 @@
 #include <ostream>
 #include <vector>
 
-#ifdef TOKEN_ID
-#define OPERATOR_TYPE operators::EOperators
-#else
-#define OPERATOR_TYPE size_t
-#endif
-
 namespace unilang
 {
 	namespace ast

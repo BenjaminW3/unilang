@@ -37,20 +37,20 @@ namespace unilang
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			VarData const * const pVariable (m_symbolCodeGenerator.getVarFromName(x._name));
+			VarData const * const pVariable (m_symbolCodeGenerator.getVarFromName(x.m_sName));
 			if(!pVariable)
 			{
-				return m_codeGeneratorErrors.ErrorValue("Undeclared variable name: '"+x._name+"' !");
+				return m_codeGeneratorErrors.ErrorValue("Undeclared variable name: '"+x.m_sName+"' !");
 			}
 			else
 			{
 				if(!pVariable->getAllocaInst())
 				{
-					return m_codeGeneratorErrors.ErrorValue("Variable is not allocated: '"+x._name+"' !", EErrorLevel::Internal);
+					return m_codeGeneratorErrors.ErrorValue("Variable is not allocated: '"+x.m_sName+"' !", EErrorLevel::Internal);
 				}
 				else
 				{
-					return m_llvmCodeGenerator.getBuilder()->CreateLoad(pVariable->getAllocaInst(), x._name.c_str());
+					return m_llvmCodeGenerator.getBuilder()->CreateLoad(pVariable->getAllocaInst(), x.m_sName.c_str());
 				}
 			}
 		}

@@ -1,6 +1,0 @@
-increment:(x:float)->(:float(x+1))
-
-entrypoint: ~()->(iErrorCode:~int(1))
-{
-	iErrorCode = cast<int>(increment(0));
-}

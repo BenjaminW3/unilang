@@ -1,4 +1,1 @@
-entrypoint: ~()->(i64{1})
-{
-	bogus(42);
-}
+entrypoint:~()->(bogus(42))

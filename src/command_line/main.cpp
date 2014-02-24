@@ -113,7 +113,7 @@ int main( int argc, char *argv[] )
 #ifdef UL_ONE_INPUT_FILE
 		std::shared_ptr<llvm::Module> spModule (unilang::compiler::compile_source_from_file(sInputFilename, unilang::compiler::EDebugOutputOptions::All));
 #else
-		std::vector<std::shared_ptr<llvm::Module>> vspModule (unilang::compiler::compile_source_from_files(vsInputFilenames, unilang::compiler::EDebugOutputOptions::All));
+		std::vector<std::shared_ptr<llvm::Module>> vspModule (unilang::compiler::compile_sources_from_files(vsInputFilenames, unilang::compiler::EDebugOutputOptions::All));
 		std::shared_ptr<llvm::Module> spModule(unilang::linker::link_modules(vspModule));
 #endif
 		if(!spModule)

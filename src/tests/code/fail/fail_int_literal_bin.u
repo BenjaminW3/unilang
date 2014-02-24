@@ -1,4 +1,1 @@
-entrypoint: ~()->(iErrorCode:~i64{1})
-{
-	iErrorCode :=	0b00101021;	// Character 2 is invalid in a binary integer.
-}
+entrypoint:~()->(i64{0b00101021})	// Character 2 is invalid in a binary integer.

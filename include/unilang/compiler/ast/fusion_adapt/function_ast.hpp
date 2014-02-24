@@ -8,8 +8,8 @@ BOOST_FUSION_ADAPT_STRUCT(
 	unilang::ast::function_declaration,
 	(unilang::ast::identifier, _idfName)
 	(bool, _bHasUnpureQualifier)
-	(std::vector<unilang::ast::variable_type_declaration>, _vParameterTypes)
-	(std::vector<unilang::ast::variable_type_declaration>, _vReturnTypes)
+	(std::vector<unilang::ast::variable_declaration>, _vParameterDeclarations)
+	(std::vector<unilang::ast::variable_declaration>, _vReturnDeclarations)
 )
 
 BOOST_FUSION_ADAPT_STRUCT(
@@ -17,6 +17,6 @@ BOOST_FUSION_ADAPT_STRUCT(
 	(unilang::ast::identifier, _idfName)
 	(bool, _bHasUnpureQualifier)
 	(std::vector<unilang::ast::variable_declaration>, _vParameterDeclarations)
-	(std::vector<unilang::ast::variable_definition>, _vReturnValueDefinitions)
 	(unilang::ast::statement_vector, _body)
+	(std::vector<unilang::ast::expression>, _vReturnExpressions)
 )

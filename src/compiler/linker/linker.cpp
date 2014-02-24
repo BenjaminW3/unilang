@@ -21,6 +21,8 @@
 #include <llvm/Support/system_error.h>
 #include <llvm/Bitcode/ReaderWriter.h>	// ParseBitcodeFile
 #include <llvm/IR/LLVMContext.h>		// getGlobalContext
+#include <llvm/IRReader/IRReader.h>		// ParseIRFile
+#include <llvm/Support/SourceMgr.h>		// SMDiagnostic
 #include <llvm/Support/raw_ostream.h>
 
 //Linker
@@ -43,28 +45,26 @@ namespace unilang
 		{
 			// TODO: check file validity
 
-			//std::unique_ptr<llvm::MemoryBuffer> buffer;
 			llvm::OwningPtr<llvm::MemoryBuffer> buffer;
 			llvm::error_code const error (llvm::MemoryBuffer::getFile(sBitCodeFilePath.c_str(), buffer));
 			if(!buffer)
 			{
-				throw std::runtime_error("Unable to getFile '" + sBitCodeFilePath + " with error: " + error.message());
+				throw std::runtime_error("Unable to getFile '" + sBitCodeFilePath + " with error: " + error.message() + ".");
 			}
 
-			std::string sError;
-			std::shared_ptr<llvm::Module> module(llvm::ParseBitcodeFile(buffer.get(), llvm::getGlobalContext(), &sError));
-			if(!module)
+			llvm::LLVMContext & Context(llvm::getGlobalContext());
+
+			llvm::ErrorOr<llvm::Module *> moduleOrError(llvm::getLazyBitcodeModule(buffer.get(), Context));
+			if(!moduleOrError)
 			{
-				throw std::runtime_error("Unable to ParseBitcodeFile '" + sBitCodeFilePath + "' with error: " + sError);
+				throw std::runtime_error("Unable to getLazyBitcodeModule '" + sBitCodeFilePath + "' with error: " + moduleOrError.getError().message() + ".");
 			}
-
-			// TODO: This bitcode to module loading process could be done lazily:
-			/*// Create the runtime library module provider, which will lazily stream functions out of the module.
-			MemoryBuffer *buffer = MemoryBuffer::getFile("mylibc.bc");
-			ModuleProvider *LMP = getBitcodeModuleProvider(buffer);
-			Module *LM = LMP->getModule();*/
-
-			return module;
+			else
+			{
+				// On success getLazyBitcodeModule takes ownership of the buffer.
+				buffer.take();
+				return std::shared_ptr<llvm::Module>(moduleOrError.get());
+			}
 		}
 		//-------------------------------------------------------------------------
 		//
@@ -75,7 +75,15 @@ namespace unilang
 			
 			for(auto const & sBitcodeFilePath : vsBitcodeFilePaths)
 			{
-				vspModules.push_back(load_module_from_bitcode_file(sBitcodeFilePath));
+				auto const spModule (load_module_from_bitcode_file(sBitcodeFilePath));
+				if(spModule)
+				{
+					vspModules.push_back(spModule);
+				}
+				else
+				{
+					throw std::runtime_error("Invalid module returned from load_module_from_bitcode_file for file '" + sBitcodeFilePath + "'.");
+				}
 			}
 
 			return vspModules;
@@ -94,6 +102,62 @@ namespace unilang
 
 			llvm::WriteBitcodeToFile(&module, fd_ostream);
 		}
+
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		std::shared_ptr<llvm::Module> load_module_from_ir_file(std::string const & sIRCodeFilePath)
+		{
+			// TODO: check file validity
+
+			llvm::LLVMContext & Context (llvm::getGlobalContext());
+
+			llvm::SMDiagnostic Err;
+			std::shared_ptr<llvm::Module> const spModule(llvm::getLazyIRFileModule(sIRCodeFilePath, Err, Context));
+			if(!spModule)
+			{
+				std::string sError;
+				llvm::raw_string_ostream rso(sError);
+				Err.print(nullptr, rso);	// nullptr == ProgName
+				throw std::runtime_error("Unable to ParseIRFile '" + sIRCodeFilePath + " with error: " + rso.str() + ".");
+			}
+
+			return spModule;
+		}
+
+		//-------------------------------------------------------------------------
+		//
+		//-------------------------------------------------------------------------
+		/*for(unsigned i = 0, e = ExtraObjects.size(); i != e; ++i)
+		{
+			ErrorOr<object::ObjectFile *> Obj =
+				object::ObjectFile::createObjectFile(ExtraObjects[i]);
+			if(!Obj)
+			{
+				Err.print(argv[0], errs());
+				return 1;
+			}
+			EE->addObjectFile(Obj.get());
+		}
+
+		for(unsigned i = 0, e = ExtraArchives.size(); i != e; ++i)
+		{
+			OwningPtr<MemoryBuffer> ArBuf;
+			error_code ec;
+			ec = MemoryBuffer::getFileOrSTDIN(ExtraArchives[i], ArBuf);
+			if(ec)
+			{
+				Err.print(argv[0], errs());
+				return 1;
+			}
+			object::Archive *Ar = new object::Archive(ArBuf.take(), ec);
+			if(ec || !Ar)
+			{
+				Err.print(argv[0], errs());
+				return 1;
+			}
+			EE->addArchive(Ar);
+		}*/
 
 		//-------------------------------------------------------------------------
 		//

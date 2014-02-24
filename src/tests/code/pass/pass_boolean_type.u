@@ -1,5 +1,7 @@
-entrypoint: ~()->(iErrorCode:~i64{0})
+entrypoint:~()
 {
+	iErrorCode:~i64{0};
+
 	bState:~i1{true};					// test true
 	if(bState)
 	{
@@ -65,3 +67,4 @@ entrypoint: ~()->(iErrorCode:~i64{0})
 		iErrorCode += i64{true && true || false};
 	}
 }
+->(iErrorCode)

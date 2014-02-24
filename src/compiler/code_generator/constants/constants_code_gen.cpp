@@ -28,7 +28,8 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		constants_code_generator::constants_code_generator( llvm_code_generator & llvmCodeGenerator ) :
+		constants_code_generator::constants_code_generator(
+			llvm_code_generator & llvmCodeGenerator ) :
 			m_llvmCodeGenerator(llvmCodeGenerator)
 		{
 		}

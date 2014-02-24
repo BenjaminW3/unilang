@@ -32,8 +32,9 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			identifier_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-								lexer::token_lexer<BaseIterator> const & lexer);
+			identifier_grammar(
+				error_handler<BaseIterator, LexerIterator>& error_handler, 
+				lexer::token_lexer<BaseIterator> const & lexer);
 
 			qi::rule<LexerIterator, ast::identifier()> m_ruleIdentifier;
 			qi::rule<LexerIterator, ast::namespaced_identifier()> m_ruleNamespacedIdentifier;

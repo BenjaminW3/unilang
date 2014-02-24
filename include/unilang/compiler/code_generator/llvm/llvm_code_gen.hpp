@@ -48,23 +48,9 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor
 			//-------------------------------------------------------------------------
-			llvm_code_generator(	code_generator_errors & codeGeneratorErrors,
-									namespace_code_generator & namespaceCodeGenerator );
-
-			//-------------------------------------------------------------------------
-			//! Optimizes the bytecode.
-			//-------------------------------------------------------------------------
-			void optimizeModule() const;
-
-			//-------------------------------------------------------------------------
-			//! Throws an exception if there are errors in the m_ruleModule
-			//-------------------------------------------------------------------------
-			void verifyModule() const;
-
-			//-------------------------------------------------------------------------
-			//! Prints out the bytecode.
-			//-------------------------------------------------------------------------
-			void printModuleBytecode() const;
+			llvm_code_generator(
+				code_generator_errors & codeGeneratorErrors,
+				namespace_code_generator & namespaceCodeGenerator );
 
 			//-------------------------------------------------------------------------
 			//! \return The LLVMContext used to build the m_ruleModule.
@@ -74,10 +60,23 @@ namespace unilang
 			//! \return The IRBuilder used to build the m_ruleModule.
 			//-------------------------------------------------------------------------
 			std::shared_ptr<IRBuilderType> getBuilder();
+
 			//-------------------------------------------------------------------------
 			//! \return The generated m_ruleModule.
 			//-------------------------------------------------------------------------
 			std::shared_ptr<llvm::Module> getModule() const;
+			//-------------------------------------------------------------------------
+			//! Optimizes the bytecode.
+			//-------------------------------------------------------------------------
+			void optimizeModule() const;
+			//-------------------------------------------------------------------------
+			//! Throws an exception if there are errors in the m_ruleModule
+			//-------------------------------------------------------------------------
+			void verifyModule() const;
+			//-------------------------------------------------------------------------
+			//! Prints out the bytecode.
+			//-------------------------------------------------------------------------
+			void printModuleBytecode() const;
 			
 			//-------------------------------------------------------------------------
 			//! Searches for the given function from inside the deepest namespace to the top of the herarchy.

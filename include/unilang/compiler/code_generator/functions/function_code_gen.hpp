@@ -32,6 +32,7 @@ namespace unilang
 		class llvm_code_generator;
 		class symbol_code_generator;
 		class allocation_code_generator;
+		class expression_code_generator;
 		class statement_code_generator;
 
 		//#########################################################################
@@ -47,12 +48,14 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			function_code_generator(code_generator_errors & codeGeneratorErrors,
-									namespace_code_generator & namespaceCodeGenerator,
-									llvm_code_generator & llvmCodeGenerator,
-									symbol_code_generator & symbolCodeGenerator,
-									allocation_code_generator & allocationCodeGenerator,
-									statement_code_generator & statementCodeGenerator);
+			function_code_generator(
+				code_generator_errors & codeGeneratorErrors,
+				namespace_code_generator & namespaceCodeGenerator,
+				llvm_code_generator & llvmCodeGenerator,
+				symbol_code_generator & symbolCodeGenerator,
+				allocation_code_generator & allocationCodeGenerator,
+				expression_code_generator & expressionCodeGenerator,
+				statement_code_generator & statementCodeGenerator);
 
 		public:
 			typedef llvm::Function * result_type;
@@ -77,6 +80,7 @@ namespace unilang
 			llvm_code_generator & m_llvmCodeGenerator;
 			symbol_code_generator & m_symbolCodeGenerator;
 			allocation_code_generator & m_allocationCodeGenerator;
+			expression_code_generator & m_expressionCodeGenerator;
 			statement_code_generator & m_statementCodeGenerator;
 		};
 	}

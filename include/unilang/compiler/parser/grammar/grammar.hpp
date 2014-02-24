@@ -38,8 +38,9 @@ namespace unilang
 			//-------------------------------------------------------------------------
 			//! Constructor.
 			//-------------------------------------------------------------------------
-			global_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-							lexer::token_lexer<BaseIterator> const & lexer);
+			global_grammar(
+				error_handler<BaseIterator, LexerIterator>& error_handler, 
+				lexer::token_lexer<BaseIterator> const & lexer);
 
 			// Refering to page 234 of the standard, 12.6.2, paragraph 5, the third dashed item reads:
 			// "Then, non-static data members shall be initialized in the order they were declared in the class definition (again regardless of the order of the mem-initializers)."

@@ -5,6 +5,7 @@
 #include <unilang/compiler/parser/grammar/identifier_grammar.hpp>
 
 #include <unilang/compiler/lexer/lexer.hpp>
+#include <unilang/compiler/lexer/token_ids_def.hpp>
 #include <unilang/compiler/parser/error_handler.hpp>
 #include <unilang/compiler/parser/annotation.hpp>
 
@@ -26,9 +27,10 @@ namespace unilang
 		//! Constructor.
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator, typename LexerIterator>
-		expression_grammar<BaseIterator,LexerIterator>::expression_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-																			identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
-																			lexer::token_lexer<BaseIterator> const & lexer) : 
+		expression_grammar<BaseIterator,LexerIterator>::expression_grammar(
+			error_handler<BaseIterator, LexerIterator>& error_handler, 
+			identifier_grammar<BaseIterator, LexerIterator> const & identifierGrammar, 
+			lexer::token_lexer<BaseIterator> const & lexer) : 
 			expression_grammar::base_type(m_ruleExpression, "expression_grammar")
 		{
 			qi::_1_type _1;
@@ -82,7 +84,7 @@ namespace unilang
 				|	lexer.m_tokLiteralUnsignedInt
 				|   lexer.m_tokLiteralBoolean
 				|	identifierGrammar	// TODO: support .m_ruleNamespacedIdentifier
-				|	(lexer("\\(") > m_ruleExpression > lexer("\\)"))
+				|	(lexer(lexer::tokens::ETokenIDs::opening_parenthesis) > m_ruleExpression > lexer(lexer::tokens::ETokenIDs::closing_parenthesis))
 				;
 			m_rulePrimaryExpression.name("primaryExpression");
 
@@ -90,24 +92,24 @@ namespace unilang
 					identifierGrammar
 				//|	m_ruleVariableDefinition	// dont! just initialize it directly!
 				|	m_ruleFunctionCall
-				|   (lexer("\\(") > m_ruleLValueExpression > lexer("\\)"))
+				|   (lexer(lexer::tokens::ETokenIDs::opening_parenthesis) > m_ruleLValueExpression > lexer(lexer::tokens::ETokenIDs::closing_parenthesis))
 				;
 			m_ruleLValueExpression.name("lValueExpression");*/
 
 			m_ruleMutableQualifier = 
-					matches[lexer("~")]
+					matches[lexer(lexer::tokens::ETokenIDs::compl)]
 				;
 			m_ruleMutableQualifier.name("mutableQualifier");
 
-			m_ruleArgumentList = -(m_ruleExpression % lexer(","));
+			m_ruleArgumentList = -(m_ruleExpression % lexer(lexer::tokens::ETokenIDs::comma));
 			m_ruleArgumentList.name("argumentList");
 
 			m_ruleFunctionCall =
 					identifierGrammar.m_ruleNamespacedIdentifier
 				>>	(m_ruleMutableQualifier
-				>>	(lexer("\\(")
+				>>	(lexer(lexer::tokens::ETokenIDs::opening_parenthesis)
 				>	m_ruleArgumentList
-				>   lexer("\\)")))
+				>   lexer(lexer::tokens::ETokenIDs::closing_parenthesis)))
 				;
 			// Paranthesis are required because of operator precedence between > and >> and how fusion_adapt exposes the attributes.
 			// Without paranthesis the result would be tuple<tuple<IDF, bool>, Args>. So tuple<IDF, bool> is assigned to the identifier and Args would be assigned to bool -> Error. The right layout is tuple<IDF, bool, Args>.
@@ -128,16 +130,16 @@ namespace unilang
 			m_ruleVariableDeclaration =
 				-(
 					identifierGrammar.m_ruleIdentifier
-					>>	lexer(":")
+					>>	lexer(lexer::tokens::ETokenIDs::colon)
 				)
 				>>	m_ruleTypeDeclaration
 				;
 			m_ruleVariableDeclaration.name("variableDeclaration");
 
 			m_ruleDefinitionParameterList = 
-					lexer("\\{")
-				>	-(	m_ruleExpression % lexer(","))
-				>	lexer("\\}")
+					lexer(lexer::tokens::ETokenIDs::opening_brace)
+				>	-(	m_ruleExpression % lexer(lexer::tokens::ETokenIDs::comma))
+				>	lexer(lexer::tokens::ETokenIDs::closing_brace)
 				;
 			m_ruleDefinitionParameterList.name("definitionParameterList");
 

@@ -1,4 +1,1 @@
-entrypoint: ~()->(iErrorCode:~i64{1})
-{
-	iErrorCode :=	0q435627934A;	// Characters 9 and A are invalid in a octal integer.
-}
+entrypoint:~()->(i64{0q435627934A})	// Characters 9 and A are invalid in a octal integer.

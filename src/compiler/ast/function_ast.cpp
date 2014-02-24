@@ -1,5 +1,7 @@
 #include <unilang/compiler/ast/function_ast.hpp>
 
+#include <unilang/compiler/ast/expression_ast.hpp>
+
 #include <sstream>
 
 namespace unilang
@@ -18,29 +20,13 @@ namespace unilang
 		function_declaration::function_declaration(
 			identifier const & idfName, 
 			bool bHasUnpureQualifier, 
-			std::vector<variable_type_declaration> const & vParameterTypes,
-			std::vector<variable_type_declaration> const & vReturnTypes) :
+			std::vector<variable_declaration> const & vParameterTypes,
+			std::vector<variable_declaration> const & vReturnTypes) :
 			_idfName				(idfName),
 			_bHasUnpureQualifier	(bHasUnpureQualifier),
-			_vParameterTypes		(vParameterTypes),
-			_vReturnTypes			(vReturnTypes)
+			_vParameterDeclarations	(vParameterTypes),
+			_vReturnDeclarations	(vReturnTypes)
 		{
-		}
-		//-------------------------------------------------------------------------
-		//
-		//-------------------------------------------------------------------------
-		function_declaration::function_declaration( function_definition const & functionDefinition ) :
-			_idfName				(functionDefinition._idfName),
-			_bHasUnpureQualifier	(functionDefinition._bHasUnpureQualifier)
-		{
-			for(ast::variable_declaration const & decl : functionDefinition._vParameterDeclarations)
-			{
-				_vParameterTypes.push_back(decl._type);
-			}
-			for(ast::variable_definition const & def : functionDefinition._vReturnValueDefinitions)
-			{
-				_vReturnTypes.push_back(def._declaration._type);
-			}
 		}
 		//-------------------------------------------------------------------------
 		//
@@ -55,12 +41,12 @@ namespace unilang
 			}
 			sstr << "(";
 			bool bFirstArg = true;
-			for(variable_type_declaration const & decl : _vParameterTypes)
+			for(auto const & decl : _vParameterDeclarations)
 			{
 				if(bFirstArg){bFirstArg = false;}
 				else{sstr << ",";}
 
-				sstr << decl.build_mangled_name();
+				sstr << decl._type.build_mangled_name();
 			}
 			sstr << ")";
 			// The return value is not part of the mangled name because on the call site of a function the return type is irrelevant and is determined by overload resolution of the argument types.
@@ -80,7 +66,7 @@ namespace unilang
 			}
 			out << "(";
 			bool bFirstArg = true;
-			for(variable_type_declaration const & decl : x._vParameterTypes)
+			for(auto const & decl : x._vParameterDeclarations)
 			{
 				if(bFirstArg){bFirstArg = false;}
 				else{out << ", ";}
@@ -91,7 +77,7 @@ namespace unilang
 
 			out << '(';
 			bool bFirstRet = true;
-			for(variable_type_declaration const & decl : x._vReturnTypes)
+			for(auto const & decl : x._vReturnDeclarations)
 			{
 				if(bFirstRet){bFirstRet = false;}
 				else{out << ", ";}
@@ -114,23 +100,23 @@ namespace unilang
 			}
 			out << "(";
 			bool bFirstArg = true;
-			for(variable_declaration const & def : x._vParameterDeclarations)
+			for(auto const & decl : x._vParameterDeclarations)
 			{
 				if(bFirstArg){bFirstArg = false;}
 				else{out << ", ";}
 
-				out << def;
+				out << decl;
 			}
 			out << ") -> ";
 
 			out << '(';
 			bool bFirstRet = true;
-			for(variable_definition const & def : x._vReturnValueDefinitions)
+			for(auto const & exp : x._vReturnExpressions)
 			{
 				if(bFirstRet){bFirstRet = false;}
 				else{out << ", ";}
 
-				out << def;
+				out << exp;
 			}
 			out << ")";
 			out << '{' << std::endl;

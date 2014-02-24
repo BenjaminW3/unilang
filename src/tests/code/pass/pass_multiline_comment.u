@@ -1,6 +1,6 @@
-entrypoint: ~()->(iErrorCode:~i64{1})
+entrypoint:~()
 {
-	iErrorCode := 1; 
+	iErrorCode:~i64{1}; 
 	/* multiline
 	comment*/
 
@@ -13,13 +13,13 @@ entrypoint: ~()->(iErrorCode:~i64{1})
 
 	iErrorCode/*comment */*= 4;	// should be 4 here. *= assignment directly after closing comment
 	
-	iErrorCode/*comment *//= 4;	// should be 1 again here. /= assignment directly after closing comment
+	iErrorCode/*comment *//= 4;	// should be 4 again here. /= assignment directly after closing comment
 
-	//*comments
+	//*multiline comments
 	iErrorCode += 8;
 	//can be commented out*/
 
-	///*starting comment with 3 slashes commented out
+	///*starting comment with 3 slashes also commented out
 	iErrorCode += 16;
 	// */
 	
@@ -27,9 +27,10 @@ entrypoint: ~()->(iErrorCode:~i64{1})
 	iErrorCode += 32;
 	*/nested*/
 
-	/*comments can/*
+	/*comments /* can/*/*
 	iErrorCode += 64;
-	//* also be nested even when commented out itself */
+	// /* singleline comments inside multiline comments do work so we do not have to close this multiline comment
 	iErrorCode += 128;
-	*/nested*/
+	*/nested*/ */*/
 }
+->(iErrorCode)

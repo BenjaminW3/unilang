@@ -1,0 +1,13 @@
+func1:(v:i64){}->()
+func2:(v:i64)->()
+func3:(v:i64){}
+func4:(v:i64)
+
+entrypoint:~()
+{
+	func1();
+	func2();
+	func3();
+	func4();
+}
+->(i64{77})

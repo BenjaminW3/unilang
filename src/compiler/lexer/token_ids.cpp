@@ -24,6 +24,7 @@ namespace unilang
 					case ETokenIDs::comment_multiline_recursive_open:	out << "comment_multiline_recursive_open"; break;
 					case ETokenIDs::comment_multiline_characters:		out << "comment_multiline_characters"; break;
 					case ETokenIDs::comment_multiline_close:			out << "comment_multiline_close"; break;
+					case ETokenIDs::lit_string_delimiter:				out << "lit_string_delimiter"; break;
 					case ETokenIDs::whitespace:							out << "whitespace"; break;
 					case ETokenIDs::comma:								out << ","; break;
 					case ETokenIDs::double_colon:						out << "::"; break;
@@ -87,6 +88,7 @@ namespace unilang
 					case ETokenIDs::plus_assign:						out << "+="; break;
 					case ETokenIDs::minus_assign:						out << "-="; break;
 
+					case ETokenIDs::lit_string:							out << "lit_string"; break;
 					case ETokenIDs::lit_ufloat:							out << "lit_ufloat"; break;
 					case ETokenIDs::lit_uint:							out << "lit_uint"; break;
 					case ETokenIDs::lit_boolean:						out << "lit_boolean"; break;

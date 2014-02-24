@@ -1,4 +1,5 @@
-entrypoint: ~()->(i64{1})
+entrypoint:~()
 {
 	foo:i64{bogus};
 }
+->(foo)

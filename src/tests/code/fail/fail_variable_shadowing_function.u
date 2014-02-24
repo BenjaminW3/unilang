@@ -1,6 +1,7 @@
-decrement:(x:~i64)->(i64{--x})
+predecessor:(x:i64)->(x-1)
 
-entrypoint: ~()->(i64{1})
+entrypoint:~()
 {
-	decrement:i64{42};
+	predecessor:i64{42};
 }
+->(predecessor)

@@ -11,9 +11,6 @@ namespace unilang
 {
 	namespace ast
 	{
-		// forward declaration
-		struct function_definition;
-
 		//#########################################################################
 		//! A Function declaration.
 		//#########################################################################
@@ -30,12 +27,8 @@ namespace unilang
 			function_declaration( 
 				identifier const & idfName, 
 				bool bHasUnpureQualifier, 
-				std::vector<variable_type_declaration> const & vParameterTypes, 
-				std::vector<variable_type_declaration> const & vReturnTypes);
-			//-------------------------------------------------------------------------
-			//! Constructor.
-			//-------------------------------------------------------------------------
-			function_declaration( function_definition const & functionDefinition );
+				std::vector<variable_declaration> const & vParameterTypes,
+				std::vector<variable_declaration> const & vReturnTypes);
 
 			//-------------------------------------------------------------------------
 			//! \return Unique names for functions with different parameters. add:(i32,i32)
@@ -44,8 +37,8 @@ namespace unilang
 
 			identifier _idfName;
 			bool _bHasUnpureQualifier;
-			std::vector<variable_type_declaration> _vParameterTypes;
-			std::vector<variable_type_declaration> _vReturnTypes;
+			std::vector<variable_declaration> _vParameterDeclarations;
+			std::vector<variable_declaration> _vReturnDeclarations;
 		};
 		std::ostream& operator<<(std::ostream& out, function_declaration const & x);
 
@@ -58,8 +51,8 @@ namespace unilang
 			identifier _idfName;
 			bool _bHasUnpureQualifier;
 			std::vector<variable_declaration> _vParameterDeclarations;
-			std::vector<variable_definition> _vReturnValueDefinitions;
 			statement_vector _body;
+			std::vector<expression> _vReturnExpressions;
 		};
 		std::ostream& operator<<(std::ostream& out, function_definition const & x);
 	}

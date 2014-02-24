@@ -9,9 +9,8 @@
 
 typedef std::string::const_iterator base_iterator_type;
 template unilang::lexer::token_lexer<base_iterator_type>::token_lexer();
-template bool unilang::lexer::token_lexer<base_iterator_type>::internal_add(std::string const &, tokens::ETokenIDs, char const *, char const *);
-template unilang::lexer::token_lexer<base_iterator_type>::raw_token_spec unilang::lexer::token_lexer<base_iterator_type>::operator()(std::string const &) const;
-//template unilang::lexer::token_lexer<base_iterator_type>::token_spec unilang::lexer::token_lexer<base_iterator_type>::token(std::string const & kwd) const;
+template void unilang::lexer::token_lexer<base_iterator_type>::internal_add(std::string const &, tokens::ETokenIDs, char const *, char const *);
+template unilang::lexer::token_lexer<base_iterator_type>::raw_token_spec unilang::lexer::token_lexer<base_iterator_type>::operator()(tokens::ETokenIDs const & eTokenID) const;
 template size_t unilang::lexer::token_lexer<base_iterator_type>::getCurrentCommentNestingLevel() const;
 
 /*
@@ -23,30 +22,30 @@ template size_t unilang::lexer::token_lexer<base_iterator_type>::getCurrentComme
 
 int main()
 {
-    typedef std::string::const_iterator base_iterator_type;
-    typedef client::lexer::conjure_tokens<base_iterator_type> lexer_type;
+	typedef std::string::const_iterator base_iterator_type;
+	typedef client::lexer::conjure_tokens<base_iterator_type> lexer_type;
 
-    lexer_type lexer;
+	lexer_type lexer;
 
-    // first generate the static switch based lexer 
-    std::ofstream out_static("unilang_static_switch_lexer.hpp");
+	// first generate the static switch based lexer 
+	std::ofstream out_static("unilang_static_switch_lexer.hpp");
 
-    bool result = boost::spirit::lex::lexertl::generate_static_switch(
-        lexer, out_static, "unilang_static_switch");
-    if (!result) {
-        std::cerr << "Failed to generate static switch based lexer\n";
-        return -1;
-    }
+	bool result = boost::spirit::lex::lexertl::generate_static_switch(lexer, out_static, "unilang_static_switch");
+	if (!result)
+	{
+		std::cerr << "Failed to generate static switch based lexer\n";
+		return -1;
+	}
 
-    // now generate the static table based lexer 
-    std::ofstream out("unilang_static_lexer.hpp");
-    result = boost::spirit::lex::lexertl::generate_static(
-        lexer, out, "unilang_static");
-    if (!result) {
-        std::cerr << "Failed to generate static table based lexer\n";
-        return -1;
-    }
+	// now generate the static table based lexer 
+	std::ofstream out("unilang_static_lexer.hpp");
+	result = boost::spirit::lex::lexertl::generate_static( lexer, out, "unilang_static" );
+	if (!result)
+	{
+		std::cerr << "Failed to generate static table based lexer\n";
+		return -1;
+	}
 
-    return 0;
+	return 0;
 }
 */

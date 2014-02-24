@@ -1,11 +1,12 @@
-entrypoint: ~()->(iErrorCode:~i64{1})
+entrypoint:~()
 {
-	iErrorCode := 1; 
+	iErrorCode:~i64{1}
 	/* multiline
 	comment*/
 
 	iErrorCode := 256;
 }
+->(iErrorCode)
 
 /*
 forget to end comment ouside of function 

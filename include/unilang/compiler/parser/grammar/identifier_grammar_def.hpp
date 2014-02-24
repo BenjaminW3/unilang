@@ -6,6 +6,7 @@
 #include <unilang/compiler/ast/fusion_adapt/identifier_ast.hpp>
 
 #include <unilang/compiler/lexer/lexer.hpp>
+#include <unilang/compiler/lexer/token_ids_def.hpp>
 #include <unilang/compiler/parser/error_handler.hpp>
 #include <unilang/compiler/parser/annotation.hpp>
 
@@ -21,8 +22,9 @@ namespace unilang
 		//! Constructor.
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator, typename LexerIterator>
-		identifier_grammar<BaseIterator,LexerIterator>::identifier_grammar(	error_handler<BaseIterator, LexerIterator>& error_handler, 
-																			lexer::token_lexer<BaseIterator> const & lexer) :
+		identifier_grammar<BaseIterator,LexerIterator>::identifier_grammar(
+			error_handler<BaseIterator, LexerIterator>& error_handler, 
+			lexer::token_lexer<BaseIterator> const & lexer) :
 			identifier_grammar::base_type(m_ruleIdentifier, "identifier_grammar")
 		{
 			qi::_1_type _1;
@@ -41,8 +43,8 @@ namespace unilang
 			m_ruleIdentifier.name("identifier");
 
 			m_ruleNamespacedIdentifier = 
-					matches[lexer("::")]
-				>>	(lexer.m_tokIdentifier % lexer("::"));
+					matches[lexer(lexer::tokens::ETokenIDs::double_colon)]
+				>>	(lexer.m_tokIdentifier % lexer(lexer::tokens::ETokenIDs::double_colon));
 			m_ruleNamespacedIdentifier.name("m_ruleNamespacedIdentifier");
 #ifdef _DEBUG
 			// Debugging and error handling and reporting support.

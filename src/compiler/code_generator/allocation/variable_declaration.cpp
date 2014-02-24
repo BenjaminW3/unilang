@@ -39,7 +39,7 @@ namespace unilang
 
 			// Is this a named allocation?
 			bool const bHasName		(x._optionalIdentifier.is_initialized());
-			std::string const sName (bHasName ? x._optionalIdentifier.get()._name : "");
+			std::string const sName	(bHasName ? x._optionalIdentifier.get().m_sName : "");
 
 			// If it has a name...
 			if(bHasName)
@@ -68,7 +68,7 @@ namespace unilang
 				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get the function the allocation for variable '"+sName+"' should be inserted into.");
 			}
 			// Get the variable type.
-			llvm::Type * const pType(m_symbolCodeGenerator.getTypeByName(x._type._idfName._name));
+			llvm::Type * const pType(m_symbolCodeGenerator.getTypeByName(x._type._idfName.m_sName));
 			if(!pType)
 			{
 				return m_codeGeneratorErrors.ErrorAllocaInst("Unable to get type of variable '"+sName+"'.");

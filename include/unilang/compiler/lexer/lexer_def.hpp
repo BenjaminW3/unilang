@@ -15,7 +15,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
 		token_lexer<BaseIterator>::token_lexer() :
-			_uiCommentNestingLevel(0),
+			m_uiCommentNestingLevel(0),
 #ifdef TOKEN_ID
 			m_tokWhitespace				("\\s+",															tokens::ETokenIDs::whitespace),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
 			m_tokCommentSingleLine		("\\/\\/[^\r\n]*",													tokens::ETokenIDs::comment_singleline),
@@ -25,8 +25,8 @@ namespace unilang
 			m_tokCommentMultilineCharacters("([^\\*\\/]|(\\/[^\\*\\/])|(\\*+[^\\*\\/]))+",					tokens::ETokenIDs::comment_multiline_characters),
 			m_tokCommentMultilineClose	("\\*+\\/",															tokens::ETokenIDs::comment_multiline_close),
 			m_tokIdentifier				("[a-zA-Z_][a-zA-Z_0-9]*",											tokens::ETokenIDs::identifier),
-			//tok_string				("[^\"]+",															tokens::ETokenIDs::string),
-			//StringLiteral = L"\\\"[^\\\"]*\\\"";
+			m_tokLiteralString			(R"(\"[^\"]*\")",													tokens::ETokenIDs::lit_string),
+			m_tokLiteralRawString				(R"(\"[^\"]*\")",											tokens::ETokenIDs::lit_string),
 			m_tokLiteralHexadecimal		("0x[0-9a-fA-F]+",													tokens::ETokenIDs::lit_uint),
 			m_tokLiteralOctal			("0q[0-8]+",														tokens::ETokenIDs::lit_uint),
 			m_tokLiteralBinary			("0b[01]+",															tokens::ETokenIDs::lit_uint),
@@ -34,40 +34,56 @@ namespace unilang
 			m_tokLiteralUnsignedInt		("[1-9][0-9]*|0",													tokens::ETokenIDs::lit_uint),
 			m_tokLiteralBoolean			("true|false",														tokens::ETokenIDs::lit_boolean)
 #else
-			m_tokWhitespace				("\\s+",															static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
-			m_tokCommentSingleLine		("\\/\\/[^\r\n]*",													static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
-			m_tokCommentMultilineOpen	("\\/\\*",															static_cast<size_t>(tokens::ETokenIDs::comment_multiline_open)),
-			m_tokCommentMultilineRecursiveOpen("\\/\\*",													static_cast<size_t>(tokens::ETokenIDs::comment_multiline_recursive_open)),
-			m_tokCommentSingleLineInMultiline("\\/\\/[^\r\n]*",												static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
-			m_tokCommentMultilineCharacters("([^\\*\\/]|(\\/[^\\*\\/])|(\\*+[^\\*\\/]))+",					static_cast<size_t>(tokens::ETokenIDs::comment_multiline_characters)),
-			m_tokCommentMultilineClose	("\\*+\\/",															static_cast<size_t>(tokens::ETokenIDs::comment_multiline_close)),
-			m_tokIdentifier				("[a-zA-Z_][a-zA-Z_0-9]*",											static_cast<size_t>(tokens::ETokenIDs::identifier)),
-			//tok_string				("[^\"]+",															tokens::ETokenIDs::string),
-			//StringLiteral = L"\\\"[^\\\"]*\\\"";
-			m_tokLiteralHexadecimal		("0x[0-9a-fA-F]+",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-			m_tokLiteralOctal			("0q[0-8]+",														static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-			m_tokLiteralBinary			("0b[01]+",															static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-			m_tokLiteralUnsignedFloat	("((([1-9][0-9]*)|(0?))\\.[0-9]+)([eE][-\\+]?[0-9]+)?",				static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
-			m_tokLiteralUnsignedInt		("[1-9][0-9]*|0",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
-			m_tokLiteralBoolean			("true|false",														static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
+			m_tokWhitespace						(R"(\s+)",													static_cast<size_t>(tokens::ETokenIDs::whitespace)),	// http://msdn.microsoft.com/en-us/library/6aw8xdf2.aspx
+			m_tokCommentSingleLine				(R"(\/\/[^\r\n]*)",											static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
+			m_tokCommentMultilineOpen			(R"(\/\*)",													static_cast<size_t>(tokens::ETokenIDs::comment_multiline_open)),
+			m_tokCommentMultilineRecursiveOpen	(R"(\/\*)",													static_cast<size_t>(tokens::ETokenIDs::comment_multiline_recursive_open)),
+			m_tokCommentSingleLineInMultiline	(R"(\/\/[^\r\n]*)",											static_cast<size_t>(tokens::ETokenIDs::comment_singleline)),
+			m_tokCommentMultilineCharacters		(R"(([^\*\/]|(\/[^\*\/])|(\*+[^\*\/]))*)",					static_cast<size_t>(tokens::ETokenIDs::comment_multiline_characters)),
+			m_tokCommentMultilineClose			(R"(\*+\/)",												static_cast<size_t>(tokens::ETokenIDs::comment_multiline_close)),
+			m_tokIdentifier						("[a-zA-Z_][a-zA-Z_0-9]*",									static_cast<size_t>(tokens::ETokenIDs::identifier)),
+			m_tokLiteralString					(R"(\"[^\"]*\")",											static_cast<size_t>(tokens::ETokenIDs::lit_string)),
+			m_tokLiteralRawStringDelimiter		(R"('[^\']')",												static_cast<size_t>(tokens::ETokenIDs::lit_string_delimiter)),
+			m_tokLiteralRawString				(R"('[^\']')",												static_cast<size_t>(tokens::ETokenIDs::lit_string)),
+			m_tokLiteralHexadecimal				("0x[0-9a-fA-F]+",											static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralOctal					("0q[0-8]+",												static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralBinary					("0b[01]+",													static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralUnsignedFloat			(R"(((([1-9][0-9]*)|(0?))\.[0-9]+)([eE][-\+]?[0-9]+)?)",	static_cast<size_t>(tokens::ETokenIDs::lit_ufloat)),
+			m_tokLiteralUnsignedInt				("[1-9][0-9]*|0",											static_cast<size_t>(tokens::ETokenIDs::lit_uint)),
+			m_tokLiteralBoolean					("true|false",												static_cast<size_t>(tokens::ETokenIDs::lit_boolean))
 #endif
 		{
-			// The following tokens are associated with the default lexer state (the "INITIAL" state). Specifying 'INITIAL' as a lexer state is strictly optional.
-
 			lex::_pass_type _pass;
 			lex::_state_type _state;
 
-			// single line comment before multiline so that you can comment out them like //*
+			// The following tokens are associated with the default lexer state (the state "INITIAL" == initial_state().c_str() ). Specifying 'INITIAL' as a lexer state is strictly optional.
+
+			// Add single line comment before multiline so that you can comment them out like '//*' .
 			this->self += m_tokCommentSingleLine [_pass = lex::pass_flags::pass_ignore];
 
-			// recursive multiline comments
-			this->self += m_tokCommentMultilineOpen [_state = "MULTILINE_COMMENT", ++boost::phoenix::ref(_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore];
-			this->self("MULTILINE_COMMENT") = m_tokCommentMultilineRecursiveOpen	[++boost::phoenix::ref(_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore]	// Does not work with += ?!?
-											| m_tokCommentMultilineClose			[--boost::phoenix::ref(_uiCommentNestingLevel), boost::phoenix::if_(boost::phoenix::ref(_uiCommentNestingLevel)==0)[_state = "INITIAL"], _pass = lex::pass_flags::pass_ignore]
+			// Add recursive multiline comments.
+			this->self += m_tokCommentMultilineOpen [_state = "MULTILINE_COMMENT", ++boost::phoenix::ref(m_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore];
+			this->self("MULTILINE_COMMENT") = m_tokCommentMultilineRecursiveOpen	[++boost::phoenix::ref(m_uiCommentNestingLevel), _pass = lex::pass_flags::pass_ignore]	// Does not work with += ?!?
+											| m_tokCommentMultilineClose			[--boost::phoenix::ref(m_uiCommentNestingLevel), boost::phoenix::if_(boost::phoenix::ref(m_uiCommentNestingLevel)==0)[_state = "INITIAL"], _pass = lex::pass_flags::pass_ignore]
 											| m_tokCommentSingleLineInMultiline		[_pass = lex::pass_flags::pass_ignore]
 											| m_tokCommentMultilineCharacters		[_pass = lex::pass_flags::pass_ignore];
 
-			this->self += m_tokWhitespace[_pass = lex::pass_flags::pass_ignore];
+			typedef boost::spirit::lex::lexertl::detail::data<BaseIterator, boost::mpl::true_, boost::spirit::lex::lexertl::position_token<base_iterator_type, boost::spirit::lex::omit, boost::mpl::true_, size_t>::has_state, boost::variant<boost::detail::variant::over_sequence<boost::mpl::vector5<boost::iterator_range<std::_String_const_iterator<std::_String_val<std::_Simple_types<char>>>>, std::string, long double, unsigned __int64, bool>>>> context_type;
+			auto const fctPassIgnore(
+				[](BaseIterator &, BaseIterator &, lex::pass_flags & pass, size_t &, context_type & ctx)
+				{
+					pass = lex::pass_flags::pass_ignore;
+					//ctx.more();
+					//context_type;
+				}
+			);
+
+			this->self += m_tokWhitespace[fctPassIgnore];
+
+			//this->self += m_tokLiteralRawStringDelimiter[[&m_sRawStringOpenDelimiterToken](BaseIterator& itStart, BaseIterator& itEnd, lex::_pass_type&, lex::_tokenid_type&, lex::_tokenid_type& ctx) { m_sRawStringOpenDelimiterToken = ; }];
+			//this->self += m_tokLiteralRawStringDelimiter[_state = "RAW_STRING", boost::phoenix::ref(m_sRawStringOpenDelimiterToken) = std::string(boost::spirit::lex::_start, boost::spirit::lex::_end)];
+			//this->self("MULTILINE_COMMENT") = m_tokLiteralRawString 
+			//								| m_tokLiteralRawStringDelimiter[boost::phoenix::if_(boost::phoenix::ref(m_sRawStringOpenDelimiterToken)==std::string(boost::spirit::lex::_start, boost::spirit::lex::_end))[_state = "INITIAL"]];
 
 			internal_add(":=",		tokens::ETokenIDs::assign);
 			internal_add("\\*=",	tokens::ETokenIDs::times_assign);
@@ -123,7 +139,8 @@ namespace unilang
 			internal_add(";",		tokens::ETokenIDs::semicolon);
 			//internal_add("~",		tokens::ETokenIDs::tilde);
 			internal_add("\\?",		tokens::ETokenIDs::question_mark);
-			
+
+			this->self += m_tokLiteralString;
 			this->self += m_tokLiteralHexadecimal;
 			this->self += m_tokLiteralOctal;
 			this->self += m_tokLiteralBinary;
@@ -137,64 +154,41 @@ namespace unilang
 		// 
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		bool token_lexer<BaseIterator>::internal_add( std::string const & keyword, tokens::ETokenIDs id, char const * state, char const * targetstate )
+		void token_lexer<BaseIterator>::internal_add( std::string const & keyword, tokens::ETokenIDs id, char const * state, char const * targetstate )
 		{
 			assert(id != tokens::ETokenIDs::invalid);
 			assert(!keyword.empty());
 			
 #ifdef TOKEN_ID
 			add_token(state ? state : initial_state().c_str(), keyword, id, targetstate ? targetstate : state);
-			// store the mapping for later retrieval
-			return _keywords.insert(typename keyword_map_type::value_type(keyword, id)).second;
 #else
 			add_token(state ? state : initial_state().c_str(), keyword, static_cast<size_t>(id), targetstate ? targetstate : state);
-			// store the mapping for later retrieval
-			return _keywords.insert(typename keyword_map_type::value_type(keyword, static_cast<size_t>(id))).second;
 #endif
 		}
 		//-------------------------------------------------------------------------
 		// 
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
-		typename token_lexer<BaseIterator>::raw_token_spec token_lexer<BaseIterator>::operator()(std::string const & keyword) const
+		typename token_lexer<BaseIterator>::raw_token_spec token_lexer<BaseIterator>::operator()(tokens::ETokenIDs const & eTokenID) const
+		//typename token_lexer<BaseIterator>::token_spec token_lexer<BaseIterator>::token(tokens::ETokenIDs const & eTokenID) const
 		{
-			assert(!keyword.empty());
-
 			namespace qi = boost::spirit::qi;
 			qi::raw_token_type raw_token;
-
-			typename keyword_map_type::const_iterator it (_keywords.find(keyword));
-			assert(it != _keywords.end());
 #ifdef TOKEN_ID
-			return raw_token((it != _keywords.end()) ? (*it).second : tokens::ETokenIDs::invalid);
+			return raw_token(eTokenID);
+			//return token(eTokenID);
 #else
-			return raw_token((it != _keywords.end()) ? (*it).second : static_cast<size_t>(tokens::ETokenIDs::invalid));
+			return raw_token(static_cast<size_t>(eTokenID));
+			//return token(static_cast<size_t>(eTokenID));
 #endif
 		}
-		//-------------------------------------------------------------------------
-		// 
-		//-------------------------------------------------------------------------
-		/*template <typename BaseIterator>
-		typename token_lexer<BaseIterator>::token_spec token_lexer<BaseIterator>::token(std::string const & keyword) const
-		{
-			namespace qi = boost::spirit::qi;
-			qi::token_type token;
-
-			typename keyword_map_type::const_iterator it = _keywords.find(keyword);
-			assert(it != _keywords.end());
-#ifdef TOKEN_ID
-			return token((it != _keywords.end()) ? (*it).second : tokens::ETokenIDs::invalid);
-#else
-			return token((it != _keywords.end()) ? (*it).second : static_cast<size_t>(tokens::ETokenIDs::invalid));
-#endif
-		}*/
 		//-------------------------------------------------------------------------
 		//! \return The current comment nesting level.
 		//-------------------------------------------------------------------------
 		template <typename BaseIterator>
 		size_t token_lexer<BaseIterator>::getCurrentCommentNestingLevel() const
 		{
-			return _uiCommentNestingLevel;
+			return m_uiCommentNestingLevel;
 		}
 	}
 }

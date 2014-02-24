@@ -40,7 +40,7 @@
     <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_local_variable.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_assignment_expression.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_chained_assignment.u" />
-    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_function_name.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_function_definition.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_duplicate_parameter_name.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_duplicate_variable_name.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_entrypoint_namespace.u" />
@@ -49,12 +49,16 @@
     <None Include="..\..\..\src\tests\code\fail\fail_int_literal_bin.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_int_literal_hex.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_int_literal_oct.u" />
-    <None Include="..\..\..\src\tests\code\fail\fail_literal_float_parameter_type_mismatch.u" />
-    <None Include="..\..\..\src\tests\code\fail\fail_literal_int_parameter_type_mismatch.u" />
-    <None Include="..\..\..\src\tests\code\fail\fail_literal_uint_parameter_type_mismatch.u" />
-    <None Include="..\..\..\src\tests\code\fail\fail_mismatch_chained_assignment.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_float_literal_parameter_type_mismatch.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_parameter_type_mismatch.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_mismatch_chained_assignment.u">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </None>
     <None Include="..\..\..\src\tests\code\fail\fail_missing_function_identifier.u" />
-    <None Include="..\..\..\src\tests\code\fail\fail_missing_variable_definition_type.u" />
+    <None Include="..\..\..\src\tests\code\fail\fail_function_input_missing_variable_declaration_type.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_multiline_comment_unclosed.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_namespace_using_ambigous.u" />
     <None Include="..\..\..\src\tests\code\fail\fail_use_of_variable_before_its_definition.u" />
@@ -65,6 +69,8 @@
     <None Include="..\..\..\src\tests\code\fail\fail_write_to_non_mutable_variable.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_assignment.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_boolean_type.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_higherorder_function_type.u" />
+    <None Include="..\..\..\src\tests\code\pass\pass_function_void_return.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_int_empty_initialization_list_const.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_int_empty_initialization_list_nonconst.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_int_initialization_list_const.u" />
@@ -72,7 +78,6 @@
     <None Include="..\..\..\src\tests\code\pass\pass_int_literals.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_int_rounding.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_int_types.u" />
-    <None Include="..\..\..\src\tests\code\pass\pass_missing_return_variable_name.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_multiline_comment.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_namespace_functions.u" />
     <None Include="..\..\..\src\tests\code\pass\pass_namespace_using.u" />
