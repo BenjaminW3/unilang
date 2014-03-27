@@ -7,7 +7,7 @@
 #include <filesystem>
 
 #include <unilang/compiler/parser/parser.hpp>
-#include <unilang/compiler/code_generator/code_generator.hpp>
+#include <unilang/compiler/code_generator/CodeGenerator.hpp>
 
 namespace unilang
 {
@@ -16,7 +16,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::string read_source_from_file( std::string const & sSourceCodeFilePath )
+		std::string readSourceFromFile( std::string const & sSourceCodeFilePath )
 		{
 			std::tr2::sys::path const pInPath(sSourceCodeFilePath);
 			if(!std::tr2::sys::is_regular_file(pInPath))
@@ -49,7 +49,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> compile_source( std::string const & sSourceCode, EDebugOutputOptions const output )
+		std::shared_ptr<llvm::Module> compileSource( std::string const & sSourceCode, EDebugOutputOptions const output )
 		{
 			/*if((EDebugOutputOptions::SourceCode & output) == EDebugOutputOptions::SourceCode)
 			{
@@ -58,9 +58,9 @@ namespace unilang
 				std::cout << "############################" << std::endl << std::endl;
 			}*/
 
-			unilang::ast::module AST (unilang::parser::parse_code( sSourceCode ));
+			unilang::ast::SModule AST (unilang::parser::parseCode( sSourceCode ));
 			
-			unilang::code_generator::code_generator gen( AST );
+			unilang::code_generator::CCodeGenerator gen( AST );
 
 			if((EDebugOutputOptions::Unoptimized & output) == EDebugOutputOptions::Unoptimized)
 			{
@@ -84,21 +84,21 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> compile_source_from_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output )
+		std::shared_ptr<llvm::Module> compileSourceFromFile( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output )
 		{
-			return compile_source(read_source_from_file(sSourceCodeFilePath), output);
+			return compileSource(readSourceFromFile(sSourceCodeFilePath), output);
 		}
 		
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::vector<std::shared_ptr<llvm::Module>> compile_sources_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output )
+		std::vector<std::shared_ptr<llvm::Module>> compileSourcesFromFiles( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output )
 		{
 			std::vector<std::shared_ptr<llvm::Module>> vspModules;
 			
 			for(auto const & sSourceFilePath : vsSourceCodeFilePaths)
 			{
-				vspModules.push_back(compile_source_from_file(sSourceFilePath, output));
+				vspModules.push_back(compileSourceFromFile(sSourceFilePath, output));
 			}
 
 			return vspModules;

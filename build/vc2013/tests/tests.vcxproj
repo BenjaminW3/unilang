@@ -33,7 +33,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\tests\main.cpp" />
+    <ClCompile Include="..\..\..\src\tests\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_function.u" />

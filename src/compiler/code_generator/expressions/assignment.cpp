@@ -1,14 +1,14 @@
-#include <unilang/compiler/code_generator/expressions/exp_code_gen.hpp>
+#include <unilang/compiler/code_generator/expressions/ExpressionCodeGen.hpp>
 
-#include <unilang/compiler/code_generator/types.hpp>
-#include <unilang/compiler/code_generator/errors.hpp>
-#include <unilang/compiler/code_generator/llvm/llvm_code_gen.hpp>
-#include <unilang/compiler/code_generator/symbols/symbol_code_gen.hpp>
-#include <unilang/compiler/code_generator/symbols/symbols.hpp>
+#include <unilang/compiler/code_generator/Types.hpp>
+#include <unilang/compiler/code_generator/ErrorCodeGen.hpp>
+#include <unilang/compiler/code_generator/llvm/LLVMCodeGen.hpp>
+#include <unilang/compiler/code_generator/symbols/SymbolCodeGen.hpp>
+#include <unilang/compiler/code_generator/symbols/Variable.hpp>
 
-#include <unilang/compiler/ast/operators.hpp>
-#include <unilang/compiler/ast/expression_ast.hpp>
-#include <unilang/compiler/ast/operators_def.hpp>
+#include <unilang/compiler/ast/OperatorsFwd.hpp>
+#include <unilang/compiler/ast/Expression.hpp>
+#include <unilang/compiler/ast/OperatorsDef.hpp>
 
 #include <unilang/compiler/log/log.hpp>
 
@@ -37,50 +37,50 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		// This is an expression for the moment because operators::EOperators::minus_minus needs it.
 		//-------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::operator()(ast::assignment const & x)
+		llvm::Value * CExpressionCodeGen::operator()(ast::SAssignment const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
 			// Look up the name.
-			VarData const * const pVariable(m_symbolCodeGenerator.getVarFromName(x._lhs.m_sName));
+			VarData const * const pVariable(m_symbolCodeGenerator.getVarFromName(x.m_lhs.m_sName));
 			if(!pVariable)
 			{
-				return m_codeGeneratorErrors.ErrorValue("Undefined variable name '"+x._lhs.m_sName+"' !");
+				return m_codeGeneratorErrors.getErrorValue("Undefined variable name '"+x.m_lhs.m_sName+"' !");
 			}
 			else
 			{
 				if(!pVariable->isMutable())
 				{
-					return m_codeGeneratorErrors.ErrorValue("Assignment to const (non-mutable) variable '"+x._lhs.m_sName+"' is impossible!");
+					return m_codeGeneratorErrors.getErrorValue("Assignment to const (non-mutable) variable '"+x.m_lhs.m_sName+"' is impossible!");
 				}
 				else
 				{
 					llvm::AllocaInst * lhsAlloca (pVariable->getAllocaInst());
 					if(!lhsAlloca)
 					{
-						return m_codeGeneratorErrors.ErrorValue("Variable '"+x._lhs.m_sName+"' is not allocated!", EErrorLevel::Internal);
+						return m_codeGeneratorErrors.getErrorValue("Variable '"+x.m_lhs.m_sName+"' is not allocated!", EErrorLevel::Internal);
 					}
 					else
 					{
 						// Codegen the RHS.
-						llvm::Value *rhsVal = (*this)(x._rhs);
+						llvm::Value *rhsVal = (*this)(x.m_rhs);
 						if(!rhsVal)
 						{
-							return m_codeGeneratorErrors.ErrorValue("Invalid right hand side of an assignment!");
+							return m_codeGeneratorErrors.getErrorValue("Invalid right hand side of an assignment!");
 						}
 						if(rhsVal->getType()!=lhsAlloca->getType()->getElementType())
 						{
-							return m_codeGeneratorErrors.ErrorValue("Assignment type mismatch! Trying to assign a value of type '" +getLLVMTypeName(rhsVal->getType())+ 
+							return m_codeGeneratorErrors.getErrorValue("Assignment type mismatch! Trying to assign a value of type '" +getLLVMTypeName(rhsVal->getType())+ 
 												"' to a value of type '"+getLLVMTypeName(lhsAlloca->getType())+"'.");
 						}
 						else
 						{
 							if(
 #ifdef TOKEN_ID
-				x._uiOperatorID
+				x.m_uiOperatorID
 #else
-				static_cast<operators::EOperators>(x._uiOperatorID)
+				static_cast<operators::EOperators>(x.m_uiOperatorID)
 #endif
 								== operators::EOperators::assign)
 							{
@@ -92,16 +92,16 @@ namespace unilang
 								llvm::Value * pVal (m_llvmCodeGenerator.getBuilder()->CreateLoad(lhsAlloca, "load.assign.lhs.val"));
 								if(!pVal)
 								{
-									return m_codeGeneratorErrors.ErrorValue("Unable to load LHS variable value in combined assignment.");
+									return m_codeGeneratorErrors.getErrorValue("Unable to load LHS variable value in combined assignment.");
 								}
 
 								// remove all possible flags to get the pure operation
 								size_t const opRemoveFlags(~static_cast<size_t>(operators::EOperatorTypes::assignmentOperation));
-								operators::EOperators const opType = static_cast<operators::EOperators>(static_cast<size_t>(x._uiOperatorID) & opRemoveFlags);
-								llvm::Value *CalcVal = CreateBinaryOperation(pVal, rhsVal, opType);
+								operators::EOperators const opType = static_cast<operators::EOperators>(static_cast<size_t>(x.m_uiOperatorID) & opRemoveFlags);
+								llvm::Value *CalcVal = createBinaryOperation(pVal, rhsVal, opType);
 								if(!CalcVal)
 								{
-									return m_codeGeneratorErrors.ErrorValue("Unable to compute result of operation prior to assignment!");
+									return m_codeGeneratorErrors.getErrorValue("Unable to compute result of operation prior to assignment!");
 								}
 								/*return */m_llvmCodeGenerator.getBuilder()->CreateStore(CalcVal, lhsAlloca);
 								return CalcVal;

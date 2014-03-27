@@ -3,8 +3,8 @@
 #include <string>
 
 #include <unilang/compiler/compiler.hpp>
-#include <unilang/compiler/linker/linker.hpp>
-#include <unilang/compiler/execution_engine/execution_engine.hpp>
+#include <unilang/compiler/linker/Linker.hpp>
+#include <unilang/compiler/execution_engine/ExecutionEngine.hpp>
 
 
 #if defined(_MSC_VER)
@@ -111,27 +111,27 @@ int main( int argc, char *argv[] )
 	{
 		// compilation
 #ifdef UL_ONE_INPUT_FILE
-		std::shared_ptr<llvm::Module> spModule (unilang::compiler::compile_source_from_file(sInputFilename, unilang::compiler::EDebugOutputOptions::All));
+		std::shared_ptr<llvm::Module> spModule (unilang::compiler::compileSourceFromFile(sInputFilename, unilang::compiler::EDebugOutputOptions::All));
 #else
-		std::vector<std::shared_ptr<llvm::Module>> vspModule (unilang::compiler::compile_sources_from_files(vsInputFilenames, unilang::compiler::EDebugOutputOptions::All));
-		std::shared_ptr<llvm::Module> spModule(unilang::linker::link_modules(vspModule));
+		std::vector<std::shared_ptr<llvm::Module>> vspModule (unilang::compiler::compileSourcesFromFiles(vsInputFilenames, unilang::compiler::EDebugOutputOptions::All));
+		std::shared_ptr<llvm::Module> spModule(unilang::linker::linkModules(vspModule));
 #endif
 		if(!spModule)
 		{
-			throw std::runtime_error("Invalid module returned from compile_source_from_file!");
+			throw std::runtime_error("Invalid module returned from compileSourceFromFile!");
 		}
 		else
 		{
 			// bitcode output
 			if(!sOutputFilename.empty())
 			{
-				unilang::linker::write_module_to_bitcode_file(*spModule.get(), sOutputFilename);
+				unilang::linker::writeModuleToBitcodeFile(*spModule.get(), sOutputFilename);
 			}
 
 			// execution
 			if(bExecute)
 			{
-				std::cout << "Execution returned: " << unilang::execution_engine::execute_module(*spModule.get()) << std::endl;
+				std::cout << "Execution returned: " << unilang::execution_engine::executeModule(*spModule.get()) << std::endl;
 			}
 		}
 	}

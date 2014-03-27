@@ -1,4 +1,4 @@
-#include <unilang/compiler/ast/ast.hpp>
+#include <unilang/compiler/ast/AST.hpp>
 
 namespace unilang
 {
@@ -7,29 +7,29 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		meta_entity::meta_entity() : base_type() {}
-		meta_entity::meta_entity(function_declaration const & val) : base_type(val) {}
-		meta_entity::meta_entity(function_definition const & val) : base_type(val) {}
-		meta_entity::meta_entity(namespace_declaration const & val) : base_type(val) {}
+		SMetaEntity::SMetaEntity() : base_type() {}
+		SMetaEntity::SMetaEntity(SFunctionDeclaration const & val) : base_type(val) {}
+		SMetaEntity::SMetaEntity(SFunctionDefinition const & val) : base_type(val) {}
+		SMetaEntity::SMetaEntity(SNamespaceDeclaration const & val) : base_type(val) {}
 
-		std::ostream& operator<<(std::ostream& out, meta_entity const & x)
+		std::ostream& operator<<(std::ostream& out, SMetaEntity const & x)
 		{
 			switch(x.get().which())
 			{
-				case 0: out << boost::get<function_declaration>(x); break;
-				case 1: out << boost::get<function_definition>(x); break;
-				case 2: out << boost::get<namespace_declaration>(x); break;
-				default: out << "undefined meta_entity"; break;
+				case 0: out << boost::get<SFunctionDeclaration>(x); break;
+				case 1: out << boost::get<SFunctionDefinition>(x); break;
+				case 2: out << boost::get<SNamespaceDeclaration>(x); break;
+				default: out << "undefined SMetaEntity"; break;
 			}
 			return out;
 		}
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, std::vector<meta_entity> const & x)
+		std::ostream& operator<<(std::ostream& out, std::vector<SMetaEntity> const & x)
 		{
 			bool bFirstRet = false;
-			for(meta_entity const & me : x)
+			for(SMetaEntity const & me : x)
 			{
 				if(bFirstRet){bFirstRet = false;}
 				else{out << std::endl;}
@@ -42,20 +42,20 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, module const & x)
+		std::ostream& operator<<(std::ostream& out, SModule const & x)
 		{
-			out << x._metaEntities;
+			out << x.m_vMetaEntities;
 			return out;
 		}
 
 		//-------------------------------------------------------------------------
 		//! 
 		//-------------------------------------------------------------------------
-		std::ostream& operator<<(std::ostream& out, namespace_declaration const & x)
+		std::ostream& operator<<(std::ostream& out, SNamespaceDeclaration const & x)
 		{
-			out << "namespace : " << x._idfName
+			out << "namespace : " << x.m_idfName
 				<< "{" << std::endl
-				<< x._metaEntities << std::endl
+				<< x.m_vMetaEntities << std::endl
 				<< "}" << std::endl;
 			return out;
 		}

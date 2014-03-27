@@ -1,12 +1,12 @@
-#include <unilang/compiler/code_generator/expressions/exp_code_gen.hpp>
+#include <unilang/compiler/code_generator/expressions/ExpressionCodeGen.hpp>
 
-#include <unilang/compiler/code_generator/types.hpp>
-#include <unilang/compiler/code_generator/errors.hpp>
-#include <unilang/compiler/code_generator/llvm/llvm_code_gen.hpp>
+#include <unilang/compiler/code_generator/Types.hpp>
+#include <unilang/compiler/code_generator/ErrorCodeGen.hpp>
+#include <unilang/compiler/code_generator/llvm/LLVMCodeGen.hpp>
 
-#include <unilang/compiler/ast/operators.hpp>
-#include <unilang/compiler/ast/expression_ast.hpp>
-#include <unilang/compiler/ast/operators_def.hpp>
+#include <unilang/compiler/ast/OperatorsFwd.hpp>
+#include <unilang/compiler/ast/Expression.hpp>
+#include <unilang/compiler/ast/OperatorsDef.hpp>
 
 #include <unilang/compiler/log/log.hpp>
 
@@ -35,95 +35,95 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		// The Shunting-yard algorithm
 		//-------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::CreateExpression(
+		llvm::Value * CExpressionCodeGen::createExpression(
 			size_t min_precedence,
 			llvm::Value * lhs,
-			std::vector<ast::operation>::const_iterator & rest_begin,
-			std::vector<ast::operation>::const_iterator rest_end)
+			std::vector<ast::SOperation>::const_iterator & rest_begin,
+			std::vector<ast::SOperation>::const_iterator rest_end)
 		{
 			while ((rest_begin != rest_end) && (operators::getPrecedenceOfOperator(
 #ifdef TOKEN_ID
-				rest_begin->_uiOperatorID
+				rest_begin->m_uiOperatorID
 #else
-				static_cast<operators::EOperators>(rest_begin->_uiOperatorID)
+				static_cast<operators::EOperators>(rest_begin->m_uiOperatorID)
 #endif
 				) >= min_precedence))
 			{
 				operators::EOperators const op ( 
 #ifdef TOKEN_ID
-				rest_begin->_uiOperatorID
+				rest_begin->m_uiOperatorID
 #else
-				static_cast<operators::EOperators>(rest_begin->_uiOperatorID)
+				static_cast<operators::EOperators>(rest_begin->m_uiOperatorID)
 #endif
 				);
 
-				llvm::Value * rhs (rest_begin->_opOperand.apply_visitor(*this));
+				llvm::Value * rhs (rest_begin->m_opOperand.apply_visitor(*this));
 				if (!rhs)
 				{
 					std::stringstream sstr;
-					sstr << "Operand '" << rest_begin->_opOperand << "' could not be evaluated!";
-					return m_codeGeneratorErrors.ErrorValue( sstr.str() );
+					sstr << "Operand '" << rest_begin->m_opOperand << "' could not be evaluated!";
+					return m_codeGeneratorErrors.getErrorValue( sstr.str() );
 				}
 				++rest_begin;
 
 				while ((rest_begin != rest_end) && (operators::getPrecedenceOfOperator(
 #ifdef TOKEN_ID
-				rest_begin->_uiOperatorID
+				rest_begin->m_uiOperatorID
 #else
-				static_cast<operators::EOperators>(rest_begin->_uiOperatorID)
+				static_cast<operators::EOperators>(rest_begin->m_uiOperatorID)
 #endif
 				) > operators::getPrecedenceOfOperator(op)))
 				{
 					operators::EOperators const next_op ( 
 #ifdef TOKEN_ID
-					rest_begin->_uiOperatorID
+					rest_begin->m_uiOperatorID
 #else
-					static_cast<operators::EOperators>(rest_begin->_uiOperatorID)
+					static_cast<operators::EOperators>(rest_begin->m_uiOperatorID)
 #endif
 					);
-					rhs = CreateExpression( operators::getPrecedenceOfOperator(next_op), rhs, rest_begin, rest_end);
+					rhs = createExpression( operators::getPrecedenceOfOperator(next_op), rhs, rest_begin, rest_end);
 				}
 
-				lhs = CreateBinaryOperation(lhs, rhs, op);
+				lhs = createBinaryOperation(lhs, rhs, op);
 			}
 			return lhs;
 		}
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::operator()(ast::expression const & x)
+		llvm::Value * CExpressionCodeGen::operator()(ast::SExpression const & x)
 		{
 			LOG_SCOPE_DEBUG;
 			LOG(x);
 
-			llvm::Value * lhs (x._firstOperand.apply_visitor(*this));
+			llvm::Value * lhs (x.m_firstOperand.apply_visitor(*this));
 			if (!lhs)
 			{
 				std::stringstream sstr;
-				sstr << "Operand '" << x._firstOperand;
-				if(x._vRestOperands.size()>0)
+				sstr << "Operand '" << x.m_firstOperand;
+				if(x.m_vRestOperands.size()>0)
 				{
 					sstr << "' in expression '" << x;
 				}
 				sstr << "' could not be evaluated!";
-				lhs = m_codeGeneratorErrors.ErrorValue( sstr.str() );
+				lhs = m_codeGeneratorErrors.getErrorValue( sstr.str() );
 			}
 			
-			std::vector<ast::operation>::const_iterator rest_begin (x._vRestOperands.begin());
-			return CreateExpression(0, lhs, rest_begin, x._vRestOperands.end());
+			std::vector<ast::SOperation>::const_iterator rest_begin(x.m_vRestOperands.begin());
+			return createExpression(0, lhs, rest_begin, x.m_vRestOperands.end());
 		}
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		llvm::Value * expression_code_generator::CreateBinaryOperation(llvm::Value * L, llvm::Value * R, operators::EOperators op)
+		llvm::Value * CExpressionCodeGen::createBinaryOperation(llvm::Value * L, llvm::Value * R, operators::EOperators op)
 		{
 			if(!L)
 			{
-				return m_codeGeneratorErrors.ErrorValue( "Invalid L Value for operand." );
+				return m_codeGeneratorErrors.getErrorValue( "Invalid L Value for operand." );
 			}
 			else if(!R)
 			{
-				return m_codeGeneratorErrors.ErrorValue( "Invalid R Value for operand." );
+				return m_codeGeneratorErrors.getErrorValue( "Invalid R Value for operand." );
 			}
 			else if(L->getType() == R->getType())
 			{
@@ -188,7 +188,7 @@ namespace unilang
 						{
 							std::stringstream sstr;
 							sstr << "Operation '" << op;
-							return m_codeGeneratorErrors.ErrorValue(sstr.str()+"' unknown for values of type '"+getLLVMTypeName(L->getType())+"'.", EErrorLevel::Fatal);
+							return m_codeGeneratorErrors.getErrorValue(sstr.str()+"' unknown for values of type '"+getLLVMTypeName(L->getType())+"'.", EErrorLevel::Fatal);
 						}
 					}
 				}
@@ -320,18 +320,18 @@ namespace unilang
 						{
 							std::stringstream sstr;
 							sstr << "Operation '" << op;
-							return m_codeGeneratorErrors.ErrorValue(sstr.str()+"' unknown for values of type '"+getLLVMTypeName(L->getType())+"'.", EErrorLevel::Fatal);
+							return m_codeGeneratorErrors.getErrorValue(sstr.str()+"' unknown for values of type '"+getLLVMTypeName(L->getType())+"'.", EErrorLevel::Fatal);
 						}
 					}
 				}
 				else
 				{
-					return m_codeGeneratorErrors.ErrorValue("Unsupported type in operation!", EErrorLevel::Internal);
+					return m_codeGeneratorErrors.getErrorValue("Unsupported type in operation!", EErrorLevel::Internal);
 				}
 			}
 			else
 			{
-				return m_codeGeneratorErrors.ErrorValue("Operation type mismatch! Trying to mix LHS type '"+getLLVMTypeName(L->getType())+ "' and RHS type '"+getLLVMTypeName(R->getType())+"' in operation.");
+				return m_codeGeneratorErrors.getErrorValue("Operation type mismatch! Trying to mix LHS type '"+getLLVMTypeName(L->getType())+ "' and RHS type '"+getLLVMTypeName(R->getType())+"' in operation.");
 			}
 		}
 	}

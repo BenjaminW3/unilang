@@ -21,11 +21,6 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\..\src\tests\main.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-  </ItemGroup>
-  <ItemGroup>
     <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_function.u">
       <Filter>Resource Files\fail</Filter>
     </None>
@@ -197,5 +192,10 @@
     <None Include="..\..\..\src\tests\code\pass\pass_string_literals.u">
       <Filter>Resource Files\pass</Filter>
     </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\tests\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

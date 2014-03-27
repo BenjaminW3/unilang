@@ -5,7 +5,7 @@
 #include <tuple>
 
 #include <unilang/compiler/compiler.hpp>
-#include <unilang/compiler/execution_engine/execution_engine.hpp>
+#include <unilang/compiler/execution_engine/ExecutionEngine.hpp>
 
 struct Test
 {
@@ -38,7 +38,7 @@ int main( int /*argc*/, char * /*argv*/[] )
 	vTestFiles.emplace_back("pass/pass_singleline_comment.u", true, 36);
 	vTestFiles.emplace_back("pass/pass_multiline_comment.u", true, 1+2+8+16);
 	vTestFiles.emplace_back("pass/pass_boolean_type.u", true, 12);
-	vTestFiles.emplace_back("pass/pass_int_literals.u", true, 1024+128);
+	vTestFiles.emplace_back("pass/pass_int_literals.u", true, 171+205+239+409+93+35+64+2048+32);
 	vTestFiles.emplace_back("pass/pass_int_rounding.u", true, 1+2+4+8);
 	vTestFiles.emplace_back("pass/pass_int_initialization_list_const.u", true, 27);
 	vTestFiles.emplace_back("pass/pass_int_initialization_list_nonconst.u", true, 23);
@@ -94,8 +94,8 @@ int main( int /*argc*/, char * /*argv*/[] )
 	{
 		try
 		{
-			std::shared_ptr<llvm::Module> spModule(unilang::compiler::compile_source_from_file(sSourceDirectoryPath + test._sTestFile));
-			int64_t iRetVal (unilang::execution_engine::execute_module(*spModule.get()));
+			std::shared_ptr<llvm::Module> spModule(unilang::compiler::compileSourceFromFile(sSourceDirectoryPath + test._sTestFile));
+			int64_t iRetVal (unilang::execution_engine::executeModule(*spModule.get()));
 
 			if(test._bSucceeds)
 			{

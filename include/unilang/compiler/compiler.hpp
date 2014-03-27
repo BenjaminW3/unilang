@@ -1,6 +1,6 @@
 #pragma once
 
-#include <unilang/compiler/export.hpp>
+#include <unilang/compiler/Export.hpp>
 
 #include <string>
 #include <memory>
@@ -23,7 +23,39 @@
 //! Assignments are done via <tt>var := 51;</tt>. Assignments are statements so they do not return a value. Comparisons are done via <tt>if(a=b)</tt>. This solves the "if (a=b)" (assignment instead of comparison) problem that other languages have.
 //! Integer literals can be written in multiple bases. Standard decimal ('28'), hexadecimal ('0x1C'), binary ('0b11100') or octal ('0q34'). The prefix q is used instead of o to avoid the prefix o being mistaken for a zero.
 //! 
-//! \subsection lang2 Comments
+//! \subsection Lexical Elements
+//!
+//! \subsubsection Input
+//!	The input files are interpreted as a sequence of unicode codepoits encoded in UTF-8. Each code point is distinct; for instance, upper and lower case letters are different characters.
+//!
+//! \subsubsection Whitespace
+//!	Any of the following Unicode characters is considered whitespace: U+0020 (space, ' '), U+0009 (tab, '\t'), U+000A (LF, '\n'), U+000D (CR, '\r').
+//!	Unilang is a "free-form" language, meaning that all forms of whitespace serve only to separate tokens in the grammar, and have no semantic significance.
+//!
+//! \subsubsection Literals
+//! \paragraph Number Literals
+//! \subparagraph Number Literals
+//! Integer literals can be encoded in hexadecimal (0x), octal (0q), binary (0b) with prefixes or by default in decimal system.
+//! Integer literals can be interrupted by underscores for ease of reading and alignment. This is completely syntax sugar.
+//! <tt>
+//! bin_digit = '0' | '1'
+//! oct_digit = bin_digit | '2' | '3' | '4' | '5' | '6' | '7' 
+//! nonzero_dec_digit: '1' | '2' | '3' | '4' | '5' | '6' | '7' | '8' | '9';
+//! dec_digit: '0' | nonzero_dec;
+//! hex_digit : 'a' | 'b' | 'c' | 'd' | 'e' | 'f' | 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | dec_digit;
+//! 
+//! IntegerLiteral = :		"0x"[hex_digit | '_']+ int_suffix? 
+//!						|	"0q"[oct_digit | '_']+ int_suffix?
+//!						|	"0b"[bin_digit | '_']+ int_suffix?
+//!						|	[dec_digit | '_']+ int_suffix?
+//FIXME: implement integer suffix
+//!	 </tt>
+//!
+//! \subsubsection Identifiers
+//!	Identifiers consist of at least one letter followed by multiple letters or numbers. The underscore is considered a letter.
+//! <tt>Identifier = [a-zA-Z_][a-zA-Z_0-9]*</tt>
+//!
+//! \subsubsection lang2 Comments
 //! There are two types of comments available. 
 //! On the one hand there are C++ style comments <tt>// commented text</tt>. Those comment out everything from the two slashes to the end of the line.
 //! On the other hand you can use C-style comments <tt>/* commented text */</tt>. They can be used in a line and also over multiple lines e.g. <tt>iErrorCode = /*3 +*/ 4;</tt>.
@@ -36,6 +68,69 @@
 //! Single-line comments '//' occurring within a multiline-comment '/*' are not ignored. This is different from the way it is handeled in C++ and other languages.
 //! So the code <tt> /* function:()->(a:i64) // This is a comment at the end of a method being commented out fully. */ </tt> is missing a closing multiline comment because the singleline-comment makes the lexer ignore the existing one.
 //! This is on purpose so that commented out multiline comments are fully permissive for being recursively commented out themselves.
+//! <tt>SingleLineComment = "//" non_eol* </tt>
+//! <tt>MultiLineComment = "/*" MultiLineCommentBody* "*/"</tt>
+//! <tt>MultiLineCommentBody = (MultiLineComment | character)* </tt>
+//!
+//! \subsubsection Keywords
+//!	The following list of keywords are reserved and can not be used as identifiers:
+//! <tt> if, else, namespace</tt>
+// TODO: while, return, break, continue, default, for, import, interface, class, struct, switch
+//!
+//! \subsubsection Operators, Delimiters and other Symbols
+//!	The following list of tokens represent special operators, delimiters or symbols:
+//! <tt> 
+//!	* multiplication
+//!	/ division
+//!	% modulo
+//!	+ addition
+//!	- subtraction
+//!	++ increment
+//!	-- decrement
+//TODO:	^ exponent
+//!	& bitwise-and
+//!	# bitwise-xor
+//!	| bitwise-or
+//!	<< left-shift
+//!	>> right-shift
+//!	<< left-shift
+//!	:= assignment
+//!	*= multiplication-assignment
+//!	/= division-assignment
+//!	%= modulo-assignment
+//TODO:	^= exponent-assignment
+//!	&= bitwise-and-assignment
+//!	#= bitwise-xor-assignment
+//!	|= bitwise-or-assignment
+//!	<<= left-shift-assignment
+//!	>>= right-shift-assignment
+//!	+= addition-assignment
+//!	-= subtraction-assignment
+//!	<<= left-shift-assignment
+//TODO: Predefined for bool type:
+//!	|| logical-or
+//!	&& logical-and
+//!	= equality
+//!	!= inequality
+//!	< less-then
+//!	<= less-then-equal
+//!	> greater-then
+//!	>= greater-then-equality
+//!	! not
+//!	~ complement
+//!	:: double-colon
+//!	: colon
+//!	~ complement
+//!	-> arrow
+//! ( opening-parenthesis
+//! ) closing-parenthesis
+//! { opening-brace
+//! } closing-brace
+//TODO: [ opening-bracket
+//TODO: ] closing-bracket
+//!	, comma
+//!	; semicolon
+//!	? question-mark</tt>
 //!
 //! \subsection lang3 Types
 //! Unilang defines a few fundamental types. There is only the differentation between floating point and integer types of different precision.
@@ -154,7 +249,7 @@ namespace unilang
 		//! \param sSourceCodeFilePath The path to the source code file.
 		//! \return The source code.
 		//-------------------------------------------------------------------------
-		U_EXPORT std::string read_source_from_file( std::string const & sSourceCodeFilePath );
+		U_EXPORT std::string readSourceFromFile( std::string const & sSourceCodeFilePath );
 
 		//-------------------------------------------------------------------------
 		//! Compiles the given source.
@@ -164,7 +259,7 @@ namespace unilang
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Module being created.
 		//-------------------------------------------------------------------------
-		U_EXPORT std::shared_ptr<llvm::Module> compile_source( std::string const & sSourceCode, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
+		U_EXPORT std::shared_ptr<llvm::Module> compileSource( std::string const & sSourceCode, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 
 		//-------------------------------------------------------------------------
 		//! Compiles the given file.
@@ -174,7 +269,7 @@ namespace unilang
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Module being created.
 		//-------------------------------------------------------------------------
-		U_EXPORT std::shared_ptr<llvm::Module> compile_source_from_file( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
+		U_EXPORT std::shared_ptr<llvm::Module> compileSourceFromFile( std::string const & sSourceCodeFilePath, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 
 		//-------------------------------------------------------------------------
 		//! Compiles the given files.
@@ -184,6 +279,6 @@ namespace unilang
 		//! \param output The verbosity of the debug output.
 		//! \return The llvm::Modules being created.
 		//-------------------------------------------------------------------------
-		U_EXPORT std::vector<std::shared_ptr<llvm::Module>> compile_sources_from_files( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
+		U_EXPORT std::vector<std::shared_ptr<llvm::Module>> compileSourcesFromFiles( std::vector<std::string> const & vsSourceCodeFilePaths, EDebugOutputOptions const output = EDebugOutputOptions::Standard );
 	}
 }

@@ -1,31 +1,32 @@
 #if defined(_MSC_VER)
+#pragma warning(push)
 # pragma warning(disable: 4503)	// decorated name length exceeded, name was truncated
 # pragma warning(disable: 4510)	// warning C4510: 'boost::phoenix::actor<Expr>' : default constructor could not be generated
 # pragma warning(disable: 4512)	// warning C4512: 'boost::phoenix::vector6<const boost::phoenix::actor<Expr> *,A0,A1,A2,A3,A4>' : assignment operator could not be generated
 # pragma warning(disable: 4610)	// warning C4610 : struct 'boost::phoenix::actor<Expr>' can never be instantiated - user defined constructor required
 #endif
 
-#include <unilang/compiler/lexer/lexer_def.hpp>
+#include <unilang/compiler/lexer/LexerDef.hpp>
 
-typedef std::string::const_iterator base_iterator_type;
-template unilang::lexer::token_lexer<base_iterator_type>::token_lexer();
-template void unilang::lexer::token_lexer<base_iterator_type>::internal_add(std::string const &, tokens::ETokenIDs, char const *, char const *);
-template unilang::lexer::token_lexer<base_iterator_type>::raw_token_spec unilang::lexer::token_lexer<base_iterator_type>::operator()(tokens::ETokenIDs const & eTokenID) const;
-template size_t unilang::lexer::token_lexer<base_iterator_type>::getCurrentCommentNestingLevel() const;
+typedef std::string::const_iterator TSourceCodeIterator;
+template unilang::lexer::CTokenLexer<TSourceCodeIterator>::CTokenLexer();
+template void unilang::lexer::CTokenLexer<TSourceCodeIterator>::addStringTokenToState(std::string const &, tokens::ETokenIDs, char const *, char const *);
+template unilang::lexer::CTokenLexer<TSourceCodeIterator>::raw_token_spec unilang::lexer::CTokenLexer<TSourceCodeIterator>::operator()(tokens::ETokenIDs const & eTokenID) const;
+template size_t unilang::lexer::CTokenLexer<TSourceCodeIterator>::getCurrentCommentNestingLevel() const;
 
 /*
 #include <fstream>
 #include <iostream>
 
-#include <unilang/compiler/lexer/lexer_def.hpp>
+#include <unilang/compiler/lexer/LexerDef.hpp>
 #include <boost/spirit/include/lex_generate_static_lexertl.hpp>
 
 int main()
 {
-	typedef std::string::const_iterator base_iterator_type;
-	typedef client::lexer::conjure_tokens<base_iterator_type> lexer_type;
+	typedef std::string::const_iterator TSourceCodeIterator;
+	typedef client::lexer::conjure_tokens<TSourceCodeIterator> TLexer;
 
-	lexer_type lexer;
+	TLexer lexer;
 
 	// first generate the static switch based lexer 
 	std::ofstream out_static("unilang_static_switch_lexer.hpp");
@@ -49,3 +50,7 @@ int main()
 	return 0;
 }
 */
+
+#if defined(_MSC_VER)
+#pragma warning(pop)
+#endif

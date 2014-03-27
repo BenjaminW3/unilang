@@ -1,6 +1,6 @@
-#include <unilang/compiler/linker/linker.hpp>
+#include <unilang/compiler/linker/Linker.hpp>
 
-#include <unilang/compiler/ast/function_ast.hpp>
+#include <unilang/compiler/ast/Function.hpp>
 
 #if defined(_MSC_VER)
 #pragma warning(push)
@@ -41,7 +41,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> load_module_from_bitcode_file( std::string const & sBitCodeFilePath )
+		std::shared_ptr<llvm::Module> loadModuleFromBitcodeFile( std::string const & sBitCodeFilePath )
 		{
 			// TODO: check file validity
 
@@ -69,20 +69,20 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::vector<std::shared_ptr<llvm::Module>> load_modules_from_bitcode_files( std::vector<std::string> const & vsBitcodeFilePaths )
+		std::vector<std::shared_ptr<llvm::Module>> loadModulesFromBitcodeFiles( std::vector<std::string> const & vsBitcodeFilePaths )
 		{
 			std::vector<std::shared_ptr<llvm::Module>> vspModules;
 			
 			for(auto const & sBitcodeFilePath : vsBitcodeFilePaths)
 			{
-				auto const spModule (load_module_from_bitcode_file(sBitcodeFilePath));
+				auto const spModule (loadModuleFromBitcodeFile(sBitcodeFilePath));
 				if(spModule)
 				{
 					vspModules.push_back(spModule);
 				}
 				else
 				{
-					throw std::runtime_error("Invalid module returned from load_module_from_bitcode_file for file '" + sBitcodeFilePath + "'.");
+					throw std::runtime_error("Invalid module returned from loadModuleFromBitcodeFile for file '" + sBitcodeFilePath + "'.");
 				}
 			}
 
@@ -91,7 +91,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		void write_module_to_bitcode_file( llvm::Module const & module, std::string const & sBitCodeFilePath )
+		void writeModuleToBitcodeFile( llvm::Module const & module, std::string const & sBitCodeFilePath )
 		{
 			std::string sError;
 			llvm::raw_fd_ostream fd_ostream(sBitCodeFilePath.c_str(), sError);
@@ -106,7 +106,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> load_module_from_ir_file(std::string const & sIRCodeFilePath)
+		std::shared_ptr<llvm::Module> loadModuleFromIRFile(std::string const & sIRCodeFilePath)
 		{
 			// TODO: check file validity
 
@@ -162,7 +162,7 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> link_modules( std::vector<std::shared_ptr<llvm::Module>> vModules )
+		std::shared_ptr<llvm::Module> linkModules( std::vector<std::shared_ptr<llvm::Module>> vModules )
 		{
 			std::shared_ptr<llvm::Module> newModule (std::make_shared<llvm::Module>("unilang-module", llvm::getGlobalContext()));
 			llvm::Linker linker (newModule.get());
@@ -187,9 +187,9 @@ namespace unilang
 		//-------------------------------------------------------------------------
 		//
 		//-------------------------------------------------------------------------
-		std::shared_ptr<llvm::Module> link_bitcode_files_to_module( std::vector<std::string> const & vsBitcodeFilePaths ) 
+		std::shared_ptr<llvm::Module> linkBitcodeFilesToModule( std::vector<std::string> const & vsBitcodeFilePaths ) 
 		{
-			return link_modules(load_modules_from_bitcode_files(vsBitcodeFilePaths));
+			return linkModules(loadModulesFromBitcodeFiles(vsBitcodeFilePaths));
 		}
 	}
 }

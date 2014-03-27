@@ -29,8 +29,8 @@
   </PropertyGroup>
   
   <PropertyGroup>
-    <OutDir>..\..\..\lib\$(Platform)\$(Configuration)\</OutDir>
-    <IntDir>..\..\..\obj\$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+    <OutDir>../../../lib/$(Platform)/$(Configuration)/</OutDir>
+    <IntDir>../../../obj/$(Platform)/$(Configuration)/$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)'=='Debug'">
     <LinkIncremental>true</LinkIncremental>
@@ -41,6 +41,7 @@
   
   <ItemDefinitionGroup>
     <ClCompile>
+      <ObjectFileName>$(IntDir)/$(Platform)/$(Configuration)/$(ProjectName)/%(RelativeDir)/</ObjectFileName><!-- We have to add the Platform/Config/ProjName twice directories because the RelativeDir begins with three backslashes -->
       <WarningLevel>Level4</WarningLevel>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <MinimalRebuild>false</MinimalRebuild><!--Command line warning D9030: '/Gm' is incompatible with multiprocessing; ignoring /MP switch-->
