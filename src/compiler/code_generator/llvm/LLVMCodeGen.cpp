@@ -98,9 +98,9 @@ namespace unilang
 			llvm::EnableStatistics();
 #endif
 #ifdef USE_MCJIT
-			std::string const sTripleStr (llvm::sys::getDefaultTargetTriple() + "-elf"); // Something like "i686-unknown-win32" FIXME:  + "-elf" is needed for MCJIT
+			std::string const sTripleStr (llvm::sys::getDefaultTargetTriple() + "-elf"); // Something like "i686-unknown-windows-msvc" FIXME:  + "-elf" is needed for MCJIT
 #endif
-			std::string const sTripleStr(llvm::sys::getDefaultTargetTriple()); // Something like "i686-unknown-win32"
+			std::string const sTripleStr(llvm::sys::getDefaultTargetTriple()); // Something like "i686-unknown-windows-msvc"
 			std::cout << "Using target triple: '" << sTripleStr << "'" << std::endl;
 
 			llvm::InitializeAllTargetInfos();

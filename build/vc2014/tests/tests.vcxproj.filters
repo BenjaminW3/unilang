@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Resource Files\fail">
+      <UniqueIdentifier>{c7271617-4e97-41d4-867b-d23a1eb69dad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Resource Files\pass">
+      <UniqueIdentifier>{698f43d0-73fd-45fa-8579-f7e1bf2a7a28}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_function.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_accessing_non_existant_local_variable.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_assignment_expression.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_chained_assignment.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_parameter_name.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_variable_name.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_entrypoint_namespace.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_higherorder_function_type_mismatch.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_initialization_list_too_long.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_mismatch_chained_assignment.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_missing_function_identifier.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_multiline_comment_unclosed.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_use_of_variable_before_its_definition.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_function.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_keyword.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_variable_different_type.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_variable_shadowing_variable_same_type.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_write_to_non_mutable_variable.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_assignment.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_boolean_type.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_empty_initialization_list_const.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_empty_initialization_list_nonconst.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_initialization_list_const.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_initialization_list_nonconst.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_literals.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_rounding.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_int_types.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_multiline_comment.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_namespace_functions.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_addition.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_bit_and.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_bit_or.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_bit_xor.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_division.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_mod.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_multiplication.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_shift_left.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_shift_right.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_combined_assignment_subtraction.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_compl.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_decrement.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_increment.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_not.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_operator_precedence.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_singleline_comment.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_namespace_using.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_namespace_using_ambigous.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_hex.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_bin.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_oct.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_function_void_return.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_int_literal_parameter_type_mismatch.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_float_literal_parameter_type_mismatch.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_duplicate_function_definition.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\fail\fail_function_input_missing_variable_declaration_type.u">
+      <Filter>Resource Files\fail</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_higherorder_function_type.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+    <None Include="..\..\..\src\tests\code\pass\pass_string_literals.u">
+      <Filter>Resource Files\pass</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\..\..\src\tests\Main.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

@@ -3,6 +3,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
+#include <fstream>
 
 #include <filesystem>
 
@@ -21,19 +22,19 @@ namespace unilang
 			std::tr2::sys::path const pInPath(sSourceCodeFilePath);
 			if(!std::tr2::sys::is_regular_file(pInPath))
 			{
-				throw std::runtime_error("The input is no valid file: \""+ pInPath.file_string() +"\"\n\n");
+				throw std::runtime_error("The input is no valid file: \""+ pInPath.string() +"\"\n\n");
 			}
 			if(pInPath.extension() != ".u")
 			{
-				throw std::runtime_error("The input is no valid file. The '.u' extension is required: \""+ pInPath.file_string() +"\"\n\n");
+				throw std::runtime_error("The input is no valid file. The '.u' extension is required: \""+ pInPath.string() +"\"\n\n");
 			}
 
-			std::cout << "Compiling: '" << pInPath.file_string() << "'\n";
+			std::cout << "Compiling: '" << pInPath.string() << "'\n";
 			
-			std::ifstream ifs ( pInPath.file_string() , std::ifstream::in );
+			std::ifstream ifs(pInPath.string(), std::ifstream::in);
 			if(!ifs)
 			{
-				throw std::runtime_error("Unable to open file: "+pInPath.file_string());
+				throw std::runtime_error("Unable to open file: "+pInPath.string());
 			}
 			std::string sSourceCode;
 			ifs.unsetf(std::ios::skipws); // No white space skipping!
